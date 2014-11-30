@@ -265,8 +265,8 @@ function Wikiplus(WikiplusData){
     //此处定义局部变量self
     //self可以在class Wikiplus中的任何一个function中调用
     //self实际指向class
-    this.Version = '1.4.5';
-    this.LastestUpdateDescription = '允许自行编辑小尾巴';
+    this.Version = '1.4.7';
+    this.LastestUpdateDescription = '允许重置统计数据';
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
     this.PreloadData = {};
@@ -299,10 +299,12 @@ function Wikiplus(WikiplusData){
     * 输入:无
     * 输出:无
     **/
-    this.Install = function(){
+    this.Install = function(callback){
+        var callback = arguments[0]?arguments[0]:function(){};
         var worldend = new Date(253402271999000);//Cookie有效期到一个近乎世界末日的时间
         $.cookie('Wikiplus_StartUseAt',(new Date()).valueOf(),{expires : worldend});
         $.cookie('Wikiplus_SrartEditCount',wgUserEditCount,{expires: worldend});
+        callback();
     }
     /**
     * 模块:获取页面基础信息
@@ -758,6 +760,7 @@ function Wikiplus(WikiplusData){
             $("#wikiplus-function").append('<li id="wikiplus-function-CRP">创建重定向页</li>');
             $("#wikiplus-function-CRP").click(function(){
                 $("#wikiplus-function").children().fadeOut('slow',function(){
+                    $("#wikiplus-function").children().remove();
                     $("#wikiplus-function").append('<input id="wikiplus-function-CRP-input" placeholder="将哪个页面重定向至' + wgPageName + '?"></input><button id="wikiplus-function-CRP-submit">提交</button>');
                     $("#wikiplus-function-CRP-submit").click(function(){
                         if ($("#wikiplus-function-CRP-input").val() != ""){
@@ -780,6 +783,34 @@ function Wikiplus(WikiplusData){
             });
         }
     };
+    this.editSettings = function(){
+        if ($("#wikiplus-function").length>0){
+            $("#wikiplus-function").append('<li id="wikiplus-function-settings">设置</li>');
+            $("#wikiplus-function-settings").click(function(){
+                $("#wikiplus-function").children().fadeOut('slow',function(){
+                    $("#wikiplus-function").children().remove();
+                    $("#wikiplus-function").append('<li id="wikiplus-function-RS" style="display:none;">重置统计数据</li>');
+                    $("#wikiplus-function-RS").fadeIn('slow',function(){
+                        $(this).click(function(){
+                            $(this).unbind();
+                            $("#wikiplus-function").children().fadeOut('slow',function(){
+                                $("#wikiplus-function").children().remove();
+                                $("#wikiplus-function").append('<button id="wikiplus-function-RS-comfirm">确认</button>');
+                                $("#wikiplus-function-RS-comfirm").click(function(){
+                                    $(this).attr('disabled','disabled');
+                                    $.removeCookie("Wikiplus_StartUseAt");
+                                    $.removeCookie("Wikiplus_SrartEditCount");
+                                    self.Install(function(){
+                                        location.reload();
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        }
+    }
     /**
     * 模块:预读取
     **/
@@ -826,6 +857,9 @@ function Wikiplus(WikiplusData){
             else{
                 console.log('当前页面不输出，但您可以使用Wikiplus的开放接口');
                 return false;
+            }
+            if (typeof $.cookie('Wikiplus_StartUseAt') == "undefined"){
+                self.Install();
             }
             var usetime = ((new Date()).valueOf() - $.cookie('Wikiplus_StartUseAt'))/1000;
             if (usetime<86400){
@@ -886,6 +920,7 @@ function Wikiplus(WikiplusData){
     this.initFunctions = function(){
         this.createRedirectPage();
         this.bindPreloadEvents();
+        this.editSettings();
     }
 }
 $(document).ready(function(){
