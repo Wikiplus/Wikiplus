@@ -265,8 +265,8 @@ function Wikiplus(WikiplusData){
     //此处定义局部变量self
     //self可以在class Wikiplus中的任何一个function中调用
     //self实际指向class
-    this.Version = '1.5.0 beta';
-    this.LastestUpdateDescription = '允许自定义某些设置';
+    this.Version = '1.5.0 fix1';
+    this.LastestUpdateDescription = '修正超长页面预览失败的问题';
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
     this.PreloadData = {};
@@ -436,7 +436,7 @@ function Wikiplus(WikiplusData){
     this.getPagePreview = function(wikitext,callback){
         var callback = arguments[1]?arguments[1]:function(){};
         $.ajaxq("MainQueue",{
-            type:"GET",
+            type:"POST",
             dataType:"json",
             data:{'format':'json','action':'parse','text':wikitext,'title':wgPageName.replace(/ /ig,"_"),'pst':true},
             url:this.APILocation,
