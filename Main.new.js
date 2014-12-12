@@ -265,8 +265,8 @@ function Wikiplus(WikiplusData){
     //此处定义局部变量self
     //self可以在class Wikiplus中的任何一个function中调用
     //self实际指向class
-    this.Version = '1.5.0 fix1';
-    this.LastestUpdateDescription = '修正超长页面预览失败的问题';
+    this.Version = '1.5.1 fix';
+    this.LastestUpdateDescription = '配置项目支持匿名函数返回 修复有时匿名函数解析失败的问题';
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
     this.PreloadData = {};
@@ -506,33 +506,35 @@ function Wikiplus(WikiplusData){
     */
     this.initQuickEditStepOne = function(section,summary,callback){
         var callback = arguments[2]?arguments[2]:function(){};
+        var sectionNumber = section!=0?section.data('section'):0;
+        var sectionName = section!=0?section.data('sectionName'):"";
         $('body').animate({scrollTop:0},200);
-        var isPreloadExist = eval('this.PreloadData.section' + section);
+        var isPreloadExist = eval('this.PreloadData.section' + sectionNumber);
         if (typeof isPreloadExist != "undefined"){
             this.OutputPrinter(this.OutputBox,"本次编辑触发预读取，读取用时0ms",'fine',function(object){
                 setTimeout(function(){
-                    object.fadeOut('slow');
+                    object.fadeOut('fast');
                 },3000);
             });
             $("#mw-content-text").html('<div id="wikiplus-quickedit-back">返回</div><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
-            $("textarea#quickedit").val(eval('this.PreloadData.section' + section));
+            $("textarea#quickedit").val(eval('this.PreloadData.section' + sectionNumber));
             $("input#wikiplus-quickedit-summary-input").val(self.getSetting('defaultSummary') || summary);
-            this.initQuickEditStepTwo(section);
+            this.initQuickEditStepTwo(sectionNumber);
         }
         else{
             console.time('加载用时')
             this.OutputPrinter(this.OutputBox,"加载中..",'fine',function(object){
                 setTimeout(function(){
-                    object.fadeOut('slow');
+                    object.fadeOut('fast');
                 },3000);
             });
-            this.getPageWikitext(wgPageName,section,wgRevisionId,function(data){
+            this.getPageWikitext(wgPageName,sectionNumber,wgRevisionId,function(data){
                 console.timeEnd('加载用时');
                 $("#mw-content-text").html('<div id="wikiplus-quickedit-back">返回</div><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
                 $("textarea#quickedit").val(data);
 
                 $("input#wikiplus-quickedit-summary-input").val(self.getSetting('defaultSummary') || summary);
-                self.initQuickEditStepTwo(section);
+                self.initQuickEditStepTwo(sectionNumber);
             })
         }
 
@@ -565,7 +567,7 @@ function Wikiplus(WikiplusData){
             $(this).attr('disabled','disabled');
             self.OutputPrinter(self.OutputBox,'加载中...','fine',function(object){
                 setTimeout(function(){
-                    object.fadeOut('slow');
+                    object.fadeOut('fast');
                 },3000);
             })
             var content = $("textarea#quickedit").val();
@@ -574,7 +576,7 @@ function Wikiplus(WikiplusData){
                 $("button#wikiplus-quickedit-preview-submit").removeAttr('disabled');
                 self.OutputPrinter(self.OutputBox,'请收下您的预览~','fine',function(object){
                     setTimeout(function(){
-                        object.fadeOut('slow');
+                        object.fadeOut('fast');
                     },3000);
                 })
             })
@@ -599,8 +601,9 @@ function Wikiplus(WikiplusData){
             $(this).unbind();
             var section = $(this).parent().find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(\d+)/)[1];
             $(this).data('section',section);//将每个快速编辑按钮对应的段落编号用data的方式存储在自身
+            $(this).data('sectionName',$(this).parent().prev().text());
             $(this).click(function(i){
-                self.initQuickEditStepOne(section,"/*" + $(this).parent().prev().text() + '*/ //快速编辑 via Wikiplus');
+                self.initQuickEditStepOne($(this),"/*" + $(this).data('sectionName') + '*/ //快速编辑 via Wikiplus');
             })
         });
         if ($("#wikiplus-quickedit-button-top").length>0){
@@ -684,7 +687,7 @@ function Wikiplus(WikiplusData){
                 else{
                     self.OutputPrinter(self.OutputBox,'空输入..干什么呀..','warning',function(object){
                         setTimeout(function(){
-                            object.fadeOut('slow');
+                            object.fadeOut('fast');
                         },3000);
                     })
                 }
@@ -764,7 +767,7 @@ function Wikiplus(WikiplusData){
         if ($("#wikiplus-function").length>0){
             $("#wikiplus-function").append('<li id="wikiplus-function-CRP">创建重定向页</li>');
             $("#wikiplus-function-CRP").click(function(){
-                $("#wikiplus-function").children().fadeOut('slow',function(){
+                $("#wikiplus-function").children().fadeOut('fast',function(){
                     $("#wikiplus-function").children().remove();
                     $("#wikiplus-function").append('<input id="wikiplus-function-CRP-input" placeholder="将哪个页面重定向至' + wgPageName + '?"></input><button id="wikiplus-function-CRP-submit">提交(Ctrl+Enter)</button>');
                     $("#wikiplus-function-CRP-submit").click(function(){
@@ -788,7 +791,7 @@ function Wikiplus(WikiplusData){
         else{
             self.OutputPrinter(self.OutputBox,'不能为空哦','warning',function(object){
                 setTimeout(function(){
-                    object.fadeOut('slow');
+                    object.fadeOut('fast');
                 },3000);
             });
         }
@@ -800,15 +803,15 @@ function Wikiplus(WikiplusData){
         if ($("#wikiplus-function").length>0){
             $("#wikiplus-function").append('<li id="wikiplus-function-settings">设置</li>');
             $("#wikiplus-function-settings").click(function(){
-                $("#wikiplus-function").children().fadeOut('slow',function(){
+                $("#wikiplus-function").children().fadeOut('fast',function(){
                     $("#wikiplus-function").children().remove();
                     $("#wikiplus-function").append('<li id="wikiplus-function-RS" style="display:none;">重置统计数据</li>');
                     $("#wikiplus-function").append('<li id="wikiplus-function-ESF" style="display:none;">配置设置文件</li>');
                     //
-                    $("#wikiplus-function-RS").fadeIn('slow',function(){
+                    $("#wikiplus-function-RS").fadeIn('fast',function(){
                         $(this).click(function(){
                             $(this).unbind();
-                            $("#wikiplus-function").children().fadeOut('slow',function(){
+                            $("#wikiplus-function").children().fadeOut('fast',function(){
                                 $("#wikiplus-function").children().remove();
                                 $("#wikiplus-function").append('<button id="wikiplus-function-RS-comfirm">确认</button>');
                                 $("#wikiplus-function-RS-comfirm").click(function(){
@@ -822,7 +825,7 @@ function Wikiplus(WikiplusData){
                             })
                         })
                     });
-                    $("#wikiplus-function-ESF").fadeIn('slow',function(){
+                    $("#wikiplus-function-ESF").fadeIn('fast',function(){
                         $(this).click(function(){
                             $(this).unbind();
                             $("#wikiplus-function").append(
@@ -836,7 +839,7 @@ function Wikiplus(WikiplusData){
                                 var settings = $("#wikiplus-function-ESF-input").val();
                                 $.cookie('Wikiplus_Settings',settings,{'raw' : true , 'expires' : new Date(253402271999000) , 'path' : '/'});
                                 self.OutputPrinter(self.OutputBox,'修改设置完毕','fine');
-                                $("#wikiplus-function").children().fadeOut('slow',function(){
+                                $("#wikiplus-function").children().fadeOut('fast',function(){
                                     location.reload();
                                 })
                             });
@@ -858,7 +861,23 @@ function Wikiplus(WikiplusData){
     */
     this.getSetting = function(key){
         var settings = $.parseJSON($.cookie('Wikiplus_Settings'));
-        return settings[key];
+        try{
+            var _setting = new Function('return ' + settings[key]);
+            if (typeof _setting == 'function'){
+                try{
+                    return _setting();
+                }
+                catch (e){
+                    return settings[key];
+                }
+            }
+            else{
+                return settings[key];
+            }
+        }
+        catch (e){
+            return settings[key];
+        }
     }
     /**
     * 模块:预读取
