@@ -265,8 +265,8 @@ function Wikiplus(WikiplusData){
     //此处定义局部变量self
     //self可以在class Wikiplus中的任何一个function中调用
     //self实际指向class
-    this.Version = '1.5.1 fix';
-    this.LastestUpdateDescription = '配置项目支持匿名函数返回 修复有时匿名函数解析失败的问题';
+    this.Version = '1.5.1 fix2';
+    this.LastestUpdateDescription = '<br><strong>配置项目支持匿名函数返回</strong> 修复匿名函数为纯JavaScript注释语句解析失败的问题';
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
     this.PreloadData = {};
@@ -865,7 +865,7 @@ function Wikiplus(WikiplusData){
             var _setting = new Function('return ' + settings[key]);
             if (typeof _setting == 'function'){
                 try{
-                    return _setting();
+                    return _setting() || settings[key];
                 }
                 catch (e){
                     return settings[key];
