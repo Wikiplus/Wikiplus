@@ -1,3 +1,6 @@
+.clear{
+	clear: both;
+}
 #wikiplus{
 	text-align: center;
 }
@@ -32,13 +35,21 @@
 	border: 1px #66ccff solid;
 	text-align: center;
 }
-#wikiplus-quickedit-back{
+#wikiplus-quickedit-back,.wikiplus-btn{
 	position: relative;
 	text-align: center;
-	width: 40px;
-	margin: 3px;
-	padding:2px;
+	float: left;
+	width: auto;
+	margin: 3px 5px 3px 5px;
+	padding:2px 4px 2px 4px;
 	box-shadow:0 1px 2px #aaa;
+}
+.wikiplus-btn a{
+    display: block;
+    text-decoration: none;
+    color: black;
+    position: relative;
+    margin: 0px;
 }
 #wikiplus-quickedit-summary-input{
 	width: 300px;
