@@ -265,8 +265,8 @@ function Wikiplus(WikiplusData){
     //此处定义局部变量self
     //self可以在class Wikiplus中的任何一个function中调用
     //self实际指向class
-    this.Version = '1.5.4';
-    this.LastestUpdateDescription = '增加跳到编辑框的快捷按钮';
+    this.Version = '1.5.4.1';
+    this.LastestUpdateDescription = '修正样式错位';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -539,7 +539,7 @@ function Wikiplus(WikiplusData){
             });
             this.getPageWikitext(wgPageName,sectionNumber,wgRevisionId,function(data){
                 console.timeEnd('加载用时');
-                $("#mw-content-text").html('<div id="wikiplus-quickedit-back">返回</div><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
+                $("#mw-content-text").html('<div id="wikiplus-quickedit-back" class="wikiplus-btn">返回</div><div id="wikiplus-quickedit-jump" class="wikiplus-btn"><a href="#quickedit">到编辑框</a></div><div class="clear" /><hr><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
                 $("textarea#quickedit").val(data);
                 $("input#wikiplus-quickedit-summary-input").val(self.getSetting('defaultSummary',section) || summary);
                 self.initQuickEditStepTwo(sectionNumber);
