@@ -262,11 +262,9 @@
 
 function Wikiplus(WikiplusData){
     var self = this;
-    //此处定义局部变量self
-    //self可以在class Wikiplus中的任何一个function中调用
-    //self实际指向class
-    this.Version = '1.5.4.1';
-    this.LastestUpdateDescription = '修正样式错位';
+    //self = class
+    this.Version = '1.5.5';
+    this.LastestUpdateDescription = '重构预读取的存储与读取';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -413,8 +411,8 @@ function Wikiplus(WikiplusData){
     */
     this.editCategories = function(categories,callback){
         var callback = arguments[1]?arguments[1]:function(){};
-        if (typeof this.PreloadData.section0 != "undefined"){
-            var content = this.PreloadData.section0;
+        if (self.getPreloadData(0)){
+            var content = self.getPreloadData(0);
             content = content.replace(new RegExp('\\[\\[分类\\:.+?\\]\\]','ig'),"");
             content = content.replace(new RegExp('\\[\\[category\\:.+?\\]\\]','ig'),"");
             var newcategories = "";
@@ -469,7 +467,7 @@ function Wikiplus(WikiplusData){
     this.getPageWikitext = function(pagename,section,revision,callback){
         var callback = arguments[3]?arguments[3]:function(){};
         var url = location.origin + wgScriptPath + '/index.php?title=' + encodeURI(pagename) + '&oldid=' + revision + '&action=raw';
-        if (section !== 0){
+        if (section != 0){
             url += '&section=' + section;
         }
         $.ajaxq("MainQueue",{
@@ -487,15 +485,14 @@ function Wikiplus(WikiplusData){
     * 输出:无
     */
     this.preloadPage = function(section,callback){
-        var isPreloadExist = eval('this.PreloadData.section' + section);
-        if (typeof isPreloadExist != "undefined"){
+        if (self.getPreloadData(section)){
             console.log('段落' + section + '已预读取，跳过');
             return false;
         }
         else{
             this.getPageWikitext(wgPageName,section,wgRevisionId,function(data){
                 try{
-                    eval('self.PreloadData.section' + section + '=data');
+                    self.setPreloadData(section,data);
                     console.log('完成段落' + section + '的预读取');
                     callback();
                 } catch(e) {};
@@ -518,15 +515,14 @@ function Wikiplus(WikiplusData){
         }
         //var section = section?section:{};
         $('body').animate({scrollTop:0},200);
-        var isPreloadExist = eval('this.PreloadData.section' + sectionNumber);
-        if (typeof isPreloadExist != "undefined"){
+        if (self.getPreloadData(sectionNumber)){
             this.OutputPrinter(this.OutputBox,"本次编辑触发预读取，读取用时0ms",'fine',function(object){
                 setTimeout(function(){
                     object.fadeOut('fast');
                 },3000);
             });
             $("#mw-content-text").html('<div id="wikiplus-quickedit-back" class="wikiplus-btn">返回</div><div id="wikiplus-quickedit-jump" class="wikiplus-btn"><a href="#quickedit">到编辑框</a></div><div class="clear" /><hr><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
-            $("textarea#quickedit").val(eval('this.PreloadData.section' + sectionNumber));
+            $("textarea#quickedit").val(self.getPreloadData(sectionNumber));
             $("input#wikiplus-quickedit-summary-input").val(self.getSetting('defaultSummary',section) || summary);
             this.initQuickEditStepTwo(sectionNumber);
         }
@@ -896,6 +892,32 @@ function Wikiplus(WikiplusData){
             catch (e){
                 return undefined;
             }
+        }
+    }
+    /**
+    * 模块:读取预读取数据
+    * 输入:段落编号
+    * 输出:段落内容 || false
+    */
+    this.getPreloadData = function(id){
+        try{
+            var data = self.PreloadData['section' + id] || false;
+            return data;
+        }
+        catch (e){
+            return false;
+        }
+    }
+    /**
+    * 模块:设置预读取数据
+    * 输入:段落编号,内容
+    */
+    this.setPreloadData = function(id,data){
+        try{
+            self.PreloadData['section' + id] = data;
+        }
+        catch(e){
+            return false;
         }
     }
     /**
