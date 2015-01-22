@@ -263,9 +263,9 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.5.5';
-    this.LastestUpdateDescription = '重构预读取的存储与读取';
-    this.isBeta = true;
+    this.Version = '1.5.5.1';
+    this.LastestUpdateDescription = '分类管理修改分类默认值为当前分类名';
+    this.isBeta = false;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
     this.PreloadData = {};
@@ -297,6 +297,9 @@ function Wikiplus(WikiplusData){
                 return false;
         }
     };
+    this.log = function(text){
+        console.log(text);
+    }
     /**
     * 模块:首次使用生成Cookie
     * 输入:无
@@ -517,9 +520,7 @@ function Wikiplus(WikiplusData){
         $('body').animate({scrollTop:0},200);
         if (self.getPreloadData(sectionNumber)){
             this.OutputPrinter(this.OutputBox,"本次编辑触发预读取，读取用时0ms",'fine',function(object){
-                setTimeout(function(){
-                    object.fadeOut('fast');
-                },3000);
+                object.delay(3000).fadeOut('fast');
             });
             $("#mw-content-text").html('<div id="wikiplus-quickedit-back" class="wikiplus-btn">返回</div><div id="wikiplus-quickedit-jump" class="wikiplus-btn"><a href="#quickedit">到编辑框</a></div><div class="clear" /><hr><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
             $("textarea#quickedit").val(self.getPreloadData(sectionNumber));
@@ -529,9 +530,7 @@ function Wikiplus(WikiplusData){
         else{
             console.time('加载用时')
             this.OutputPrinter(this.OutputBox,"加载中..",'fine',function(object){
-                setTimeout(function(){
-                    object.fadeOut('fast');
-                },3000);
+                object.delay(3000).fadeOut('fast');
             });
             this.getPageWikitext(wgPageName,sectionNumber,wgRevisionId,function(data){
                 console.timeEnd('加载用时');
@@ -570,18 +569,14 @@ function Wikiplus(WikiplusData){
             $('body').animate({scrollTop:0},200);
             $(this).attr('disabled','disabled');
             self.OutputPrinter(self.OutputBox,'加载中...','fine',function(object){
-                setTimeout(function(){
-                    object.fadeOut('fast');
-                },3000);
+                object.delay(3000).fadeOut('fast');
             })
             var content = $("textarea#quickedit").val();
             self.getPagePreview(content,function(content){
                 $("div#wikiplus-quickedit-preview-ouput").html(content);
                 $("button#wikiplus-quickedit-preview-submit").removeAttr('disabled');
                 self.OutputPrinter(self.OutputBox,'请收下您的预览~','fine',function(object){
-                    setTimeout(function(){
-                        object.fadeOut('fast');
-                    },3000);
+                    object.delay(3000).fadeOut('fast');
                 })
             })
         });
@@ -690,9 +685,7 @@ function Wikiplus(WikiplusData){
                 }
                 else{
                     self.OutputPrinter(self.OutputBox,'空输入..干什么呀..','warning',function(object){
-                        setTimeout(function(){
-                            object.fadeOut('fast');
-                        },3000);
+                        object.delay(3000).fadeOut('fast');
                     })
                 }
                 list += '<a href="javascript:void(0)" class="wikiplus-category-add">(+)</a>';
@@ -709,6 +702,7 @@ function Wikiplus(WikiplusData){
                 var oldcategoryobj = $(this);
                 $(this).data('status','removed');
                 $(this).after('<input id="wikiplus-category-edit-input" placeholder="修改为什么呢"></input><button id="wikiplus-category-edit-apply">应用更改</button>');
+                $("#wikiplus-category-edit-input").val(oldcategory);
                 $(this).hide();
                 $("#wikiplus-category-edit-apply").click(function(){
                     var newcategory = $(this).prev().val();
@@ -794,9 +788,7 @@ function Wikiplus(WikiplusData){
         }
         else{
             self.OutputPrinter(self.OutputBox,'不能为空哦','warning',function(object){
-                setTimeout(function(){
-                    object.fadeOut('fast');
-                },3000);
+                object.delay(3000).fadeOut('fast');
             });
         }
     };
