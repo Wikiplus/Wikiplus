@@ -263,8 +263,8 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.5.5.1';
-    this.LastestUpdateDescription = '分类管理修改分类默认值为当前分类名';
+    this.Version = '1.5.5.2';
+    this.LastestUpdateDescription = '提交失败时备份内容';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -386,6 +386,7 @@ function Wikiplus(WikiplusData){
                 if (typeof data.error == "undefined"){
                     if (data.edit.result == "Success"){
                         self.OutputPrinter(self.OutputBox,"编辑页面成功",'fine');
+                        localStorage.contentBackup = "";
                         callback();
                     }
                     else{
@@ -404,6 +405,7 @@ function Wikiplus(WikiplusData){
             },
             error:function(e){
                 self.OutputPrinter(self.OutputBox,'编辑页面失败:网络原因','error');
+                localStorage.contentBackup = content;
             }
         })
     };
@@ -454,7 +456,7 @@ function Wikiplus(WikiplusData){
                     })
                 }
                 else{
-                    self.OutputPrinter(self.OutputBox,"预览页面失败",'error');
+                    self.OutputPrinter(self.OutputBox,"预览页面失败:未知原因",'error');
                 }
             },
             error:function(){
@@ -522,7 +524,7 @@ function Wikiplus(WikiplusData){
             this.OutputPrinter(this.OutputBox,"本次编辑触发预读取，读取用时0ms",'fine',function(object){
                 object.delay(3000).fadeOut('fast');
             });
-            $("#mw-content-text").html('<div id="wikiplus-quickedit-back" class="wikiplus-btn">返回</div><div id="wikiplus-quickedit-jump" class="wikiplus-btn"><a href="#quickedit">到编辑框</a></div><div class="clear" /><hr><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
+            $("#mw-content-text").html('<div id="wikiplus-quickedit-back" class="wikiplus-btn">返回</div><div id="wikiplus-quickedit-jump" class="wikiplus-btn"><a href="#quickedit">到编辑框</a></div><div class="clear" /><hr><div class="clear" /><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
             $("textarea#quickedit").val(self.getPreloadData(sectionNumber));
             $("input#wikiplus-quickedit-summary-input").val(self.getSetting('defaultSummary',section) || summary);
             this.initQuickEditStepTwo(sectionNumber);
@@ -535,6 +537,12 @@ function Wikiplus(WikiplusData){
             this.getPageWikitext(wgPageName,sectionNumber,wgRevisionId,function(data){
                 console.timeEnd('加载用时');
                 $("#mw-content-text").html('<div id="wikiplus-quickedit-back" class="wikiplus-btn">返回</div><div id="wikiplus-quickedit-jump" class="wikiplus-btn"><a href="#quickedit">到编辑框</a></div><div class="clear" /><hr><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
+                if (localStorage.contentBackup){
+                    $("#mw-content-text #wikiplus-quickedit-jump").after('<div class="clear" /><div class="wikiplus-rescue-help">您有上回未提交成功的内容 本次备份将于下一次编辑后被删除</div><div class="wikiplus-btn" id="wikiplus-rescue-apply">覆盖到当前编辑框</div><div class="clear" />');
+                    $("#wikiplus-rescue-apply").click(function(){
+                        $("textarea#quickedit").val(localStorage.contentBackup);
+                    })
+                }
                 $("textarea#quickedit").val(data);
                 $("input#wikiplus-quickedit-summary-input").val(self.getSetting('defaultSummary',section) || summary);
                 self.initQuickEditStepTwo(sectionNumber);
