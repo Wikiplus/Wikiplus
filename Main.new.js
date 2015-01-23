@@ -265,7 +265,7 @@ function Wikiplus(WikiplusData){
     //self = class
     this.Version = '1.5.5.1';
     this.LastestUpdateDescription = '分类管理修改分类默认值为当前分类名';
-    this.isBeta = false;
+    this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
     this.PreloadData = {};
