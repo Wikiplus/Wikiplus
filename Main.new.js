@@ -1,7 +1,7 @@
 /**
 * Wikiplus
 * Author:+Eridanus Sora/@妹空酱
-* https://github.com/Last-Order/Moesound/tree/master/WikiPlus
+* Github:https://github.com/Last-Order/Wikiplus
 */
 
 
@@ -637,6 +637,7 @@ function Wikiplus(WikiplusData){
     * 输出:无
     */
     this.initCategoriesManage = function(){
+        console.log('开始加载功能：分类管理');
         if (typeof this.wgCategories != "undefined" && this.wgCategories.length != 0){
             var manager = '<span class="wikiplus-categories">当前页面含有的非自动分类:';
             for (i=0;i<this.wgCategories.length;i++){
@@ -776,7 +777,7 @@ function Wikiplus(WikiplusData){
     * 模块:快速创建重定向页
     */
     this.createRedirectPage = function(){
-        console.log('加载功能：创建重定向页');
+        console.log('开始加载功能：创建重定向页');
         if ($("#wikiplus-function").length>0){
             $("#wikiplus-function").append('<li id="wikiplus-function-CRP">创建重定向页</li>');
             $("#wikiplus-function-CRP").click(function(){
@@ -811,6 +812,7 @@ function Wikiplus(WikiplusData){
     * 编辑设置
     */
     this.editSettings = function(){
+        console.log('开始加载功能：配置编辑');
         if ($("#wikiplus-function").length>0){
             $("#wikiplus-function").append('<li id="wikiplus-function-settings">设置</li>');
             $("#wikiplus-function-settings").click(function(){
