@@ -263,8 +263,8 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.5.5.2';
-    this.LastestUpdateDescription = '提交失败时备份内容';
+    this.Version = '1.5.5.3 stable';
+    this.LastestUpdateDescription = '提升稳定性<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -336,7 +336,7 @@ function Wikiplus(WikiplusData){
                                 BasicInfomation.TimeStamp = data.query.pages[key].revisions[0].timestamp;
                             }
                             catch (e){
-                                console.log('获取基础信息失败!');
+                                console.log('获取基础信息失败!可能是由于本页面不存在');
                                 return false;
                             }
                             console.timeEnd('获取基础信息用时');
@@ -345,12 +345,12 @@ function Wikiplus(WikiplusData){
                     }
                 }
                 else{
-                    self.OutputPrinter(self.OutputBox,"页面基础信息获取失败",'error');
+                    self.OutputPrinter(self.OutputBox,"页面基础信息获取失败:未知原因",'error');
                     return false;
                 }
             },
             error:function(e){
-                self.OutputPrinter(self.OutputBox,"页面基础信息获取失败",'error');
+                self.OutputPrinter(self.OutputBox,"页面基础信息获取失败:网络原因",'error');
                 return false;
             }
         });
@@ -396,10 +396,16 @@ function Wikiplus(WikiplusData){
                 }
                 else{
                     if (data.error.code = 'editconflict'){
-                        self.OutputPrinter(self.OutputBox,'发生编辑冲突！请不要慌张，请复制下方编辑框中的内容，然后刷新页面重新进行编辑！','error');
+                        self.OutputPrinter(self.OutputBox,'发生编辑冲突！请不要慌张，请复制下方编辑框中的内容，然后刷新页面重新进行编辑！<br>提示:在进行复杂编辑、长时间编辑、对热点条目进行编辑时，请尽量避免使用Wikiplus','error');
                         $('textarea').removeAttr('disabled');
                     }
-                    self.OutputPrinter(self.OutputBox,'编辑页面失败:' + data.error.code + ':' + data.error.info,'error');
+                    try{
+                        self.OutputPrinter(self.OutputBox,'编辑页面失败:' + data.error.code + ':' + data.error.info,'error');
+                    }
+                    catch(e){
+                        console.log('Wikiplus主体致命错误 跳出并停止当前流程')
+                        self.OutputPrinter(self.OutputBox,'编辑页面失败:未知原因','error');
+                    }
                     return false;
                 }
             },
@@ -770,6 +776,7 @@ function Wikiplus(WikiplusData){
     * 模块:快速创建重定向页
     */
     this.createRedirectPage = function(){
+        console.log('加载功能：创建重定向页');
         if ($("#wikiplus-function").length>0){
             $("#wikiplus-function").append('<li id="wikiplus-function-CRP">创建重定向页</li>');
             $("#wikiplus-function-CRP").click(function(){
@@ -924,12 +931,21 @@ function Wikiplus(WikiplusData){
     * 模块:预读取
     */
     this.bindPreloadEvents = function(){
+        console.log('开始加载功能：Shimakaze Preloader')
         $("#toc").children("ul").find("a").each(function(i){
             $(this).mouseover(function(){
                 $(this).unbind('mouseover');
                 self.preloadPage(i+1,function(){});
             });
         }); 
+        //当鼠标划过目录时预加载对应段落
+        $(".quickedit-section").each(function(){
+            $(this).mouseover(function(){
+                var section = $(this).data('section');
+                self.preloadPage(section);
+            });
+        });
+        //当鼠标划过快速编辑按钮时加载对应段落
     }
     //各个基础功能模块 结束
     /**
