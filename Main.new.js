@@ -263,8 +263,8 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.5.5.3 stable';
-    this.LastestUpdateDescription = '提升稳定性<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
+    this.Version = '1.5.5.5';
+    this.LastestUpdateDescription = '修正在某些页面无法加载且不报错的问题<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -327,26 +327,41 @@ function Wikiplus(WikiplusData){
             dataType:"json",
             url:this.APILocation + '?action=query&prop=revisions|info&titles=' + wgPageName + '&rvprop=timestamp&intoken=edit&format=json',
             success:function(data){
-                if (typeof data.query.pages != "undefined"){
+                if (data && data.query && typeof data.query.pages != "undefined"){
                     for (key in data.query.pages){
-                        if (typeof data.query.pages[key].edittoken != "undefined"){
+                        if (data.query.pages[key] && typeof data.query.pages[key].edittoken != "undefined"){
                             var BasicInfomation = {};
-                            try{
-                                BasicInfomation.EditToken = data.query.pages[key].edittoken;
-                                BasicInfomation.TimeStamp = data.query.pages[key].revisions[0].timestamp;
+                            if (key!='-1'){
+                                console.log('我执行了');
+                                try{
+                                    BasicInfomation.EditToken = data.query.pages[key].edittoken;
+                                    BasicInfomation.TimeStamp = data.query.pages[key].revisions[0].timestamp;
+                                }
+                                catch(e){
+                                    console.log('获取基础信息失败!可能是由于本页面不存在');
+                                    return false;
+                                }
                             }
-                            catch (e){
-                                console.log('获取基础信息失败!可能是由于本页面不存在');
-                                return false;
+                            else{
+                                //我觉得这里也不会执行到
                             }
                             console.timeEnd('获取基础信息用时');
                             callback(BasicInfomation);
-                        };
+                        }
+                        else{
+                            console.log('该页面无基础信息');
+                            throw '什么鬼啦 这个页面没有基础信息啦';
+                        }
                     }
                 }
                 else{
-                    self.OutputPrinter(self.OutputBox,"页面基础信息获取失败:未知原因",'error');
-                    return false;
+                    try{
+                        self.OutputPrinter(self.OutputBox,"页面基础信息获取失败:未知原因",'error');
+                    }
+                    catch(e){
+                        throw '输出错误信息失败!'
+                    }
+                    return false;//这里应该不会执行
                 }
             },
             error:function(e){
@@ -958,6 +973,9 @@ function Wikiplus(WikiplusData){
     this.init = function(){
         console.log('Wikiplus正努力加载');
         //获取页面基本信息并存储
+        window.onerror = function(){
+            console.log('Wikiplus初始化失败');
+        };
         this.getBasicInfomation(function(BasicInfomation){
             try{
                 self.EditToken = BasicInfomation.EditToken;
@@ -975,7 +993,7 @@ function Wikiplus(WikiplusData){
                 type: "text/css",
                 href: "http://www.moesound.org/css/wikiplus.new.css"
             });
-            if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, this.namespaces)!='-1'||wgIsArticle)){
+            if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, self.ValidNamespaces)!='-1'&&!wgIsArticle)){
                 if (wgAction == 'view'){
                     $("body").find(".firstHeading").after('<div class="wikiplus-output"></div><div id="wikiplus"><div id="wikiplus-main-button">W+</div><div id="wikiplus-function"></div><div style="clear:both;"></div></div>');
                     self.OutputBox = $(".wikiplus-output");
