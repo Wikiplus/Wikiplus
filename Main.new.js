@@ -263,8 +263,8 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.5.5.6';
-    this.LastestUpdateDescription = '修正在某些页面无法加载且不报错的问题<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
+    this.Version = '1.5.5.7';
+    this.LastestUpdateDescription = '修正添加分类时若值为空多出一个删除按钮的问题<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -701,10 +701,15 @@ function Wikiplus(WikiplusData){
                 var list = "";
                 if (categoreis.length>0){
                     for (i=0;i<categoreis.length;i++){
-                        if (!($.inArray(categoreis[i],self.wgCategories)!=-1)){
+                        if (!($.inArray(categoreis[i],self.wgCategories)!='-1')){
                             var category = categoreis[i];
-                            list += '<span class="wikiplus-category" data-status="added">' + category + '</span><a href="javascript:void(0)" class="wikiplus-category-remove">(-)</a> ';
-                            self.wgCategories.push(category);
+                            if (category){
+                                list += '<span class="wikiplus-category" data-status="added">' + category + '</span><a href="javascript:void(0)" class="wikiplus-category-remove">(-)</a> ';
+                                self.wgCategories.push(category);
+                            }
+                            else{
+                                continue;
+                            }
                         }
                         else{
                             continue;
