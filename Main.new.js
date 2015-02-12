@@ -263,7 +263,7 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.5.5.5';
+    this.Version = '1.5.5.6';
     this.LastestUpdateDescription = '修正在某些页面无法加载且不报错的问题<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
@@ -332,7 +332,6 @@ function Wikiplus(WikiplusData){
                         if (data.query.pages[key] && typeof data.query.pages[key].edittoken != "undefined"){
                             var BasicInfomation = {};
                             if (key!='-1'){
-                                console.log('我执行了');
                                 try{
                                     BasicInfomation.EditToken = data.query.pages[key].edittoken;
                                     BasicInfomation.TimeStamp = data.query.pages[key].revisions[0].timestamp;
@@ -993,7 +992,7 @@ function Wikiplus(WikiplusData){
                 type: "text/css",
                 href: "http://www.moesound.org/css/wikiplus.new.css"
             });
-            if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, self.ValidNamespaces)!='-1'&&!wgIsArticle)){
+            if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, self.ValidNamespaces)!='-1'&&wgIsArticle)){
                 if (wgAction == 'view'){
                     $("body").find(".firstHeading").after('<div class="wikiplus-output"></div><div id="wikiplus"><div id="wikiplus-main-button">W+</div><div id="wikiplus-function"></div><div style="clear:both;"></div></div>');
                     self.OutputBox = $(".wikiplus-output");
