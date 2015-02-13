@@ -263,8 +263,8 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.5.5.7';
-    this.LastestUpdateDescription = '修正添加分类时若值为空多出一个删除按钮的问题<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
+    this.Version = '1.5.5.8';
+    this.LastestUpdateDescription = '修正预览失败后无法重试的问题<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -477,10 +477,12 @@ function Wikiplus(WikiplusData){
                 }
                 else{
                     self.OutputPrinter(self.OutputBox,"预览页面失败:未知原因",'error');
+                    $('#wikiplus-quickedit-preview-submit').removeAttr('disabled');
                 }
             },
             error:function(){
                 self.OutputPrinter(self.OutputBox,"预览页面失败:网络原因",'error');
+                $('#wikiplus-quickedit-preview-submit').removeAttr('disabled');
             }
         })
     },
@@ -790,6 +792,28 @@ function Wikiplus(WikiplusData){
             }
         })
         console.log('现在的分类列表:'+self.wgCategories);
+    }
+    this.siteFeatureLoader = function(){
+        var siteList = {
+            'mgp' : {
+                sitename : '萌娘百科',
+                feature : ''
+            },
+            'zwp' : {
+                sitename : '中文维基百科',
+                feature : ''
+            },
+            'msp' : {
+                site : '萌音物语',
+                feature : ''
+            }
+        };
+        var siteCode = null;
+        switch(location.host){
+            case 'zh.moegirl.org':
+                siteCode = 'mgp';
+                break;
+        }
     }
     //各个基础功能模块 开始
     /**
