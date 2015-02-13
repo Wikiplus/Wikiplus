@@ -263,8 +263,8 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.5.5.8';
-    this.LastestUpdateDescription = '修正预览失败后无法重试的问题<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
+    this.Version = '1.5.5.9';
+    this.LastestUpdateDescription = '增加几个返回按钮<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -826,6 +826,10 @@ function Wikiplus(WikiplusData){
             $("#wikiplus-function-CRP").click(function(){
                 $("#wikiplus-function").children().fadeOut('fast',function(){
                     $("#wikiplus-function").children().remove();
+                    $("#wikiplus-function").append('<div class="wikiplus-btn" id="wikiplus-function-reload">返回</div>');
+                    $("#wikiplus-function-reload").click(function(){
+                        self.initFunctionsStepTwo();
+                    });
                     $("#wikiplus-function").append('<input id="wikiplus-function-CRP-input" placeholder="将哪个页面重定向至' + wgPageName + '?"></input><button id="wikiplus-function-CRP-submit">提交(Ctrl+Enter)</button>');
                     $("#wikiplus-function-CRP-submit").click(function(){
                         if ($("#wikiplus-function-CRP-input").val() != ""){
@@ -861,9 +865,12 @@ function Wikiplus(WikiplusData){
             $("#wikiplus-function-settings").click(function(){
                 $("#wikiplus-function").children().fadeOut('fast',function(){
                     $("#wikiplus-function").children().remove();
+                    $("#wikiplus-function").append('<div class="wikiplus-btn" id="wikiplus-function-reload">返回</div>');
+                    $("#wikiplus-function-reload").click(function(){
+                        self.initFunctionsStepTwo();
+                    });
                     $("#wikiplus-function").append('<li id="wikiplus-function-RS" style="display:none;">重置统计数据</li>');
                     $("#wikiplus-function").append('<li id="wikiplus-function-ESF" style="display:none;">配置设置文件</li>');
-                    //
                     $("#wikiplus-function-RS").fadeIn('fast',function(){
                         $(this).click(function(){
                             $(this).unbind();
@@ -1097,8 +1104,13 @@ function Wikiplus(WikiplusData){
     * 输出:无
     */
     this.initFunctions = function(){
-        this.createRedirectPage();
+        this.initFunctionsStepTwo();
         this.bindPreloadEvents();
+        
+    }
+    this.initFunctionsStepTwo = function(){
+        $("#wikiplus-function").html('');
+        this.createRedirectPage();
         this.editSettings();
     }
 }
