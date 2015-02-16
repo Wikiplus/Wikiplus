@@ -263,8 +263,8 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.5.5.3 stable';
-    this.LastestUpdateDescription = '提升稳定性<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
+    this.Version = '1.6';
+    this.LastestUpdateDescription = '针对奇怪的编辑错误 增加feedback系统<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
     this.isBeta = false;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -327,26 +327,40 @@ function Wikiplus(WikiplusData){
             dataType:"json",
             url:this.APILocation + '?action=query&prop=revisions|info&titles=' + wgPageName + '&rvprop=timestamp&intoken=edit&format=json',
             success:function(data){
-                if (typeof data.query.pages != "undefined"){
+                if (data && data.query && typeof data.query.pages != "undefined"){
                     for (key in data.query.pages){
-                        if (typeof data.query.pages[key].edittoken != "undefined"){
+                        if (data.query.pages[key] && typeof data.query.pages[key].edittoken != "undefined"){
                             var BasicInfomation = {};
-                            try{
-                                BasicInfomation.EditToken = data.query.pages[key].edittoken;
-                                BasicInfomation.TimeStamp = data.query.pages[key].revisions[0].timestamp;
+                            if (key!='-1'){
+                                try{
+                                    BasicInfomation.EditToken = data.query.pages[key].edittoken;
+                                    BasicInfomation.TimeStamp = data.query.pages[key].revisions[0].timestamp;
+                                }
+                                catch(e){
+                                    console.log('获取基础信息失败!可能是由于本页面不存在');
+                                    return false;
+                                }
                             }
-                            catch (e){
-                                console.log('获取基础信息失败!可能是由于本页面不存在');
-                                return false;
+                            else{
+                                //我觉得这里也不会执行到
                             }
                             console.timeEnd('获取基础信息用时');
                             callback(BasicInfomation);
-                        };
+                        }
+                        else{
+                            console.log('该页面无基础信息');
+                            throw '什么鬼啦 这个页面没有基础信息啦';
+                        }
                     }
                 }
                 else{
-                    self.OutputPrinter(self.OutputBox,"页面基础信息获取失败:未知原因",'error');
-                    return false;
+                    try{
+                        self.OutputPrinter(self.OutputBox,"页面基础信息获取失败:未知原因",'error');
+                    }
+                    catch(e){
+                        throw '输出错误信息失败!'
+                    }
+                    return false;//这里应该不会执行
                 }
             },
             error:function(e){
@@ -375,6 +389,9 @@ function Wikiplus(WikiplusData){
             data:data,
             url:this.APILocation,
             success:function(data){
+                setTimeout(function(){
+                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://moesound.org/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + data + '" target="_blank">提报BUG！</a>','error');
+                },60000)
                 if (typeof data.edit.code != "undefined"){
                     self.OutputPrinter(self.OutputBox,"编辑页面失败 " +  data.edit.code + ':' + data.edit.info,'error');
                     if (data.edit.info.match(/AbuseFilter/)!==null){
@@ -463,10 +480,12 @@ function Wikiplus(WikiplusData){
                 }
                 else{
                     self.OutputPrinter(self.OutputBox,"预览页面失败:未知原因",'error');
+                    $('#wikiplus-quickedit-preview-submit').removeAttr('disabled');
                 }
             },
             error:function(){
                 self.OutputPrinter(self.OutputBox,"预览页面失败:网络原因",'error');
+                $('#wikiplus-quickedit-preview-submit').removeAttr('disabled');
             }
         })
     },
@@ -687,10 +706,15 @@ function Wikiplus(WikiplusData){
                 var list = "";
                 if (categoreis.length>0){
                     for (i=0;i<categoreis.length;i++){
-                        if (!($.inArray(categoreis[i],self.wgCategories)!=-1)){
+                        if (!($.inArray(categoreis[i],self.wgCategories)!='-1')){
                             var category = categoreis[i];
-                            list += '<span class="wikiplus-category" data-status="added">' + category + '</span><a href="javascript:void(0)" class="wikiplus-category-remove">(-)</a> ';
-                            self.wgCategories.push(category);
+                            if (category){
+                                list += '<span class="wikiplus-category" data-status="added">' + category + '</span><a href="javascript:void(0)" class="wikiplus-category-remove">(-)</a> ';
+                                self.wgCategories.push(category);
+                            }
+                            else{
+                                continue;
+                            }
                         }
                         else{
                             continue;
@@ -772,6 +796,33 @@ function Wikiplus(WikiplusData){
         })
         console.log('现在的分类列表:'+self.wgCategories);
     }
+    /**
+    * 模块:站点特性加载器
+    * 输入:无
+    * 输出:无s
+    */
+    this.siteFeatureLoader = function(){
+        var siteList = {
+            'mgp' : {
+                sitename : '萌娘百科',
+                feature : ''
+            },
+            'zwp' : {
+                sitename : '中文维基百科',
+                feature : ''
+            },
+            'msp' : {
+                site : '萌音物语',
+                feature : ''
+            }
+        };
+        var siteCode = null;
+        switch(location.host){
+            case 'zh.moegirl.org':
+                siteCode = 'mgp';
+                break;
+        }
+    }
     //各个基础功能模块 开始
     /**
     * 模块:快速创建重定向页
@@ -783,6 +834,10 @@ function Wikiplus(WikiplusData){
             $("#wikiplus-function-CRP").click(function(){
                 $("#wikiplus-function").children().fadeOut('fast',function(){
                     $("#wikiplus-function").children().remove();
+                    $("#wikiplus-function").append('<div class="wikiplus-btn" id="wikiplus-function-reload">返回</div>');
+                    $("#wikiplus-function-reload").click(function(){
+                        self.initFunctionsStepTwo();
+                    });
                     $("#wikiplus-function").append('<input id="wikiplus-function-CRP-input" placeholder="将哪个页面重定向至' + wgPageName + '?"></input><button id="wikiplus-function-CRP-submit">提交(Ctrl+Enter)</button>');
                     $("#wikiplus-function-CRP-submit").click(function(){
                         if ($("#wikiplus-function-CRP-input").val() != ""){
@@ -818,9 +873,12 @@ function Wikiplus(WikiplusData){
             $("#wikiplus-function-settings").click(function(){
                 $("#wikiplus-function").children().fadeOut('fast',function(){
                     $("#wikiplus-function").children().remove();
+                    $("#wikiplus-function").append('<div class="wikiplus-btn" id="wikiplus-function-reload">返回</div>');
+                    $("#wikiplus-function-reload").click(function(){
+                        self.initFunctionsStepTwo();
+                    });
                     $("#wikiplus-function").append('<li id="wikiplus-function-RS" style="display:none;">重置统计数据</li>');
                     $("#wikiplus-function").append('<li id="wikiplus-function-ESF" style="display:none;">配置设置文件</li>');
-                    //
                     $("#wikiplus-function-RS").fadeIn('fast',function(){
                         $(this).click(function(){
                             $(this).unbind();
@@ -958,6 +1016,9 @@ function Wikiplus(WikiplusData){
     this.init = function(){
         console.log('Wikiplus正努力加载');
         //获取页面基本信息并存储
+        window.onerror = function(){
+            console.log('Wikiplus初始化失败');
+        };
         this.getBasicInfomation(function(BasicInfomation){
             try{
                 self.EditToken = BasicInfomation.EditToken;
@@ -975,7 +1036,7 @@ function Wikiplus(WikiplusData){
                 type: "text/css",
                 href: "http://www.moesound.org/css/wikiplus.new.css"
             });
-            if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, this.namespaces)!='-1'||wgIsArticle)){
+            if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, self.ValidNamespaces)!='-1'&&wgIsArticle)){
                 if (wgAction == 'view'){
                     $("body").find(".firstHeading").after('<div class="wikiplus-output"></div><div id="wikiplus"><div id="wikiplus-main-button">W+</div><div id="wikiplus-function"></div><div style="clear:both;"></div></div>');
                     self.OutputBox = $(".wikiplus-output");
@@ -1051,8 +1112,13 @@ function Wikiplus(WikiplusData){
     * 输出:无
     */
     this.initFunctions = function(){
-        this.createRedirectPage();
+        this.initFunctionsStepTwo();
         this.bindPreloadEvents();
+        
+    }
+    this.initFunctionsStepTwo = function(){
+        $("#wikiplus-function").html('');
+        this.createRedirectPage();
         this.editSettings();
     }
 }
