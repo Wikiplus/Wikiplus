@@ -263,8 +263,8 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.5.5.9';
-    this.LastestUpdateDescription = '增加几个返回按钮<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
+    this.Version = '1.6';
+    this.LastestUpdateDescription = '针对奇怪的编辑错误 增加feedback系统<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,10,12];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -389,6 +389,9 @@ function Wikiplus(WikiplusData){
             data:data,
             url:this.APILocation,
             success:function(data){
+                setTimeout(function(){
+                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://moesound.org/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + data + '" target="_blank">提报BUG！</a>','error');
+                },60000)
                 if (typeof data.edit.code != "undefined"){
                     self.OutputPrinter(self.OutputBox,"编辑页面失败 " +  data.edit.code + ':' + data.edit.info,'error');
                     if (data.edit.info.match(/AbuseFilter/)!==null){
@@ -793,6 +796,11 @@ function Wikiplus(WikiplusData){
         })
         console.log('现在的分类列表:'+self.wgCategories);
     }
+    /**
+    * 模块:站点特性加载器
+    * 输入:无
+    * 输出:无s
+    */
     this.siteFeatureLoader = function(){
         var siteList = {
             'mgp' : {
