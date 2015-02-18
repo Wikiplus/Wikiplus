@@ -821,7 +821,11 @@ function Wikiplus(WikiplusData){
             case 'zh.moegirl.org':
                 siteCode = 'mgp';
                 break;
+            case 'zh.wikipedia.org':
+                siteCode = 'zwp';
+                break;
         }
+        console.log(siteList[siteCode]);
     }
     //各个基础功能模块 开始
     /**
@@ -1123,6 +1127,6 @@ function Wikiplus(WikiplusData){
     }
 }
 $(document).ready(function(){
-    nya = new Wikiplus();
-    nya.init();
+    wikiplus = new Wikiplus();
+    wikiplus.init();
 })
