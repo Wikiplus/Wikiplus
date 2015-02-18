@@ -263,8 +263,8 @@
 function Wikiplus(WikiplusData){
     var self = this;
     //self = class
-    this.Version = '1.6.1';
-    this.LastestUpdateDescription = '修正空页面的错误输出<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
+    this.Version = '1.6.2';
+    this.LastestUpdateDescription = '支持了更多NameSpaces 修正变量名<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
     this.isBeta = true;
     this.ValidNamespaces = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
     this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
