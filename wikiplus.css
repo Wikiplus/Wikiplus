@@ -115,6 +115,9 @@ textarea#quickedit{
 	border-left: 5px #FFDF00 solid;
 	background-color: #F4BD00;
 }
+.MoeNotification-notice-warning span{
+	color: black;
+}
 .MoeNotification-notice-error{
 	border-top-left-radius:3px;
 	border-bottom-left-radius:3px;
@@ -122,7 +125,7 @@ textarea#quickedit{
 	background-color: #B00E06;
 }
 #MoeNotification{
-	position: absolute;
+	position: fixed;
 	width: 30%;
 	left:0px;
 	bottom: 30px;

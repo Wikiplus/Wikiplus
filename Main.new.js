@@ -133,129 +133,6 @@
     
 })(jQuery);
 
-
-/** 
-* 依赖组件
-* jQuery.cookie
-*/
-/*!
- * jQuery Cookie Plugin v1.4.1
- * https://github.com/carhartl/jquery-cookie
- *
- * Copyright 2006, 2014 Klaus Hartl
- * Released under the MIT license
- */
-(function (factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define(['jquery'], factory);
-    } else if (typeof exports === 'object') {
-        // CommonJS
-        factory(require('jquery'));
-    } else {
-        // Browser globals
-        factory(jQuery);
-    }
-}(function ($) {
-
-    var pluses = /\+/g;
-
-    function encode(s) {
-        return config.raw ? s : encodeURIComponent(s);
-    }
-
-    function decode(s) {
-        return config.raw ? s : decodeURIComponent(s);
-    }
-
-    function stringifyCookieValue(value) {
-        return encode(config.json ? JSON.stringify(value) : String(value));
-    }
-
-    function parseCookieValue(s) {
-        if (s.indexOf('"') === 0) {
-            // This is a quoted cookie as according to RFC2068, unescape...
-            s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-        }
-
-        try {
-            // Replace server-side written pluses with spaces.
-            // If we can't decode the cookie, ignore it, it's unusable.
-            // If we can't parse the cookie, ignore it, it's unusable.
-            s = decodeURIComponent(s.replace(pluses, ' '));
-            return config.json ? JSON.parse(s) : s;
-        } catch(e) {}
-    }
-
-    function read(s, converter) {
-        var value = config.raw ? s : parseCookieValue(s);
-        return $.isFunction(converter) ? converter(value) : value;
-    }
-
-    var config = $.cookie = function (key, value, options) {
-
-        // Write
-
-        if (arguments.length > 1 && !$.isFunction(value)) {
-            options = $.extend({}, config.defaults, options);
-
-            if (typeof options.expires === 'number') {
-                var days = options.expires, t = options.expires = new Date();
-                t.setTime(+t + days * 864e+5);
-            }
-
-            return (document.cookie = [
-                encode(key), '=', stringifyCookieValue(value),
-                options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
-                options.path    ? '; path=' + options.path : '',
-                options.domain  ? '; domain=' + options.domain : '',
-                options.secure  ? '; secure' : ''
-            ].join(''));
-        }
-
-        // Read
-
-        var result = key ? undefined : {};
-
-        // To prevent the for loop in the first place assign an empty array
-        // in case there are no cookies at all. Also prevents odd result when
-        // calling $.cookie().
-        var cookies = document.cookie ? document.cookie.split('; ') : [];
-
-        for (var i = 0, l = cookies.length; i < l; i++) {
-            var parts = cookies[i].split('=');
-            var name = decode(parts.shift());
-            var cookie = parts.join('=');
-
-            if (key && key === name) {
-                // If second argument (value) is a function it's a converter...
-                result = read(cookie, value);
-                break;
-            }
-
-            // Prevent storing a cookie that we couldn't decode.
-            if (!key && (cookie = read(cookie)) !== undefined) {
-                result[name] = cookie;
-            }
-        }
-
-        return result;
-    };
-
-    config.defaults = {};
-
-    $.removeCookie = function (key, options) {
-        if ($.cookie(key) === undefined) {
-            return false;
-        }
-
-        // Must not alter options, thus extending a fresh object...
-        $.cookie(key, '', $.extend({}, options, { expires: -1 }));
-        return !$.cookie(key);
-    };
-
-}));
-
 /**
 * 依赖组件:MoeNotification
 * https://github.com/Last-Order/MoeNotification
@@ -263,6 +140,7 @@
 function MoeNotification(undefined){
     var self = this;
     this.display = function(text,type,callback){
+        console.log('New Notification:' + text);
         var _callback = callback || function(){};
         var _text = text  || '喵~';
         var _type = type || 'success';
@@ -333,8 +211,8 @@ function Wikiplus(){
     var self = this;
     //self = class
     this.Notification             = new MoeNotification();
-    this.Version                  = '1.6.2';
-    this.LastestUpdateDescription = '支持了更多NameSpaces 修正变量名<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
+    this.Version                  = '1.6.4';
+    this.LastestUpdateDescription = '引入新通知组件(beta)';
     this.isBeta                   = true;
     this.ValidNamespaces          = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
     this.APILocation              = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -376,11 +254,16 @@ function Wikiplus(){
     * 输出:无
     */
     this.Install = function(callback){
-        var callback = arguments[0]?arguments[0]:function(){};
-        var worldend = new Date(253402271999000);//Cookie有效期到一个近乎世界末日的时间
-        $.cookie('Wikiplus_StartUseAt',(new Date()).valueOf(),{expires : worldend , path: '/'});
-        $.cookie('Wikiplus_SrartEditCount',wgUserEditCount,{expires: worldend , path: '/'});
-        callback();
+        var _callback = callback || function(){};
+        localStorage.setItem('Wikiplus_StartUseAt',(new Date()).valueOf());
+        localStorage.setItem('Wikiplus_SrartEditCount',wgUserEditCount);
+        localStorage.setItem('Wikiplus_Version',self.Version);
+        localStorage.setItem('Wikiplus_LastUse',(new Date()).toLocaleDateString());
+        //var callback = arguments[0]?arguments[0]:function(){};
+        //var worldend = new Date(253402271999000);//Cookie有效期到一个近乎世界末日的时间
+        //$.cookie('Wikiplus_StartUseAt',(new Date()).valueOf(),{expires : worldend , path: '/'});
+        //$.cookie('Wikiplus_SrartEditCount',wgUserEditCount,{expires: worldend , path: '/'});
+        _callback();
     }
     /**
     * 模块:获取页面基础信息
@@ -1121,13 +1004,24 @@ function Wikiplus(){
                 console.log('当前页面不输出，但您可以使用Wikiplus的开放接口');
                 return false;
             }
-            if ($.cookie('Wikiplus_StartUseAt') === undefined){
-                self.Install();
+            if (localStorage.Wikiplus_StartUseAt === undefined){
+                self.Install(function(){
+                    self.Notification.create.success('您已成功安装Wikiplus喵呜',function(object){
+                        setTimeout(function(){
+                            slideLeft(object);
+                        },6000);
+                    });
+                });
             }
-            if ($.cookie('Wikiplus_Settings') === undefined){
-                $.cookie('Wikiplus_Settings',JSON.stringify(self.DefaultSettings),{'expires': new Date(253402271999000) , 'path' : '/'});
+            if (localStorage.Wikiplus_Settings === undefined){
+                localStorage.setItem('Wikiplus_Settings',JSON.stringify(self.DefaultSettings));
             }
-            var usetime = ((new Date()).valueOf() - $.cookie('Wikiplus_StartUseAt'))/1000;
+            if (localStorage.Wikiplus_Version != self.Version){
+                self.Notification.create.warning('获得更新！当前版本:' + self.Version);
+                self.Notification.create.warning('更新内容:' + self.LastestUpdateDescription);
+                localStorage.setItem('Wikiplus_Version',self.Version);
+            }
+            var usetime = ((new Date()).valueOf() - parseInt(localStorage.Wikiplus_StartUseAt))/1000;
             if (usetime<86400){
                 var timehint = usetime + '秒';
             }
@@ -1137,10 +1031,26 @@ function Wikiplus(){
             else{
                 var timehint = Math.floor(usetime/31556900) + '年' + Math.floor((usetime-Math.floor(usetime/31556900)*31556900)/86400) + '天有余';
             }
-            self.OutputPrinter(self.OutputBox,'Wikiplus已经陪伴您' + (wgUserEditCount - $.cookie('Wikiplus_SrartEditCount')) + '次编辑、' + timehint,'fine');
-            self.OutputPrinter(self.OutputBox,'当前版本:' + self.Version + '  最后一次更新内容:' + self.LastestUpdateDescription,'warning');
-            if (self.isBeta){
-                self.OutputPrinter(self.OutputBox,'您当前使用的是测试版本 可能存在功能异常、效率低下、逻辑错误、无法加载、抽风犯病等不可预知事件','warning');
+            if (localStorage.Wikiplus_LastUse != (new Date()).toLocaleDateString()){
+                //以下通知每日提示一次
+                localStorage.Wikiplus_LastUse = (new Date()).toLocaleDateString();
+                if (self.isBeta){
+                    self.Notification.create.warning('您当前使用的是测试版本 可能存在功能异常、效率低下、逻辑错误、无法加载、抽风犯病等不可预知事件',function(object){
+                        setTimeout(function(){
+                            slideLeft(object);
+                        },3000);
+                    })
+                }
+                self.Notification.create.success('Wikiplus已经陪伴您' + (wgUserEditCount - parseInt(localStorage.Wikiplus_SrartEditCount)) + '次编辑、' + timehint,function(object){
+                    setTimeout(function(){
+                        slideLeft(object);
+                    },6000);
+                });
+                self.Notification.create.success('Wikiplus祝您新春快乐',function(object){
+                    setTimeout(function(){
+                        slideLeft(object);
+                    },6000);
+                });
             }
             self.displayQuickEditInterface();
             self.initFunctions();
