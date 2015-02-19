@@ -256,20 +256,90 @@
 
 }));
 
+/**
+* 依赖组件:MoeNotification
+* https://github.com/Last-Order/MoeNotification
+*/
+function MoeNotification(undefined){
+    var self = this;
+    this.display = function(text,type,callback){
+        var _callback = callback || function(){};
+        var _text = text  || '喵~';
+        var _type = type || 'success';
+        $("#MoeNotification").append(
+            $("<div>").addClass('MoeNotification-notice')
+                      .addClass('MoeNotification-notice-' + _type)
+                      .append('<span>' + _text + '</span>')
+                      .fadeIn(300)
+        );
+        self.bind();
+        self.clear();
+        _callback($("#MoeNotification").find('.MoeNotification-notice').last());
+    }
+    this.create = {
+        success : function(text,callback){
+            var _callback = callback || function(){};
+            self.display(text,'success',_callback);
+        },
+        warning : function(text,callback){
+            var _callback = callback || function(){};
+            self.display(text,'warning',_callback);
+        },
+        error : function(text,callback){
+            var _callback = callback || function(){};
+            self.display(text,'error',_callback);
+        }
+    };
+    this.clear = function(){
+        if ($(".MoeNotification-notice").length>=10){
+            //self.slideLeft($(".MoeNotification-notice").first());
+            $("#MoeNotification").children().first().fadeOut(150,function(){
+                $(this).remove();
+            });
+            setTimeout(self.clear,300);
+        }
+        else{
+            return false;
+        }
+    }
+    this.bind = function(){
+        $(".MoeNotification-notice").mouseover(function(){
+            self.slideLeft($(this));
+        });
+    }
+    window.slideLeft = this.slideLeft = function(object,speed){
+        object.css('position','relative');
+        object.animate({
+            left: "-200%",
+            },
+            speed || 150, function() {
+                $(this).fadeOut('fast',function(){
+                    $(this).remove();
+                });
+        });
+    }
+    this.init = function(){
+        $("body").append('<div id="MoeNotification"></div>');
+    }
+    if (!$("#MoeNotification").length>0){
+        this.init();
+    }
+}
 /** 
 * 主程序开始
 */
 
-function Wikiplus(WikiplusData){
+function Wikiplus(){
     var self = this;
     //self = class
-    this.Version = '1.6.2';
+    this.Notification             = new MoeNotification();
+    this.Version                  = '1.6.2';
     this.LastestUpdateDescription = '支持了更多NameSpaces 修正变量名<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
-    this.isBeta = true;
-    this.ValidNamespaces = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
-    this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
-    this.PreloadData = {};
-    this.DefaultSettings = {
+    this.isBeta                   = true;
+    this.ValidNamespaces          = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
+    this.APILocation              = 'http://' + location.host + wgScriptPath + '/api.php';
+    this.PreloadData              = {};
+    this.DefaultSettings          = {
         '设置名' : '设置值',
         '设置参考' : 'http://zh.moegirl.org/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
     };
@@ -390,8 +460,8 @@ function Wikiplus(WikiplusData){
             url:this.APILocation,
             success:function(data){
                 setTimeout(function(){
-                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://moesound.org/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + data + '" target="_blank">提报BUG！</a>','error');
-                },60000)
+                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://moesound.org/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + JSON.stringify(data) + '" target="_blank">提报BUG！</a>','error');
+                },30000)
                 if (typeof data.edit.code != "undefined"){
                     self.OutputPrinter(self.OutputBox,"编辑页面失败 " +  data.edit.code + ':' + data.edit.info,'error');
                     if (data.edit.info.match(/AbuseFilter/)!==null){
@@ -402,6 +472,7 @@ function Wikiplus(WikiplusData){
                 }
                 if (typeof data.error == "undefined"){
                     if (data.edit.result == "Success"){
+                        //self.Notification.create.success('编辑页面成功！');
                         self.OutputPrinter(self.OutputBox,"编辑页面成功",'fine');
                         localStorage.contentBackup = "";
                         callback();
