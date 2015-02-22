@@ -211,8 +211,8 @@ function Wikiplus(){
     var self = this;
     //self = class
     this.Notification             = new MoeNotification();
-    this.Version                  = '1.6.4';
-    this.LastestUpdateDescription = '引入新通知组件(beta)';
+    this.Version                  = '1.6.5';
+    this.LastestUpdateDescription = '修复feedback';
     this.isBeta                   = true;
     this.ValidNamespaces          = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
     this.APILocation              = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -259,10 +259,6 @@ function Wikiplus(){
         localStorage.setItem('Wikiplus_SrartEditCount',wgUserEditCount);
         localStorage.setItem('Wikiplus_Version',self.Version);
         localStorage.setItem('Wikiplus_LastUse',(new Date()).toLocaleDateString());
-        //var callback = arguments[0]?arguments[0]:function(){};
-        //var worldend = new Date(253402271999000);//Cookie有效期到一个近乎世界末日的时间
-        //$.cookie('Wikiplus_StartUseAt',(new Date()).valueOf(),{expires : worldend , path: '/'});
-        //$.cookie('Wikiplus_SrartEditCount',wgUserEditCount,{expires: worldend , path: '/'});
         _callback();
     }
     /**
@@ -302,7 +298,7 @@ function Wikiplus(){
                         }
                         else{
                             console.log('该页面无基础信息');
-                            throw '什么鬼啦 这个页面没有基础信息啦';
+                            return false;
                         }
                     }
                 }
@@ -343,7 +339,7 @@ function Wikiplus(){
             url:this.APILocation,
             success:function(data){
                 setTimeout(function(){
-                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://moesound.org/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + JSON.stringify(data) + '" target="_blank">提报BUG！</a>','error');
+                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://moesound.org/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + encodeURI(JSON.stringify(data)) + '" target="_blank">提报BUG！</a>','error');
                 },30000)
                 if (typeof data.edit.code != "undefined"){
                     self.OutputPrinter(self.OutputBox,"编辑页面失败 " +  data.edit.code + ':' + data.edit.info,'error');
