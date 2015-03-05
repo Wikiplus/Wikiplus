@@ -133,143 +133,91 @@
     
 })(jQuery);
 
-
-/** 
-* 依赖组件
-* jQuery.cookie
+/**
+* 依赖组件:MoeNotification
+* https://github.com/Last-Order/MoeNotification
 */
-/*!
- * jQuery Cookie Plugin v1.4.1
- * https://github.com/carhartl/jquery-cookie
- *
- * Copyright 2006, 2014 Klaus Hartl
- * Released under the MIT license
- */
-(function (factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define(['jquery'], factory);
-    } else if (typeof exports === 'object') {
-        // CommonJS
-        factory(require('jquery'));
-    } else {
-        // Browser globals
-        factory(jQuery);
+function MoeNotification(undefined){
+    var self = this;
+    this.display = function(text,type,callback){
+        console.log('New Notification:' + text);
+        var _callback = callback || function(){};
+        var _text = text  || '喵~';
+        var _type = type || 'success';
+        $("#MoeNotification").append(
+            $("<div>").addClass('MoeNotification-notice')
+                      .addClass('MoeNotification-notice-' + _type)
+                      .append('<span>' + _text + '</span>')
+                      .fadeIn(300)
+        );
+        self.bind();
+        self.clear();
+        _callback($("#MoeNotification").find('.MoeNotification-notice').last());
     }
-}(function ($) {
-
-    var pluses = /\+/g;
-
-    function encode(s) {
-        return config.raw ? s : encodeURIComponent(s);
-    }
-
-    function decode(s) {
-        return config.raw ? s : decodeURIComponent(s);
-    }
-
-    function stringifyCookieValue(value) {
-        return encode(config.json ? JSON.stringify(value) : String(value));
-    }
-
-    function parseCookieValue(s) {
-        if (s.indexOf('"') === 0) {
-            // This is a quoted cookie as according to RFC2068, unescape...
-            s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+    this.create = {
+        success : function(text,callback){
+            var _callback = callback || function(){};
+            self.display(text,'success',_callback);
+        },
+        warning : function(text,callback){
+            var _callback = callback || function(){};
+            self.display(text,'warning',_callback);
+        },
+        error : function(text,callback){
+            var _callback = callback || function(){};
+            self.display(text,'error',_callback);
         }
-
-        try {
-            // Replace server-side written pluses with spaces.
-            // If we can't decode the cookie, ignore it, it's unusable.
-            // If we can't parse the cookie, ignore it, it's unusable.
-            s = decodeURIComponent(s.replace(pluses, ' '));
-            return config.json ? JSON.parse(s) : s;
-        } catch(e) {}
-    }
-
-    function read(s, converter) {
-        var value = config.raw ? s : parseCookieValue(s);
-        return $.isFunction(converter) ? converter(value) : value;
-    }
-
-    var config = $.cookie = function (key, value, options) {
-
-        // Write
-
-        if (arguments.length > 1 && !$.isFunction(value)) {
-            options = $.extend({}, config.defaults, options);
-
-            if (typeof options.expires === 'number') {
-                var days = options.expires, t = options.expires = new Date();
-                t.setTime(+t + days * 864e+5);
-            }
-
-            return (document.cookie = [
-                encode(key), '=', stringifyCookieValue(value),
-                options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
-                options.path    ? '; path=' + options.path : '',
-                options.domain  ? '; domain=' + options.domain : '',
-                options.secure  ? '; secure' : ''
-            ].join(''));
-        }
-
-        // Read
-
-        var result = key ? undefined : {};
-
-        // To prevent the for loop in the first place assign an empty array
-        // in case there are no cookies at all. Also prevents odd result when
-        // calling $.cookie().
-        var cookies = document.cookie ? document.cookie.split('; ') : [];
-
-        for (var i = 0, l = cookies.length; i < l; i++) {
-            var parts = cookies[i].split('=');
-            var name = decode(parts.shift());
-            var cookie = parts.join('=');
-
-            if (key && key === name) {
-                // If second argument (value) is a function it's a converter...
-                result = read(cookie, value);
-                break;
-            }
-
-            // Prevent storing a cookie that we couldn't decode.
-            if (!key && (cookie = read(cookie)) !== undefined) {
-                result[name] = cookie;
-            }
-        }
-
-        return result;
     };
-
-    config.defaults = {};
-
-    $.removeCookie = function (key, options) {
-        if ($.cookie(key) === undefined) {
+    this.clear = function(){
+        if ($(".MoeNotification-notice").length>=10){
+            //self.slideLeft($(".MoeNotification-notice").first());
+            $("#MoeNotification").children().first().fadeOut(150,function(){
+                $(this).remove();
+            });
+            setTimeout(self.clear,300);
+        }
+        else{
             return false;
         }
-
-        // Must not alter options, thus extending a fresh object...
-        $.cookie(key, '', $.extend({}, options, { expires: -1 }));
-        return !$.cookie(key);
-    };
-
-}));
-
+    }
+    this.bind = function(){
+        $(".MoeNotification-notice").mouseover(function(){
+            self.slideLeft($(this));
+        });
+    }
+    window.slideLeft = this.slideLeft = function(object,speed){
+        object.css('position','relative');
+        object.animate({
+            left: "-200%",
+            },
+            speed || 150, function() {
+                $(this).fadeOut('fast',function(){
+                    $(this).remove();
+                });
+        });
+    }
+    this.init = function(){
+        $("body").append('<div id="MoeNotification"></div>');
+    }
+    if (!$("#MoeNotification").length>0){
+        this.init();
+    }
+}
 /** 
 * 主程序开始
 */
 
-function Wikiplus(WikiplusData){
+function Wikiplus(){
     var self = this;
     //self = class
-    this.Version = '1.6';
-    this.LastestUpdateDescription = '针对奇怪的编辑错误 增加feedback系统<div class="output-fine">WikiPlus感谢您在过去一年的相伴 祝您新春快乐</div>';
-    this.isBeta = false;
-    this.ValidNamespaces = [0,1,2,3,10,12];
-    this.APILocation = 'http://' + location.host + wgScriptPath + '/api.php';
-    this.PreloadData = {};
-    this.DefaultSettings = {
+    this.Notification             = new MoeNotification();
+    this.Version                  = '1.6.5';
+    this.LastestUpdateDescription = '修复feedback';
+    this.isBeta                   = false;
+    this.ValidNamespaces          = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
+    this.APILocation              = 'http://' + location.host + wgScriptPath + '/api.php';
+    this.PreloadData              = {};
+    this.DefaultSettings          = {
         '设置名' : '设置值',
         '设置参考' : 'http://zh.moegirl.org/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
     };
@@ -306,11 +254,12 @@ function Wikiplus(WikiplusData){
     * 输出:无
     */
     this.Install = function(callback){
-        var callback = arguments[0]?arguments[0]:function(){};
-        var worldend = new Date(253402271999000);//Cookie有效期到一个近乎世界末日的时间
-        $.cookie('Wikiplus_StartUseAt',(new Date()).valueOf(),{expires : worldend , path: '/'});
-        $.cookie('Wikiplus_SrartEditCount',wgUserEditCount,{expires: worldend , path: '/'});
-        callback();
+        var _callback = callback || function(){};
+        localStorage.setItem('Wikiplus_StartUseAt',(new Date()).valueOf());
+        localStorage.setItem('Wikiplus_SrartEditCount',wgUserEditCount);
+        localStorage.setItem('Wikiplus_Version',self.Version);
+        localStorage.setItem('Wikiplus_LastUse',(new Date()).toLocaleDateString());
+        _callback();
     }
     /**
     * 模块:获取页面基础信息
@@ -349,7 +298,7 @@ function Wikiplus(WikiplusData){
                         }
                         else{
                             console.log('该页面无基础信息');
-                            throw '什么鬼啦 这个页面没有基础信息啦';
+                            return false;
                         }
                     }
                 }
@@ -390,8 +339,8 @@ function Wikiplus(WikiplusData){
             url:this.APILocation,
             success:function(data){
                 setTimeout(function(){
-                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://moesound.org/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + data + '" target="_blank">提报BUG！</a>','error');
-                },60000)
+                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://moesound.org/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + encodeURI(JSON.stringify(data)) + '" target="_blank">提报BUG！</a>','error');
+                },30000)
                 if (typeof data.edit.code != "undefined"){
                     self.OutputPrinter(self.OutputBox,"编辑页面失败 " +  data.edit.code + ':' + data.edit.info,'error');
                     if (data.edit.info.match(/AbuseFilter/)!==null){
@@ -402,6 +351,7 @@ function Wikiplus(WikiplusData){
                 }
                 if (typeof data.error == "undefined"){
                     if (data.edit.result == "Success"){
+                        //self.Notification.create.success('编辑页面成功！');
                         self.OutputPrinter(self.OutputBox,"编辑页面成功",'fine');
                         localStorage.contentBackup = "";
                         callback();
@@ -821,7 +771,11 @@ function Wikiplus(WikiplusData){
             case 'zh.moegirl.org':
                 siteCode = 'mgp';
                 break;
+            case 'zh.wikipedia.org':
+                siteCode = 'zwp';
+                break;
         }
+        console.log(siteList[siteCode]);
     }
     //各个基础功能模块 开始
     /**
@@ -1034,9 +988,9 @@ function Wikiplus(WikiplusData){
             css.attr({
                 rel: "stylesheet",
                 type: "text/css",
-                href: "http://www.moesound.org/css/wikiplus.new.css"
+                href: "http://miku.host.smartgslb.com/wikiplus/wikiplus.css"
             });
-            if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, self.ValidNamespaces)!='-1'&&wgIsArticle)){
+            if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, self.ValidNamespaces)!='-1'&&wgIsArticle&&wgArticleId!=0)){
                 if (wgAction == 'view'){
                     $("body").find(".firstHeading").after('<div class="wikiplus-output"></div><div id="wikiplus"><div id="wikiplus-main-button">W+</div><div id="wikiplus-function"></div><div style="clear:both;"></div></div>');
                     self.OutputBox = $(".wikiplus-output");
@@ -1046,13 +1000,24 @@ function Wikiplus(WikiplusData){
                 console.log('当前页面不输出，但您可以使用Wikiplus的开放接口');
                 return false;
             }
-            if ($.cookie('Wikiplus_StartUseAt') === undefined){
-                self.Install();
+            if (localStorage.Wikiplus_StartUseAt === undefined){
+                self.Install(function(){
+                    self.Notification.create.success('您已成功安装Wikiplus喵呜',function(object){
+                        setTimeout(function(){
+                            slideLeft(object);
+                        },6000);
+                    });
+                });
             }
-            if ($.cookie('Wikiplus_Settings') === undefined){
-                $.cookie('Wikiplus_Settings',JSON.stringify(self.DefaultSettings),{'expires': new Date(253402271999000) , 'path' : '/'});
+            if (localStorage.Wikiplus_Settings === undefined){
+                localStorage.setItem('Wikiplus_Settings',JSON.stringify(self.DefaultSettings));
             }
-            var usetime = ((new Date()).valueOf() - $.cookie('Wikiplus_StartUseAt'))/1000;
+            if (localStorage.Wikiplus_Version != self.Version){
+                self.Notification.create.warning('获得更新！当前版本:' + self.Version);
+                self.Notification.create.warning('更新内容:' + self.LastestUpdateDescription);
+                localStorage.setItem('Wikiplus_Version',self.Version);
+            }
+            var usetime = ((new Date()).valueOf() - parseInt(localStorage.Wikiplus_StartUseAt))/1000;
             if (usetime<86400){
                 var timehint = usetime + '秒';
             }
@@ -1062,10 +1027,26 @@ function Wikiplus(WikiplusData){
             else{
                 var timehint = Math.floor(usetime/31556900) + '年' + Math.floor((usetime-Math.floor(usetime/31556900)*31556900)/86400) + '天有余';
             }
-            self.OutputPrinter(self.OutputBox,'Wikiplus已经陪伴您' + (wgUserEditCount - $.cookie('Wikiplus_SrartEditCount')) + '次编辑、' + timehint,'fine');
-            self.OutputPrinter(self.OutputBox,'当前版本:' + self.Version + '  最后一次更新内容:' + self.LastestUpdateDescription,'warning');
-            if (self.isBeta){
-                self.OutputPrinter(self.OutputBox,'您当前使用的是测试版本 可能存在功能异常、效率低下、逻辑错误、无法加载、抽风犯病等不可预知事件','warning');
+            if (localStorage.Wikiplus_LastUse != (new Date()).toLocaleDateString()){
+                //以下通知每日提示一次
+                localStorage.Wikiplus_LastUse = (new Date()).toLocaleDateString();
+                if (self.isBeta){
+                    self.Notification.create.warning('您当前使用的是测试版本 可能存在功能异常、效率低下、逻辑错误、无法加载、抽风犯病等不可预知事件',function(object){
+                        setTimeout(function(){
+                            slideLeft(object);
+                        },3000);
+                    })
+                }
+                self.Notification.create.success('Wikiplus已经陪伴您' + (wgUserEditCount - parseInt(localStorage.Wikiplus_SrartEditCount)) + '次编辑、' + timehint,function(object){
+                    setTimeout(function(){
+                        slideLeft(object);
+                    },6000);
+                });
+                self.Notification.create.success('Wikiplus祝您新春快乐',function(object){
+                    setTimeout(function(){
+                        slideLeft(object);
+                    },6000);
+                });
             }
             self.displayQuickEditInterface();
             self.initFunctions();
@@ -1123,6 +1104,6 @@ function Wikiplus(WikiplusData){
     }
 }
 $(document).ready(function(){
-    nya = new Wikiplus();
-    nya.init();
+    wikiplus = new Wikiplus();
+    wikiplus.init();
 })

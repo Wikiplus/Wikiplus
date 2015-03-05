@@ -988,7 +988,7 @@ function Wikiplus(){
             css.attr({
                 rel: "stylesheet",
                 type: "text/css",
-                href: "http://www.moesound.org/css/wikiplus.new.css"
+                href: "http://miku.host.smartgslb.com/wikiplus/wikiplus.css"
             });
             if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, self.ValidNamespaces)!='-1'&&wgIsArticle&&wgArticleId!=0)){
                 if (wgAction == 'view'){
