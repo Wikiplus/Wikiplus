@@ -211,8 +211,8 @@ function Wikiplus(){
     var self = this;
     //self = class
     this.Notification             = new MoeNotification();
-    this.Version                  = '1.6.5';
-    this.LastestUpdateDescription = '修复feedback';
+    this.Version                  = '1.6.5.2';
+    this.LastestUpdateDescription = '修正在IE下无法使用的问题';
     this.isBeta                   = true;
     this.ValidNamespaces          = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
     this.APILocation              = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -339,7 +339,7 @@ function Wikiplus(){
             url:this.APILocation,
             success:function(data){
                 setTimeout(function(){
-                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://moesound.org/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + encodeURI(JSON.stringify(data)) + '" target="_blank">提报BUG！</a>','error');
+                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://miku.host.smartgslb.com/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + encodeURI(JSON.stringify(data)) + '" target="_blank">提报BUG！</a>','error');
                 },30000)
                 if (typeof data.edit.code != "undefined"){
                     self.OutputPrinter(self.OutputBox,"编辑页面失败 " +  data.edit.code + ':' + data.edit.info,'error');
@@ -446,7 +446,7 @@ function Wikiplus(){
     */
     this.getPageWikitext = function(pagename,section,revision,callback){
         var callback = arguments[3]?arguments[3]:function(){};
-        var url = location.origin + wgScriptPath + '/index.php?title=' + encodeURI(pagename) + '&oldid=' + revision + '&action=raw';
+        var url = 'http://' + location.host + wgScriptPath + '/index.php?title=' + encodeURI(pagename) + '&oldid=' + revision + '&action=raw';
         if (section != 0){
             url += '&section=' + section;
         }
@@ -971,7 +971,7 @@ function Wikiplus(){
         console.log('Wikiplus正努力加载');
         //获取页面基本信息并存储
         window.onerror = function(){
-            console.log('Wikiplus初始化失败');
+            console.log('Wikiplus初始化失败 版本:' + self.Version);
         };
         this.getBasicInfomation(function(BasicInfomation){
             try{
@@ -1038,11 +1038,6 @@ function Wikiplus(){
                     })
                 }
                 self.Notification.create.success('Wikiplus已经陪伴您' + (wgUserEditCount - parseInt(localStorage.Wikiplus_SrartEditCount)) + '次编辑、' + timehint,function(object){
-                    setTimeout(function(){
-                        slideLeft(object);
-                    },6000);
-                });
-                self.Notification.create.success('Wikiplus祝您新春快乐',function(object){
                     setTimeout(function(){
                         slideLeft(object);
                     },6000);

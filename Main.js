@@ -339,7 +339,7 @@ function Wikiplus(){
             url:this.APILocation,
             success:function(data){
                 setTimeout(function(){
-                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://moesound.org/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + encodeURI(JSON.stringify(data)) + '" target="_blank">提报BUG！</a>','error');
+                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://miku.host.smartgslb.com/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + encodeURI(JSON.stringify(data)) + '" target="_blank">提报BUG！</a>','error');
                 },30000)
                 if (typeof data.edit.code != "undefined"){
                     self.OutputPrinter(self.OutputBox,"编辑页面失败 " +  data.edit.code + ':' + data.edit.info,'error');
