@@ -211,8 +211,8 @@ function Wikiplus(){
     var self = this;
     //self = class
     this.Notification             = new MoeNotification();
-    this.Version                  = '1.6.5.2';
-    this.LastestUpdateDescription = '修正在IE下无法使用的问题';
+    this.Version                  = '1.6.5.4';
+    this.LastestUpdateDescription = '修正特殊标题无法编辑的问题';
     this.isBeta                   = false;
     this.ValidNamespaces          = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
     this.APILocation              = 'http://' + location.host + wgScriptPath + '/api.php';
@@ -274,7 +274,15 @@ function Wikiplus(){
         $.ajaxq("MainQueue",{
             type:"GET",
             dataType:"json",
-            url:this.APILocation + '?action=query&prop=revisions|info&titles=' + wgPageName + '&rvprop=timestamp&intoken=edit&format=json',
+            url:this.APILocation,
+            data:{
+                'action' : 'query',
+                'prop' : 'revisions|info',
+                'titles' : wgPageName.replace(/ /ig,'_'),
+                'rvprop' : 'timestamp',
+                'intoken' : 'edit',
+                'format' : 'json'
+            },
             success:function(data){
                 if (data && data.query && typeof data.query.pages != "undefined"){
                     for (key in data.query.pages){
