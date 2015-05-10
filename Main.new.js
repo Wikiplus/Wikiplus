@@ -4,134 +4,6 @@
 * Github:https://github.com/Last-Order/Wikiplus
 */
 /**
-* 依赖组件 jQuery.ajaxq
-*/
-// AjaxQ jQuery Plugin
-// Copyright (c) 2012 Foliotek Inc.
-// MIT License
-// https://github.com/Foliotek/ajaxq
-(function($) {
-
-    var queues = {};
-
-    // Register an $.ajaxq function, which follows the $.ajax interface, but allows a queue name which will force only one request per queue to fire.
-    $.ajaxq = function(qname, opts) {
-
-        if (typeof opts === "undefined") {
-            throw ("AjaxQ: queue name is not provided");
-        }
-
-        // Will return a Deferred promise object extended with success/error/callback, so that this function matches the interface of $.ajax
-        var deferred = $.Deferred(),
-            promise = deferred.promise();
-
-        promise.success = promise.done;
-        promise.error = promise.fail;
-        promise.complete = promise.always;
-
-        // Create a deep copy of the arguments, and enqueue this request.
-        var clonedOptions = $.extend(true, {}, opts);
-        enqueue(function() {
-
-            // Send off the ajax request now that the item has been removed from the queue
-            var jqXHR = $.ajax.apply(window, [clonedOptions]).always(dequeue);
-
-            // Notify the returned deferred object with the correct context when the jqXHR is done or fails
-            // Note that 'always' will automatically be fired once one of these are called: http://api.jquery.com/category/deferred-object/.
-            jqXHR.done(function() {
-                deferred.resolve.apply(this, arguments);
-            });
-            jqXHR.fail(function() {
-                deferred.reject.apply(this, arguments);
-            });
-        });
-
-        return promise;
-
-        // If there is no queue, create an empty one and instantly process this item.
-        // Otherwise, just add this item onto it for later processing.
-        function enqueue(cb) {
-            if (!queues[qname]) {
-                queues[qname] = [];
-                cb();
-            }
-            else {
-                queues[qname].push(cb);
-            }
-        }
-
-        // Remove the next callback from the queue and fire it off.
-        // If the queue was empty (this was the last item), delete it from memory so the next one can be instantly processed.
-        function dequeue() {
-            if (!queues[qname]) {
-                return;
-            }
-            var nextCallback = queues[qname].shift();
-            if (nextCallback) {
-                nextCallback();
-            }
-            else {
-                delete queues[qname];
-            }
-        }
-    };
-
-    // Register a $.postq and $.getq method to provide shortcuts for $.get and $.post
-    // Copied from jQuery source to make sure the functions share the same defaults as $.get and $.post.
-    $.each( [ "getq", "postq" ], function( i, method ) {
-        $[ method ] = function( qname, url, data, callback, type ) {
-
-            if ( $.isFunction( data ) ) {
-                type = type || callback;
-                callback = data;
-                data = undefined;
-            }
-
-            return $.ajaxq(qname, {
-                type: method === "postq" ? "post" : "get",
-                url: url,
-                data: data,
-                success: callback,
-                dataType: type
-            });
-        };
-    });
-
-    var isQueueRunning = function(qname) {
-        return queues.hasOwnProperty(qname);
-    };
-
-    var isAnyQueueRunning = function() {
-        for (var i in queues) {
-            if (isQueueRunning(i)) return true;
-        }
-        return false;
-    };
-
-    $.ajaxq.isRunning = function(qname) {
-        if (qname) return isQueueRunning(qname);
-        else return isAnyQueueRunning();
-    };
-    
-    $.ajaxq.clear = function(qname) {
-        if (!qname) {
-            for (var i in queues) {
-                if (queues.hasOwnProperty(i)) {
-                    delete queues[i];
-                }
-            }
-        }
-        else {
-            if (queues[qname]) {
-                delete queues[qname];
-            }
-        }
-    };
-    
-})(jQuery);
-
-
-/**
 * 依赖组件:MoeNotification
 * https://github.com/Last-Order/MoeNotification
 */
@@ -229,7 +101,14 @@ $(function(){
         e.number = number;
         e.message = message || '未知错误';
         console.log('%c错误[' + e.number + ':' + e.message + ']抛出','color:red');
-        throw e;
+        if ($('.Wikiplus-Banner').length>0){
+            $('.Wikiplus-Banner').text(e.message);
+            $('.Wikiplus-Banner').css('background','rgba(218, 142, 167, 0.65)');
+        }
+        else{
+            (new MoeNotification()).create.error(e.message);
+        }
+        //throw e;
     }
 
     //检测值是否在数组中 
@@ -263,56 +142,58 @@ $(function(){
         this.pageName  = this.pageName.replace(/ /ig,'_');
         this.revision  = wgRevisionId;
         this.articleId = wgArticleId;
-        this.API       = 'http://' + location.host + wgScriptPath + '/api.php';
+        this.API       = location.protocol +  '//' + location.host + wgScriptPath + '/api.php';
         console.log('正在获得页面基础信息');
         //从API获得编辑令牌和起始时间戳
-        $.ajaxq("Main",{
-            type:"GET",
-            dataType:"json",
-            url:self.API,
-            data:{
-                'action' : 'query',
-                'prop'   : 'revisions|info',
-                'titles' : self.pageName,
-                'rvprop' : 'timestamp',
-                'intoken': 'edit',
-                'format' : 'json'
-            },
-            beforeSend : function(){
-                console.time('获得页面基础信息耗时');
-            },
-            success:function(data){
-                if (data && data.query && data.query.pages){
-                    var info = data.query.pages;
-                    for (key in info){
-                        if (key != '-1'){
-                            if (info[key].revisions && info[key].revisions.length>0){
-                                self.timeStamp = info[key].revisions[0].timestamp;
-                            }
-                            else{
-                                throwError(1004,'无法获得页面时间戳');
-                                return false;
-                            }
-                            if (info[key].edittoken){
-                                if (info[key].edittoken != '+\\'){
-                                    self.editToken = info[key].edittoken;
+        try{
+            $.ajax({
+                type:"GET",
+                dataType:"json",
+                url:self.API,
+                data:{
+                    'action' : 'query',
+                    'prop'   : 'revisions|info',
+                    'titles' : self.pageName,
+                    'rvprop' : 'timestamp',
+                    'intoken': 'edit',
+                    'format' : 'json'
+                },
+                beforeSend : function(){
+                    console.time('获得页面基础信息耗时');
+                },
+                success:function(data){
+                    if (data && data.query && data.query.pages){
+                        var info = data.query.pages;
+                        for (key in info){
+                            if (key != '-1'){
+                                if (info[key].revisions && info[key].revisions.length>0){
+                                    self.timeStamp = info[key].revisions[0].timestamp;
                                 }
                                 else{
-                                    throwError(1005,'无法获得页面编辑令牌 请确认登录状态');
-                                    return false;
+                                    throwError(1004,'无法获得页面时间戳');
+                                }
+                                if (info[key].edittoken){
+                                    if (info[key].edittoken != '+\\'){
+                                        self.editToken = info[key].edittoken;
+                                    }
+                                    else{
+                                        throwError(1005,'无法获得页面编辑令牌 请确认登录状态');
+                                    }
                                 }
                             }
-                        }
-                        else{
-                            throwError(1003,'无法获得页面基础信息，请检查页面是否存在');
-                            return false;
+                            else{
+                                throwError(1003,'无法获得页面基础信息，请检查页面是否存在');
+                            }
                         }
                     }
+                    console.timeEnd('获得页面基础信息耗时');
+                    self.inited = true;
                 }
-                console.timeEnd('获得页面基础信息耗时');
-                self.inited = true;
-            }
-        });
+            });
+        }
+        catch (e) {
+            console.log('获取基础信息失败:' + e.message);
+        }
     }
     
     //通用编辑
@@ -329,7 +210,7 @@ $(function(){
         data.basetimestamp = this.timeStamp;
         console.log(data);
         console.log(config);
-        $.ajaxq("Main",{
+        $.ajax({
             type:"POST",
             url:self.API,
             data:$.extend(data,config), //将自定义设置覆盖到默认设置
@@ -441,7 +322,7 @@ $(function(){
             this.edit('#重定向 [[' + this.pageName + ']]',{
                 'title' : origin,
                 'summary' : '重定向至[[' + this.pageName + ']] // Wikiplus'
-            })
+            },callback)
         }
     }
     //Wikipage - getWikiText
@@ -454,7 +335,7 @@ $(function(){
             'title' : this.pageName,
             'action' : 'raw'
         };
-        $.ajaxq("Main",{
+        $.ajax({
             url : url,
             type : "GET",
             dataType : "text",
@@ -489,7 +370,7 @@ $(function(){
             'title' : this.pageName,
             'pst' : 'true'
         }
-        $.ajaxq('Main',{
+        $.ajax({
             type : 'POST',
             dataType : 'json',
             data : data,
@@ -527,20 +408,31 @@ $(function(){
             '设置名' : '设置值',
             '设置参考' : 'http://zh.moegirl.org/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
         };
-
+        //初始化
         this.init = function(){
             console.log('Wikiplus' + self.version + '正在加载');
-            self.kotori = new Wikipage();
-            $("head").append("<link>");
-            var css = $("head").children(":last");
-            css.attr({
-                rel: "stylesheet",
-                type: "text/css",
-                href: "http://miku.host.smartgslb.com/wikiplus/wikiplus_new.css"
-            });
-            self.initBasicFunctions();
-            self.initAdvancedFunctions();
+            if (wgIsArticle && inArray(wgNamespaceNumber,self.validNameSpaces) && wgAction == 'view' ) {
+                self.kotori = new Wikipage();
+                $("head").append("<link>");
+                var css = $("head").children(":last");
+                css.attr({
+                    rel: "stylesheet",
+                    type: "text/css",
+                    href: location.protocol == 'http:' ? "http://miku.host.smartgslb.com/wikiplus/wikiplus_new.css" : "https://blog.kotori.moe/wikiplus/wikiplus_new.css"
+                });
+                self.initBasicFunctions();
+                self.initAdvancedFunctions();
+            }
+            else{
+                console.log('不符合加载条件，程序终止。');
+            }
         }
+
+        /*
+        * 基础功能区
+        */
+
+        ////核心功能：快速编辑 开始
         //构建快速编辑相关入口
         this.editPageBuild = function(){
             var topBtn = $('<li>').attr('id','Wikiplus-Edit-TopBtn').html(
@@ -591,7 +483,7 @@ $(function(){
                     $('#mw-content-text').fadeIn(100);
                     $('#Wikiplus-Quickedit').val(text);
                     self.initQuickEditStepTwo(section,contentBackup);
-                    //这里有个坑……这句话不能放在网面，否则元素还没插完就下一步导致无法绑定事件
+                    //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
                 });
             }
             //$('#mw-content-text').append(backBtn).append(jumpBtn).append(inputBox).append(previewBox).append(summaryBox).append(editSubmitBtn).append(previewSubmitBtn);
@@ -604,23 +496,18 @@ $(function(){
                 }
                 else{
                     self.showNotice.create.success('载入编辑数据中...');
-                    try{
-                        var timer = new Date().valueOf();
-                        self.kotori.getWikiText(function(data){
-                            var contentBackup = $('#mw-content-text').html();
-                            showUI(data,summary,contentBackup);
-                            self.showNotice.create.success('载入完成，用时' + new String(new Date().valueOf() - timer) + 'ms',function(){
-                                setTimeout(function(){
-                                    self.showNotice.empty(slideLeft);
-                                },3000);
-                            });
-                        },{
-                            'section' : section
+                    var timer = new Date().valueOf();
+                    self.kotori.getWikiText(function (data) {
+                        var contentBackup = $('#mw-content-text').html();
+                        showUI(data, summary, contentBackup);
+                        self.showNotice.create.success('载入完成，用时' + new String(new Date().valueOf() - timer) + 'ms', function () {
+                            setTimeout(function () {
+                                self.showNotice.empty(slideLeft);
+                            }, 3000);
                         });
-                    }
-                    catch (e){
-                        self.showNotice.error(e.message);
-                    }       
+                    }, {
+                        'section': section
+                    });
                 }
             }
             else{
@@ -634,6 +521,7 @@ $(function(){
             //返回
             $("#Wikiplus-Quickedit-Back").click(function(){
                 $('#mw-content-text').html(contentBackup);
+                self.editPageBind();
             });
             //预览
             var onPreload = $('<div>').addClass('Wikiplus-Banner').text('正在载入预览');
@@ -666,22 +554,90 @@ $(function(){
                     $('#Wikiplus-Quickedit-Preview-Output').html(onEdit);
                     $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                 });
-                try{
-                    self.kotori.edit(wikiText,{
-                        'summary' : summary,
-                        'section' : section,
-                    },function(){
-                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background','rgba(6, 239, 92, 0.44)');
-                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + (new Date().valueOf() - timer) + 'ms');
-                        setTimeout(function(){
-                            location.reload();
-                        },500);
-                    })
-                }
-                catch(e){
-                    self.showNotice.create.error('编辑失败：' + e.message);
-                }
+                self.kotori.edit(wikiText,{
+                    'summary' : summary,
+                    'section' : section,
+                },function(){
+                    $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background','rgba(6, 239, 92, 0.44)');
+                    $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + (new Date().valueOf() - timer) + 'ms');
+                    setTimeout(function(){
+                        location.reload();
+                    },500);
+                })
             })
+        }
+        ////核心功能：快速编辑 结束
+
+        //重定向相关
+        this.simpleRedirector = function () {
+            self.addFunctionButton('将页面重定向至此', 'Wikiplus-SR-Intro', function () {
+                var input = $('<input>').addClass('Wikiplus-InterBox-Input');
+                var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Apply').text('提交');
+                var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Cancel').text('取消');
+                var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
+                self.createInterBox('请输入需要重定向到此页面的页面名', content, function () {
+                    $('#Wikiplus-SR-Apply').click(function () {
+                        if ($('.Wikiplus-InterBox-Input').val() != '') {
+                            var title = $('.Wikiplus-InterBox-Input').val()
+                            $('.Wikiplus-InterBox-Content').html('<div class="Wikiplus-Banner">提交中</div>');
+                            self.kotori.redirectFrom(title, function () {
+                                $('.Wikiplus-Banner').text('重定向完成!');
+                                $('.Wikiplus-InterBox').fadeOut(500);
+                                location.href = '/' + title;
+                            });
+                        }
+                        else {
+                            self.showNotice.create.warning('输入不能为空');
+                        }
+                    })
+                });
+            })
+        }
+        /*
+        * 基础功能区 结束
+        */
+
+
+        /*
+        * 通用函数起始点
+        */
+        //增加一个功能按钮
+        //(string) text : 按钮文本 , (string) id : 按钮的id , (function) event : 点击按钮触发的事件
+        this.addFunctionButton = function(text,id,event){
+            var button = $('<li></li>').attr('id',id).append($('<a></a>').attr('href','javascript:void(0);').text(text));
+            if ($('.menu').length > 0){
+                $('.menu ul').append(button);
+                $('.menu ul').find('li').last().click(event);
+            }
+            else{
+                throwError(1080,'未知错误：无法增加功能按钮');
+            }
+        }
+        //创建一个悬浮交互框
+        //(string) title : 标题 , (element) content : 内容 , (function) callback : 回调函数
+        this.createInterBox = function (title, content, callback) {
+            var callback = callback || function () { };
+            if ($('.Wikiplus-InterBox').length > 0) {
+                $('.Wikiplus-InterBox').each(function () {
+                    $(this).remove();
+                });
+            }
+            var width = document.body.clientWidth;
+            var height = document.body.clientHeight;
+            $('body').append(
+                $('<div>').addClass('Wikiplus-InterBox')
+                          .css('margin-left', width / 2 - 300)
+                          .append(
+                              $('<div>').addClass('Wikiplus-InterBox-Header')
+                                         .text(title)
+                          )
+                          .append(
+                              $('<div>').addClass('Wikiplus-InterBox-Content')
+                                        .append(content)
+                          )
+            );
+            callback();
+            $('.Wikiplus-InterBox').fadeIn(500);
         }
         //预加载页面Wiki文本 
         //Params : (section) section 
@@ -753,9 +709,13 @@ $(function(){
                 }
             }
         }
+        /*
+        * 通用函数终止点
+        */
         this.initBasicFunctions = function(){
             //加载基础功能
-            this.editPageBuild();
+            this.editPageBuild();//快速编辑
+            this.simpleRedirector();
         }
         this.initAdvancedFunctions = function(){
             //加载高级功能

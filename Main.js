@@ -211,11 +211,11 @@ function Wikiplus(){
     var self = this;
     //self = class
     this.Notification             = new MoeNotification();
-    this.Version                  = '1.6.5.4';
-    this.LastestUpdateDescription = '修正特殊标题无法编辑的问题';
+    this.Version                  = '1.6.5.5';
+    this.LastestUpdateDescription = '支持HTTPS';
     this.isBeta                   = false;
     this.ValidNamespaces          = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
-    this.APILocation              = 'http://' + location.host + wgScriptPath + '/api.php';
+    this.APILocation              = location.protocol +  '//' + location.host + wgScriptPath + '/api.php';
     this.PreloadData              = {};
     this.DefaultSettings          = {
         '设置名' : '设置值',
@@ -453,13 +453,17 @@ function Wikiplus(){
     * 输出:输出到回调函数:String
     */
     this.getPageWikitext = function(pagename,section,revision,callback){
-        var callback = arguments[3]?arguments[3]:function(){};
-        var url = 'http://' + location.host + wgScriptPath + '/index.php?title=' + encodeURI(pagename) + '&oldid=' + revision + '&action=raw';
-        if (section != 0){
-            url += '&section=' + section;
-        }
-        $.ajaxq("MainQueue",{
-            type:"GET",
+        var callback = arguments[3] ? arguments[3] : function () { };
+        var url = location.protocol + '//' + location.host + wgScriptPath + '/index.php';
+        $.ajaxq("MainQueue", {
+            url : url,
+            type: "GET",
+            data : {
+                'title': pagename,
+                'oldid': revision,
+                'action': 'raw',
+                'section' : section || ''
+            },
             dataType:"text",
             url:url,
             success:function(data){
@@ -807,7 +811,7 @@ function Wikiplus(){
                             self.OutputPrinter(self.OutputBox,'将' + RedirectPageName + '重定向至' + wgPageName + '...','fine');
                             self.editPage(RedirectPageName,'#重定向 [[' + wgPageName + ']]','//将' + RedirectPageName + '重定向至' + wgPageName + ' via Wikiplus',0,function(){
                                 self.OutputPrinter(self.OutputBox,'创建重定向完毕','fine');
-                                location.href = 'http://' + location.host + '/' + wgScriptPath + 'index.php?title=' + RedirectPageName;
+                                location.href = location.protocol + '//' + location.host + '/' + wgScriptPath + 'index.php?title=' + RedirectPageName;
                             })
                         }
                     });
@@ -996,7 +1000,7 @@ function Wikiplus(){
             css.attr({
                 rel: "stylesheet",
                 type: "text/css",
-                href: "http://miku.host.smartgslb.com/wikiplus/wikiplus.css"
+                href: location.protocol == 'http:' ? "http://miku.host.smartgslb.com/wikiplus/wikiplus.css" : "https://blog.kotori.moe/wikiplus/wikiplus.css"
             });
             if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, self.ValidNamespaces)!='-1'&&wgIsArticle&&wgArticleId!=0)){
                 if (wgAction == 'view'){

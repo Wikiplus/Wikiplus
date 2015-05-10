@@ -17,6 +17,48 @@
     position: relative;
     margin: 0px;
 }
+
+.Wikiplus-InterBox{
+	position: fixed;
+	text-align: center;
+	top:20%;
+	min-height: 100px;
+	width: 600px;
+	padding: 20px 10px 20px 10px;
+	border: 1px rgba(161, 154, 220, 0.41) solid;
+	background-color: #EDF9F7;
+	display: none;
+}
+.Wikiplus-InterBox hr{
+	opacity: 0;
+}
+.Wikiplus-InterBox-Header{
+	position: relative;
+	top: 0px;
+	width: 100%;
+	margin: 0px;
+	text-align:left;
+	font-size: 15px;
+	border-bottom: 1px #66ccff solid;
+}
+.Wikiplus-InterBox-Input{
+	margin: 20px;
+	width: 60%;
+}
+.Wikiplus-InterBox-Btn{
+	position: relative;
+	float: right;
+	padding: 6px 12px;
+	margin: auto 3px auto 3px;
+	text-align: center;
+	vertical-align: middle;
+	border: 1px solid rgb(222, 222, 222);
+	background-color: white;
+}
+.Wikiplus-InterBox-Btn:hover{
+	background-color: #E8E8E8;
+}
+
 #Wikiplus-Quickedit-Preview-Output{
 	margin:5px 0px 5px 0px;
 	clear: both;
