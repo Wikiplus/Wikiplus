@@ -208,8 +208,6 @@ $(function(){
         data.title         = this.pageName;
         data.token         = this.editToken;
         data.basetimestamp = this.timeStamp;
-        console.log(data);
-        console.log(config);
         $.ajax({
             type:"POST",
             url:self.API,
@@ -221,7 +219,8 @@ $(function(){
                         //编辑成功
                         callback();
                     }
-                    else{
+                    else {
+                        throwError(1085, '未知的编辑错误');
                     }
                 }
                 else if (data && data.error){
@@ -276,6 +275,9 @@ $(function(){
                         case 'customjsprotected' : throwError(1053,'无法编辑用户JS页');break;
                     }
                 }
+                else {
+                    throwError(1086, '未知的编辑错误');
+                }
             },
             error : function(e){
                 throwError(1056,'由于网络原因或服务器故障导致编辑失败');
@@ -318,7 +320,6 @@ $(function(){
             throwError(1057,'未指定重定向源');
         }
         else{
-            console.log(origin);
             this.edit('#重定向 [[' + this.pageName + ']]',{
                 'title' : origin,
                 'summary' : '重定向至[[' + this.pageName + ']] // Wikiplus'
@@ -434,15 +435,17 @@ $(function(){
 
         ////核心功能：快速编辑 开始
         //构建快速编辑相关入口
-        this.editPageBuild = function(){
+        this.editPageBuild = function () {
+            self.contentBackup =  $('#mw-content-text').html();//备份数据
             var topBtn = $('<li>').attr('id','Wikiplus-Edit-TopBtn').html(
                 $('<span>').html(
                     $('<a>').attr('href','javascript:void(0)').text('快速编辑')
                     )
                 );
             var sectionBtn = '[<a href="javascript:void(0)" class="Wikiplus-Edit-SectionBtn">快速编辑</a>]';
-            $('#ca-edit').before(topBtn);//顶部按钮
-
+            if (!$('#Wikiplus-Edit-TopBtn').length > 0) {
+                $('#ca-edit').before(topBtn);//顶部按钮
+            }
             if ($('.mw-editsection').length>0){
                 //每个段落的按钮编辑
                 $('.mw-editsection').each(function(i){
@@ -457,12 +460,27 @@ $(function(){
             $('#Wikiplus-Edit-TopBtn').click(function(){
                 self.initQuickEditStepOne('page','//Edit via Wikiplus')
             });
-            $('.Wikiplus-Edit-SectionBtn').each(function(){
-                $(this).click(function(){
-                    self.initQuickEditStepOne($(this).data('id'),'//Edit via Wikiplus');
+            $('.Wikiplus-Edit-SectionBtn').each(function () {
+                $(this).click(function () {
+                    self.initQuickEditStepOne($(this).data('id'), '//Edit via Wikiplus');
                 })
-            })
-
+            });
+            //预读取事件
+            //鼠标扫过目录对应段落
+            $("#toc").children("ul").find("a").each(function (i) {
+                $(this).mouseover(function () {
+                    $(this).unbind('mouseover');
+                    self.preload(i + 1);
+                });
+            });
+            //鼠标扫过快速编辑按钮
+            $(".Wikiplus-Edit-SectionBtn").each(function (i) {
+                $(this).mouseover(function () {
+                    self.preload(i+1);
+                });
+            });
+            //默认读取整页
+            self.preload(-1);
         }
         //快速编辑相关事件 第一步
         this.initQuickEditStepOne = function(section,summary){
@@ -473,7 +491,7 @@ $(function(){
             var inputBox = $('<textarea>').attr('id','Wikiplus-Quickedit');//主编辑框
             var previewBox = $('<div>').attr('id','Wikiplus-Quickedit-Preview-Output');//预览输出
             var summaryBox = $('<input>').attr('id','Wikiplus-Quickedit-Summary-Input').attr('placeholder','请输入编辑摘要');//编辑摘要输入
-            var editSubmitBtn = $('<button>').attr('id','Wikiplus-Quickedit-Submit').text('提交编辑');//提交按钮
+            var editSubmitBtn = $('<button>').attr('id','Wikiplus-Quickedit-Submit').text('提交编辑(Ctrl+Enter)');//提交按钮
             var previewSubmitBtn = $('<button>').attr('id','Wikiplus-Quickedit-Preview-Submit').text('预览');//预览按钮
             //插DOM
             var showUI = function(text,summary,contentBackup){
@@ -486,20 +504,17 @@ $(function(){
                     //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
                 });
             }
-            //$('#mw-content-text').append(backBtn).append(jumpBtn).append(inputBox).append(previewBox).append(summaryBox).append(editSubmitBtn).append(previewSubmitBtn);
-            if (self.kotori.inited){
+            if (self.kotori.inited) {
                 //判断页面类是否已经拿到token
                 if (self.getPreloadData(section)){
                     //如果已经预读取了内容
-                    var contentBackup = $('#mw-content-text').html();
-                    showUI(self.getPreloadData(section),summary,contentBackup);
+                    showUI(self.getPreloadData(section),summary);
                 }
                 else{
                     self.showNotice.create.success('载入编辑数据中...');
                     var timer = new Date().valueOf();
                     self.kotori.getWikiText(function (data) {
-                        var contentBackup = $('#mw-content-text').html();
-                        showUI(data, summary, contentBackup);
+                        showUI(data, summary);
                         self.showNotice.create.success('载入完成，用时' + new String(new Date().valueOf() - timer) + 'ms', function () {
                             setTimeout(function () {
                                 self.showNotice.empty(slideLeft);
@@ -516,12 +531,12 @@ $(function(){
         }
         //快速编辑界面加载第二步，主要是相关事件的绑定
         //Params : (string) section / page表示整页 , contentBackup 原内容备份
-        this.initQuickEditStepTwo = function(section,contentBackup){
+        this.initQuickEditStepTwo = function(section){
             var section = (section == 'page') ? undefined : section;
             //返回
             $("#Wikiplus-Quickedit-Back").click(function(){
-                $('#mw-content-text').html(contentBackup);
-                self.editPageBind();
+                $('#mw-content-text').html(self.contentBackup);
+                self.editPageBuild();
             });
             //预览
             var onPreload = $('<div>').addClass('Wikiplus-Banner').text('正在载入预览');
@@ -545,7 +560,8 @@ $(function(){
             $('#Wikiplus-Quickedit-Submit').click(function(){
                 var wikiText = $('#Wikiplus-Quickedit').val();
                 var summary = $('#Wikiplus-Quickedit-Summary-Input').val();
-                $(this).attr('disabled','disabled');
+                $(this).attr('disabled', 'disabled');
+                $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
                 var timer = new Date().valueOf();
                 //self.showNotice.create.success('正在提交编辑...');
                 $('body').animate({scrollTop:0},200);
@@ -563,6 +579,14 @@ $(function(){
                     setTimeout(function(){
                         location.reload();
                     },500);
+                })
+            })
+            //Ctrl+Enter提交
+            $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input').each(function () {
+                $(this).keypress(function (e) {
+                    if (e.ctrlKey && e.which == 13 || e.which == 10) {
+                        $('#Wikiplus-Quickedit-Submit').click();
+                    }
                 })
             })
         }
@@ -589,6 +613,11 @@ $(function(){
                         else {
                             self.showNotice.create.warning('输入不能为空');
                         }
+                    });
+                    $('#Wikiplus-SR-Cancel').click(function () {
+                        $('.Wikiplus-InterBox').fadeOut(500, function () {
+                            $(this).remove();
+                        });
                     })
                 });
             })
@@ -605,9 +634,9 @@ $(function(){
         //(string) text : 按钮文本 , (string) id : 按钮的id , (function) event : 点击按钮触发的事件
         this.addFunctionButton = function(text,id,event){
             var button = $('<li></li>').attr('id',id).append($('<a></a>').attr('href','javascript:void(0);').text(text));
-            if ($('.menu').length > 0){
-                $('.menu ul').append(button);
-                $('.menu ul').find('li').last().click(event);
+            if ($('#p-cactions .menu').length > 0) {
+                $('#p-cactions .menu ul').append(button);
+                $('#p-cactions .menu ul').find('li').last().click(event);
             }
             else{
                 throwError(1080,'未知错误：无法增加功能按钮');
@@ -644,21 +673,30 @@ $(function(){
         //-1 代表整个页面
         this.preload = function(section){
             try{
-                if (section == -1){
-                    console.time('预读取整页用时');
-                    self.kotori.getWikiText(function(text){
-                        self.preloadData['page'] = text;
-                        console.timeEnd('预读取整页用时');
-                    });
+                if (section == -1) {
+                    if (self.preloadData['page']) {
+                        console.log('对于 整页 的预读取已经进行过，跳过。');
+                    }
+                    else {
+                        self.kotori.getWikiText(function (text) {
+                            self.preloadData['page'] = text;
+                            console.log('成功预读取 整页 ');
+                        });
+                    }
                 }
-                else{
-                    console.time('预读取段落' + section + '用时');
-                    self.kotori.getWikiText(function(text){
-                        self.preloadData[section] = text;
-                        console.timeEnd('预读取段落' + section + '用时');
-                    },{
-                        'section' : section
-                    });
+                else {
+                    if (self.preloadData[section]) {
+                        console.log('对于段落 ' + section + ' 的预读取已经进行过，跳过');
+                    }
+                    else {
+                        console.time('预读取段落' + section + '用时');
+                        self.kotori.getWikiText(function (text) {
+                            self.preloadData[section] = text;
+                            console.timeEnd('预读取段落' + section + '用时');
+                        }, {
+                            'section': section
+                        });
+                    }
                 }
             }
             catch(e){
