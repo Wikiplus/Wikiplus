@@ -19,7 +19,8 @@
 }
 
 .Wikiplus-InterBox{
-	position: fixed;
+	z-index: 9999;
+	position: absolute;
 	text-align: center;
 	top:20%;
 	min-height: 100px;
