@@ -100,7 +100,7 @@ $(function(){
         var e = new Error();
         e.number = number;
         e.message = message || '未知错误';
-        console.log('%c错误[' + e.number + ':' + e.message + ']抛出','color:red');
+        console.log('%c致命错误[' + e.number + ':' + e.message + ']抛出','color:red');
         if ($('.Wikiplus-Banner').length>0){
             $('.Wikiplus-Banner').text(e.message);
             $('.Wikiplus-Banner').css('background','rgba(218, 142, 167, 0.65)');
@@ -109,6 +109,14 @@ $(function(){
             (new MoeNotification()).create.error(e.message);
         }
         //throw e;
+    }
+    //抛出不致命异常
+    //Params : (int) number, (string) message
+    function throwWarning(number,message){
+        var e = new Error();
+        e.number = number;
+        e.message = message || '未知错误';
+        console.log('%c非致命错误[' + e.number + ':' + e.message + ']抛出','color:#F3C421');
     }
 
     //检测值是否在数组中 
@@ -125,7 +133,7 @@ $(function(){
     //功能性函数定义结束
 
     //Wikipage类构造函数
-    Wikipage = function(page){
+    var Wikipage = function(page){
         var self = this;
         console.log('正在构建页面类');
         //可用性检测与权限检测
@@ -182,7 +190,7 @@ $(function(){
                                 }
                             }
                             else{
-                                throwError(1003,'无法获得页面基础信息，请检查页面是否存在');
+                                throwWarning(1003,'无法获得页面基础信息，请检查页面是否存在');
                             }
                         }
                     }
@@ -331,7 +339,7 @@ $(function(){
     //Params : (function) callback
     Wikipage.prototype.getWikiText = function(callback,config){
         var callback = callback || new Function();
-        var url =  'http://' + location.host + wgScriptPath + '/index.php';
+        var url =  location.protocol +  '//' + location.host + wgScriptPath + '/index.php';
         var data = {
             'title' : this.pageName,
             'action' : 'raw'
@@ -355,7 +363,12 @@ $(function(){
                 }
             },
             error : function(e){
-                throwError(1055,'无法获得页面文本(网络原因)');
+                if (e.status == 404){
+                    throwWarning(1101,'无法获得页面文本，可能由于段落或页面不存在');
+                }
+                else{
+                    throwError(1055,'无法获得页面文本(网络原因)' + '[' + e.status + ']');
+                }
             }
         })
     }
@@ -401,8 +414,8 @@ $(function(){
         var self = this;
         this.showNotice        = new MoeNotification();
         this.isBeta            = true;
-        this.version           = '1.6';
-        this.lastestUpdateDesc = '重构';
+        this.version           = '1.7.1';
+        this.lastestUpdateDesc = '修正不必要的错误抛出';
         this.validNameSpaces   = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
         this.preloadData       = {};
         this.defaultSettings          = {
@@ -760,7 +773,6 @@ $(function(){
         this.init();
     }
     $(function(){
-        window.Wikiplus = new Wikiplus();
-        //暴露出去调试用..
+        Wikiplus();
     })
 })
