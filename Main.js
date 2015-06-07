@@ -211,8 +211,8 @@ function Wikiplus(){
     var self = this;
     //self = class
     this.Notification             = new MoeNotification();
-    this.Version                  = '1.6.5.5';
-    this.LastestUpdateDescription = '支持HTTPS';
+    this.Version                  = '1.6.5.6';
+    this.LastestUpdateDescription = '修复配置文件错误时无法进行编辑的问题';
     this.isBeta                   = false;
     this.ValidNamespaces          = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
     this.APILocation              = location.protocol +  '//' + location.host + wgScriptPath + '/api.php';
@@ -898,7 +898,13 @@ function Wikiplus(){
     */
     this.getSetting = function(key,object){
         var w = object;
-        var settings = $.parseJSON($.cookie('Wikiplus_Settings'));
+        try{
+            var settings = $.parseJSON($.cookie('Wikiplus_Settings'));
+        }
+        catch(e){
+            self.Notification.create.error('配置文件存在错误!');
+            return false;
+        }
         try{
             var _setting = new Function('return ' + settings[key]);
             if (typeof _setting == 'function'){
