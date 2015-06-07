@@ -508,7 +508,20 @@ $(function(){
             var previewSubmitBtn = $('<button>').attr('id','Wikiplus-Quickedit-Preview-Submit').text('预览');//预览按钮
             //插DOM
             var showUI = function(text,summary,contentBackup){
+                self.createInterBox('快速编辑',undefined,function(){
+                    $('.Wikiplus-InterBox-Content').html(backBtn).append(jumpBtn).append(previewBox).append(inputBox).append(summaryBox).append(editSubmitBtn).append(previewSubmitBtn);
+                    //$('#mw-content-text').html(backBtn).append(jumpBtn).append(previewBox).append(inputBox).append(summaryBox).append(editSubmitBtn).append(previewSubmitBtn);
+                    $('#Wikiplus-Quickedit-Summary-Input').val(summary);
+                    //$('#mw-content-text').fadeIn(100);
+                    $('#Wikiplus-Quickedit').val(text);
+                    $('.Wikiplus-InterBox-Content').css('text-align','left');
+                    self.initQuickEditStepTwo(section,contentBackup);
+                    //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
+                },window.innerWidth * 0.8);
+                /*
                 $('#mw-content-text').fadeOut(100,function(){
+                    //Wikiplus-InterBox-Content
+                    $('.Wikiplus-InterBox-Content').html(backBtn).append(jumpBtn).append(previewBox).append(inputBox).append(summaryBox).append(editSubmitBtn).append(previewSubmitBtn);
                     $('#mw-content-text').html(backBtn).append(jumpBtn).append(previewBox).append(inputBox).append(summaryBox).append(editSubmitBtn).append(previewSubmitBtn);
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     $('#mw-content-text').fadeIn(100);
@@ -516,6 +529,7 @@ $(function(){
                     self.initQuickEditStepTwo(section,contentBackup);
                     //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
                 });
+*/
             }
             if (self.kotori.inited) {
                 //判断页面类是否已经拿到token
@@ -548,8 +562,11 @@ $(function(){
             var section = (section == 'page') ? undefined : section;
             //返回
             $("#Wikiplus-Quickedit-Back").click(function(){
-                $('#mw-content-text').html(self.contentBackup);
-                self.editPageBuild();
+                $('.Wikiplus-InterBox').fadeOut('fast',function(){
+                    $(this).remove();
+                })
+                //$('#mw-content-text').html(self.contentBackup);
+                //self.editPageBuild();
             });
             //预览
             var onPreload = $('<div>').addClass('Wikiplus-Banner').text('正在载入预览');
@@ -563,7 +580,7 @@ $(function(){
                 $('body').animate({scrollTop:0},200);//返回顶部
                 self.kotori.parseWikiText(wikiText,function(data){
                     $('#Wikiplus-Quickedit-Preview-Output').fadeOut('100',function(){
-                        $('#Wikiplus-Quickedit-Preview-Output').html('<hr>' + data + '<hr>');
+                        $('#Wikiplus-Quickedit-Preview-Output').html('<hr><div class="mw-body-content">' + data + '</div><hr>');
                         $('#Wikiplus-Quickedit-Preview-Output').fadeIn('100');
                         $('#Wikiplus-Quickedit-Preview-Submit').removeAttr('disabled');
                     });
@@ -632,7 +649,7 @@ $(function(){
                             $(this).remove();
                         });
                     })
-                });
+                },600);
             })
         }
         /*
@@ -656,18 +673,18 @@ $(function(){
         }
         //创建一个悬浮交互框
         //(string) title : 标题 , (element) content : 内容 , (function) callback : 回调函数
-        this.createInterBox = function (title, content, callback) {
+        this.createInterBox = function (title, content, callback, width) {
             var callback = callback || function () { };
             if ($('.Wikiplus-InterBox').length > 0) {
                 $('.Wikiplus-InterBox').each(function () {
                     $(this).remove();
                 });
             }
-            var width = document.body.clientWidth;
-            var height = document.body.clientHeight;
+            var cwidth = document.body.clientWidth;
+            var cheight = document.body.clientHeight;
             $('body').append(
                 $('<div>').addClass('Wikiplus-InterBox')
-                          .css('margin-left', width / 2 - 300)
+                          .css('margin-left', cwidth / 2 - ( width /2 ) )
                           .append(
                               $('<div>').addClass('Wikiplus-InterBox-Header')
                                          .text(title)
@@ -678,6 +695,7 @@ $(function(){
                           )
             );
             callback();
+            $('.Wikiplus-InterBox').width(width);
             $('.Wikiplus-InterBox').fadeIn(500);
         }
         //预加载页面Wiki文本 
