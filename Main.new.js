@@ -414,8 +414,8 @@ $(function(){
         var self = this;
         this.showNotice        = new MoeNotification();
         this.isBeta            = true;
-        this.version           = '1.7.1';
-        this.lastestUpdateDesc = '修正不必要的错误抛出';
+        this.version           = '1.7.2';
+        this.lastestUpdateDesc = '优化编辑体验';
         this.validNameSpaces   = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
         this.preloadData       = {};
         this.defaultSettings          = {
@@ -515,6 +515,7 @@ $(function(){
                     //$('#mw-content-text').fadeIn(100);
                     $('#Wikiplus-Quickedit').val(text);
                     $('.Wikiplus-InterBox-Content').css('text-align','left');
+                    $('body').animate({scrollTop:window.innerHeight * 0.2},200);//返回顶部
                     self.initQuickEditStepTwo(section,contentBackup);
                     //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
                 },window.innerWidth * 0.8);
@@ -577,7 +578,7 @@ $(function(){
                     $('#Wikiplus-Quickedit-Preview-Output').html(onPreload);
                     $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                 });
-                $('body').animate({scrollTop:0},200);//返回顶部
+                $('body').animate({scrollTop:window.innerHeight * 0.2},200);//返回顶部
                 self.kotori.parseWikiText(wikiText,function(data){
                     $('#Wikiplus-Quickedit-Preview-Output').fadeOut('100',function(){
                         $('#Wikiplus-Quickedit-Preview-Output').html('<hr><div class="mw-body-content">' + data + '</div><hr>');
@@ -594,7 +595,7 @@ $(function(){
                 $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
                 var timer = new Date().valueOf();
                 //self.showNotice.create.success('正在提交编辑...');
-                $('body').animate({scrollTop:0},200);
+                $('body').animate({scrollTop:window.innerHeight * 0.2},200);
                 var onEdit = $('<div>').addClass('Wikiplus-Banner').text('正在提交编辑');
                 $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100,function(){
                     $('#Wikiplus-Quickedit-Preview-Output').html(onEdit);
