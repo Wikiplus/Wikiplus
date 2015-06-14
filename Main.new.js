@@ -137,20 +137,20 @@ $(function(){
         var self = this;
         console.log('正在构建页面类');
         //可用性检测与权限检测
-        if (!wgEnableAPI||!wgEnableWriteAPI){
+        if (!mw.config.values.wgEnableAPI||!mw.config.values.wgEnableWriteAPI){
             throwError(1002,'本Wiki未开启可用的API');
             return;
         }
-        if (!inArray('autoconfirmed',wgUserGroups)){
+        if (!inArray('autoconfirmed',mw.config.values.wgUserGroups)){
             throwError(1001,'非自动确认用户');
             return;
         }
         //从MediaWiki定义的全局变量中获得信息
-        this.pageName  = page || wgPageName;
+        this.pageName  = page || mw.config.values.wgPageName;
         this.pageName  = this.pageName.replace(/ /ig,'_');
-        this.revision  = wgRevisionId;
-        this.articleId = wgArticleId;
-        this.API       = location.protocol +  '//' + location.host + wgScriptPath + '/api.php';
+        this.revision  = mw.config.values.wgRevisionId;
+        this.articleId = mw.config.values.wgArticleId;
+        this.API       = location.protocol +  '//' + location.host + mw.config.values.wgScriptPath + '/api.php';
         console.log('正在获得页面基础信息');
         //从API获得编辑令牌和起始时间戳
         try{
@@ -339,7 +339,7 @@ $(function(){
     //Params : (function) callback
     Wikipage.prototype.getWikiText = function(callback,config){
         var callback = callback || new Function();
-        var url =  location.protocol +  '//' + location.host + wgScriptPath + '/index.php';
+        var url =  location.protocol +  '//' + location.host + mw.config.values.wgScriptPath + '/index.php';
         var data = {
             'title' : this.pageName,
             'action' : 'raw'
@@ -414,8 +414,8 @@ $(function(){
         var self = this;
         this.showNotice        = new MoeNotification();
         this.isBeta            = true;
-        this.version           = '1.7.2';
-        this.lastestUpdateDesc = '优化编辑体验';
+        this.version           = '1.7.4';
+        this.lastestUpdateDesc = '修正在mw1.26+触发warning的问题';
         this.validNameSpaces   = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
         this.preloadData       = {};
         this.defaultSettings          = {
@@ -425,7 +425,7 @@ $(function(){
         //初始化
         this.init = function(){
             console.log('Wikiplus' + self.version + '正在加载');
-            if (wgIsArticle && inArray(wgNamespaceNumber,self.validNameSpaces) && wgAction == 'view' ) {
+            if (mw.config.values.wgIsArticle && inArray(mw.config.values.wgNamespaceNumber,self.validNameSpaces) && mw.config.values.wgAction == 'view' ) {
                 self.kotori = new Wikipage();
                 $("head").append("<link>");
                 var css = $("head").children(":last");
@@ -638,7 +638,7 @@ $(function(){
                             self.kotori.redirectFrom(title, function () {
                                 $('.Wikiplus-Banner').text('重定向完成!');
                                 $('.Wikiplus-InterBox').fadeOut(500);
-                                location.href = '/' + title;
+                                location.href = mw.config.values.wgArticlePath.replace(/\$1/ig,title);
                             });
                         }
                         else {
@@ -652,6 +652,10 @@ $(function(){
                     })
                 },600);
             })
+        }
+        //编辑设置
+        this.editSettings = function(){
+
         }
         /*
         * 基础功能区 结束
