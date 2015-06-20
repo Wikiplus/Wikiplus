@@ -598,7 +598,7 @@ function Wikiplus(){
             $(this).data('sectionName',$(this).parent().prev().text());
             $(this).click(function(i){
                 self.initQuickEditStepOne($(this),"/*" + $(this).data('sectionName') + '*/ //快速编辑 via Wikiplus');
-            })
+            });
         });
         if ($("#wikiplus-quickedit-button-top").length>0){
             //已有顶部按钮
