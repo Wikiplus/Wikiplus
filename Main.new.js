@@ -185,12 +185,27 @@ $(function(){
                                         self.editToken = info[key].edittoken;
                                     }
                                     else{
-                                        throwError(1005,'无法获得页面编辑令牌 请确认登录状态');
+                                        console.log('无法通过API获得编辑令牌，可能是空页面，尝试通过前端API获取通用编辑令牌');
+                                        self.editToken = mw.user.tokens.get( 'editToken' );
+                                        if (self.editToken && self.editToken != '+\\'){
+                                            console.log('成功获得通用编辑令牌');
+                                        }
+                                        else{
+                                            throwError(1005,'无法获得页面编辑令牌 请确认登录状态');
+                                        }
                                     }
                                 }
                             }
                             else{
                                 throwWarning(1003,'无法获得页面基础信息，请检查页面是否存在');
+                                console.log('无法通过API获得编辑令牌，可能是空页面，尝试通过前端API获取通用编辑令牌');
+                                self.editToken = mw.user.tokens.get( 'editToken' );
+                                if (self.editToken && self.editToken != '+\\'){
+                                    console.log('成功获得通用编辑令牌');
+                                }
+                                else{
+                                    throwError(1005,'无法获得页面编辑令牌 请确认登录状态');
+                                }
                             }
                         }
                     }
@@ -414,8 +429,8 @@ $(function(){
         var self = this;
         this.showNotice        = new MoeNotification();
         this.isBeta            = true;
-        this.version           = '1.7.6';
-        this.lastestUpdateDesc = '在编辑摘要显示段落名 支持自定义编辑摘要';
+        this.version           = '1.7.7';
+        this.lastestUpdateDesc = '支持编辑空页面';
         this.validNameSpaces   = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
         this.preloadData       = {};
         this.defaultSettings          = {
@@ -506,6 +521,9 @@ $(function(){
         }
         //加载快速编辑相关界面 事件绑定
         this.editPageBind = function(){
+            if ($('.noarticletext').length > 0){
+                self.preloadData['page'] = '<!-- 该页当前没有内容 请删去本行注释后进行创建 -->';//页面不存在的话变为创建模式
+            }
             $('#Wikiplus-Edit-TopBtn').click(function(){
                 self.initQuickEditStepOne('page','//Edit via Wikiplus')
             });
