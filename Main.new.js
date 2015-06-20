@@ -414,8 +414,8 @@ $(function(){
         var self = this;
         this.showNotice        = new MoeNotification();
         this.isBeta            = true;
-        this.version           = '1.7.4';
-        this.lastestUpdateDesc = '修正在mw1.26+触发warning的问题';
+        this.version           = '1.7.5';
+        this.lastestUpdateDesc = '修改首次使用安装流程';
         this.validNameSpaces   = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
         this.preloadData       = {};
         this.defaultSettings          = {
@@ -445,7 +445,38 @@ $(function(){
         /*
         * 基础功能区
         */
-
+        //检查安装
+        this.checkInstall = function(){
+            if (!localStorage.Wikiplus_Installed || localStorage.Wikiplus_Installed == 'False'){
+                //安装
+                var install = function(){
+                    localStorage.Wikiplus_Installed = 'True';//标记已安装
+                    localStorage.Wikiplus_Version = self.version;
+                    localStorage.Wikiplus_StartUseAt = new Date().valueOf();
+                    localStorage.Wikiplus_SrartEditCount = mw.config.values.wgUserEditCount;
+                    localStorage.Wikiplus_Settings = JSON.stringify(self.defaultSettings);
+                    $('.Wikiplus-InterBox').fadeOut('fast',function(){
+                        self.showNotice.create.success('成功安装Wikiplus' + self.version);
+                        $(this).remove();
+                    })
+                }
+                var notice = $('<div>').text('您是否允许Wikiplus采集非敏感数据用于改进Wikiplus及为当前Wiki:' + mw.config.values.wgSiteName + '提供改进建议?').attr('id','Wikiplus-InterBox-Content');
+                var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Apply').text('好呀');
+                var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Cancel').text('窝拒绝');
+                var content = $('<div>').append(notice).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
+                self.createInterBox('安装Wikiplus',content,function(){
+                    $('#Wikiplus-InterBox-Content').css('text-align','left');
+                    $('#Wikiplus-Setting-Apply').click(function(){
+                        localStorage.Wikiplus_SendStatistics = 'True';
+                        install();
+                    });
+                    $('#Wikiplus-Setting-Cancel').click(function(){
+                        localStorage.Wikiplus_SendStatistics = 'False';
+                        install();
+                    });
+                },600)
+            }
+        }
         ////核心功能：快速编辑 开始
         //构建快速编辑相关入口
         this.editPageBuild = function () {
@@ -637,7 +668,7 @@ $(function(){
                             $('.Wikiplus-InterBox-Content').html('<div class="Wikiplus-Banner">提交中</div>');
                             self.kotori.redirectFrom(title, function () {
                                 $('.Wikiplus-Banner').text('重定向完成!');
-                                $('.Wikiplus-InterBox').fadeOut(500);
+                                $('.Wikiplus-InterBox').fadeOut(300);
                                 location.href = mw.config.values.wgArticlePath.replace(/\$1/ig,title);
                             });
                         }
@@ -646,7 +677,7 @@ $(function(){
                         }
                     });
                     $('#Wikiplus-SR-Cancel').click(function () {
-                        $('.Wikiplus-InterBox').fadeOut(500, function () {
+                        $('.Wikiplus-InterBox').fadeOut(300, function () {
                             $(this).remove();
                         });
                     })
@@ -655,7 +686,37 @@ $(function(){
         }
         //编辑设置
         this.editSettings = function(){
-
+            self.addFunctionButton('Wikiplus设置','Wikiplus-Settings-Intro',function(){
+                var input = $('<textarea>').attr('id','Wikiplus-Setting-Input').attr('rows','10');
+                var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Apply').text('提交');
+                var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Cancel').text('取消');
+                var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
+                self.createInterBox('请在下方编辑框修改设置值',content,function(){
+                    if (self.defaultSettings){
+                        $('#Wikiplus-Setting-Input').val(JSON.stringify(self.defaultSettings));
+                    }
+                    else{
+                        $('Wikiplus-Setting-Input').attr('placeholder','当前设置为空，请在下方根据规范编辑');
+                    }
+                    $('#Wikiplus-Setting-Apply').click(function(){
+                        var settings = $('#Wikiplus-Setting-Input').val();
+                        try{
+                            settings = JSON.parse(settings);
+                        }
+                        catch(e){
+                            self.showNotice.create.error('设置存在语法错误!请检查!');
+                            return;
+                        }
+                        
+                        $('.Wikiplus-InterBox-Content').html('<div class="Wikiplus-Banner">设置已保存</div>');
+                    })
+                    $('#Wikiplus-Setting-Cancel').click(function () {
+                        $('.Wikiplus-InterBox').fadeOut(300, function () {
+                            $(this).remove();
+                        });
+                    })
+                },600);
+            });
         }
         /*
         * 基础功能区 结束
@@ -699,9 +760,9 @@ $(function(){
                                         .append(content)
                           )
             );
-            callback();
             $('.Wikiplus-InterBox').width(width);
             $('.Wikiplus-InterBox').fadeIn(500);
+            callback();
         }
         //预加载页面Wiki文本 
         //Params : (section) section 
@@ -753,7 +814,12 @@ $(function(){
         //存在 输出值 不存在 输出undefined
         this.getSetting = function(key,object){
             var w = object;
-            var settings = $.parseJSON($.cookie('Wikiplus_Settings'));
+            try{
+                var settings = $.parseJSON(localStorage.Wikiplus_Settings);
+            }
+            catch(e){
+                return localStorage.Wikiplus_Settings || '';
+            }
             try{
                 var _setting = new Function('return ' + settings[key]);
                 if (typeof _setting == 'function'){
@@ -787,8 +853,10 @@ $(function(){
         */
         this.initBasicFunctions = function(){
             //加载基础功能
+            setTimeout(this.checkInstall,1000);//检查安装
             this.editPageBuild();//快速编辑
-            this.simpleRedirector();
+            this.simpleRedirector();//快速重定向
+            this.editSettings();//编辑设置
         }
         this.initAdvancedFunctions = function(){
             //加载高级功能
@@ -796,6 +864,6 @@ $(function(){
         this.init();
     }
     $(function(){
-        Wikiplus();
+        window.Wikiplus = new Wikiplus();
     })
 })
