@@ -329,7 +329,7 @@ $(function () {
             throwError(1055, '无法重定向至空页面');
         }
         else {
-            this.edit('#重定向 [[' + target + ']]', {
+            this.edit('#REDIRECT [[' + target + ']]', {
                 'summary': '重定向页面至[[' + this.pageName + ']] // Wikiplus'
             }, callback);
         }
@@ -430,8 +430,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.7.7';
-        this.lastestUpdateDesc = '支持编辑空页面';
+        this.version = '1.7.9';
+        this.lastestUpdateDesc = '悬浮框增加关闭按钮';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -789,9 +789,17 @@ $(function () {
                     $('<div>').addClass('Wikiplus-InterBox-Content')
                         .append(content)
                     )
+                    .append(
+                    $('<i>').text('×').addClass('Wikiplus-InterBox-Close')
+                    )
                 );
             $('.Wikiplus-InterBox').width(width);
             $('.Wikiplus-InterBox').fadeIn(500);
+            $('.Wikiplus-InterBox-Close').click(function(){
+                $(this).parent().fadeOut('fast',function(){
+                    $(this).remove();
+                })
+            })
             callback();
         }
         //预加载页面Wiki文本

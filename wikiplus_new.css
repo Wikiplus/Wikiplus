@@ -59,6 +59,14 @@
 .Wikiplus-InterBox-Btn:hover{
 	background-color: #E8E8E8;
 }
+.Wikiplus-InterBox-Close{
+	cursor: pointer;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	margin: 3px 7px;
+	font-size: 20px;
+}
 
 #Wikiplus-Quickedit-Preview-Output{
 	margin:5px 0px 5px 0px;

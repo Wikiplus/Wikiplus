@@ -598,7 +598,7 @@ function Wikiplus(){
             $(this).data('sectionName',$(this).parent().prev().text());
             $(this).click(function(i){
                 self.initQuickEditStepOne($(this),"/*" + $(this).data('sectionName') + '*/ //快速编辑 via Wikiplus');
-            });
+            })
         });
         if ($("#wikiplus-quickedit-button-top").length>0){
             //已有顶部按钮
@@ -809,7 +809,7 @@ function Wikiplus(){
                         if ($("#wikiplus-function-CRP-input").val() != ""){
                             var RedirectPageName = $("#wikiplus-function-CRP-input").val();
                             self.OutputPrinter(self.OutputBox,'将' + RedirectPageName + '重定向至' + wgPageName + '...','fine');
-                            self.editPage(RedirectPageName,'#重定向 [[' + wgPageName + ']]','//将' + RedirectPageName + '重定向至' + wgPageName + ' via Wikiplus',0,function(){
+                            self.editPage(RedirectPageName,'#REDIRECT [[' + wgPageName + ']]','//将' + RedirectPageName + '重定向至' + wgPageName + ' via Wikiplus',0,function(){
                                 self.OutputPrinter(self.OutputBox,'创建重定向完毕','fine');
                                 location.href = location.protocol + '//' + location.host + '/' + wgScriptPath + 'index.php?title=' + RedirectPageName;
                             })
