@@ -120,7 +120,7 @@ $(function () {
         console.log('%c非致命错误[' + e.number + ':' + e.message + ']抛出', 'color:#F3C421');
     }
 
-    //检测值是否在数组中 
+    //检测值是否在数组中
     //Params : (string) value, (array) array
     //Returns : (boolean) True/False
     window.inArray = inArray = function (value, array) {
@@ -219,7 +219,7 @@ $(function () {
             console.log('获取基础信息失败:' + e.message);
         }
     }
-    
+
     //通用编辑
     Wikipage.prototype.edit = function (content, config, callback) {
         var self = this;
@@ -450,6 +450,13 @@ $(function () {
                     type: "text/css",
                     href: location.protocol == 'http:' ? "http://miku.host.smartgslb.com/wikiplus/wikiplus_new.css" : "https://blog.kotori.moe/wikiplus/wikiplus_new.css"
                 });
+                //版本检查
+                var nowVersion = localStorage.Wikiplus_Version;
+                if (nowVersion != self.version){
+                    localStorage.Wikiplus_Version = self.version;
+                    self.showNotice.create.success('Wikiplus已经更新到版本:' + self.version);
+                    self.showNotice.create.success('更新内容:' + self.lastestUpdateDesc);
+                }
                 self.initBasicFunctions();
                 self.initAdvancedFunctions();
             }
@@ -787,8 +794,8 @@ $(function () {
             $('.Wikiplus-InterBox').fadeIn(500);
             callback();
         }
-        //预加载页面Wiki文本 
-        //Params : (section) section 
+        //预加载页面Wiki文本
+        //Params : (section) section
         //-1 代表整个页面
         this.preload = function (section) {
             try {
