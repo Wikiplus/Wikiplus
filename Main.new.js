@@ -430,8 +430,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.7.9';
-        this.lastestUpdateDesc = '悬浮框增加关闭按钮';
+        this.version = '1.8.0';
+        this.lastestUpdateDesc = '修正段落读取错误';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -521,7 +521,7 @@ $(function () {
                     var sectionName = $(this).prev().text();
                     self.sectionMap[sectionNumber] = sectionName;
                     $(this).append(sectionBtn);
-                    $(this).find('.Wikiplus-Edit-SectionBtn').data('id', i + 1);
+                    $(this).find('.Wikiplus-Edit-SectionBtn').data('id', sectionNumber);
                     $(this).find('.Wikiplus-Edit-SectionBtn').data('name', sectionName);
                 })
             }
