@@ -2,6 +2,7 @@
 	clear: both;
 }
 .Wikiplus-Btn{
+	cursor: pointer;
 	position: relative;
 	text-align: center;
 	float: left;
