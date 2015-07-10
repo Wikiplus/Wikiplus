@@ -430,8 +430,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.0';
-        this.lastestUpdateDesc = '修正段落读取错误';
+        this.version = '1.8.1';
+        this.lastestUpdateDesc = '对无法再模板页编辑模板说明的问题作出简单处理 修正css';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -517,7 +517,19 @@ $(function () {
                 //每个段落的按钮编辑
                 self.sectionMap = {};
                 $('.mw-editsection').each(function (i) {
-                    var sectionNumber = $(this).find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(\d+)/)[1];
+                    try{
+                        var sectionNumber = $(this).find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(\d)/)[1];
+                    }
+                    catch(e){
+                        //可能是模板说明页 这里实现有问题 需要修改整体逻辑
+                        //
+                        try{
+                           var sectionNumber = $(this).find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(.+)/)[1];
+                        }
+                        catch(e){
+                           self.showNotice.create.error('致命错误 你确定这是一个正常的页面？');
+                        }
+                    }
                     var sectionName = $(this).prev().text();
                     self.sectionMap[sectionNumber] = sectionName;
                     $(this).append(sectionBtn);
@@ -559,6 +571,13 @@ $(function () {
         }
         //快速编辑相关事件 第一步
         this.initQuickEditStepOne = function (section, summary) {
+            if (section.match(/T.+/) && section.match(/T.+/).length > 0 ){
+                if (!mw.config.values.wgPageName.match(/^.+\/doc$/)){
+                    self.showNotice.create.error('暂不支持在模板页对模板说明页编辑，正在为您跳转到编辑页面');
+                    location.href = mw.config.values.wgArticlePath.replace(/\$1/,mw.config.values.wgPageName) + '/doc';
+                    return false;
+                }
+            }
             var backBtn = $('<div>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text('返回');//返回按钮
             var jumpBtn = $('<div>').attr('id', 'Wikiplus-Quickedit-Jump').addClass('Wikiplus-Btn').append(
                 $('<a>').attr('href', '#Wikiplus-Quickedit').text('到编辑框')
