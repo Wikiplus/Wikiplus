@@ -608,6 +608,7 @@ $(function () {
                     $('.Wikiplus-InterBox-Content').css('text-align', 'left');
                     $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);//返回顶部
                     self.initQuickEditStepTwo(section, contentBackup);
+                    //魔法 勿移 Magic! Please do not modify it unless you have figured it out.
                     //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
                 }, window.innerWidth * 0.8);
             }
