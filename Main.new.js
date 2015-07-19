@@ -430,8 +430,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.1';
-        this.lastestUpdateDesc = '对无法再模板页编辑模板说明的问题作出简单处理 修正css';
+        this.version = '1.8.2';
+        this.lastestUpdateDesc = '支持在最近更改页展开所有更改';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -441,15 +441,15 @@ $(function () {
         //初始化
         this.init = function () {
             console.log('Wikiplus' + self.version + '正在加载');
+            $("head").append("<link>");
+            var css = $("head").children(":last");
+            css.attr({
+                rel: "stylesheet",
+                type: "text/css",
+                href: location.protocol == 'http:' ? "http://miku.host.smartgslb.com/wikiplus/wikiplus_new.css" : "https://blog.kotori.moe/wikiplus/wikiplus_new.css"
+            });
             if (mw.config.values.wgIsArticle && inArray(mw.config.values.wgNamespaceNumber, self.validNameSpaces) && mw.config.values.wgAction == 'view') {
                 self.kotori = new Wikipage();
-                $("head").append("<link>");
-                var css = $("head").children(":last");
-                css.attr({
-                    rel: "stylesheet",
-                    type: "text/css",
-                    href: location.protocol == 'http:' ? "http://miku.host.smartgslb.com/wikiplus/wikiplus_new.css" : "https://blog.kotori.moe/wikiplus/wikiplus_new.css"
-                });
                 //版本检查
                 var nowVersion = localStorage.Wikiplus_Version;
                 if (nowVersion != self.version){
@@ -461,7 +461,13 @@ $(function () {
                 self.initAdvancedFunctions();
             }
             else {
-                console.log('不符合加载条件，程序终止。');
+            	if (inArray(mw.config.values.wgPageName,['Special:最近更改','Special:RecentChanges'])){
+            		this.initRCFunctions();
+            	}
+            	else{
+            		console.log('不符合加载条件，程序终止。');
+            	}
+                
             }
         }
 
@@ -518,7 +524,7 @@ $(function () {
                 self.sectionMap = {};
                 $('.mw-editsection').each(function (i) {
                     try{
-                        var sectionNumber = $(this).find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(\d)/)[1];
+                        var sectionNumber = $(this).find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(\d+)/)[1];
                     }
                     catch(e){
                         //可能是模板说明页 这里实现有问题 需要修改整体逻辑
@@ -768,6 +774,16 @@ $(function () {
                 }, 600);
             });
         }
+        //展开最近更改列表
+        this.uncollapseRecentChanges = function(){
+        	$('#Wikiplus_RC_Functions').append(
+        		$('<span>').addClass('Wikiplus-Btn').text('展开所有最近更改').attr('id','Wikiplus_RC_UncollapseRecentChanges')
+        	)
+        	$('#Wikiplus_RC_UncollapseRecentChanges').click(function(){
+        		$('.mw-enhancedchanges-arrow').click();
+        		$(this).text($(this).text() == '展开所有最近更改' ? '折叠所有最近更改' : '展开所有最近更改');
+        	})
+        }
         /*
         * 基础功能区 结束
         */
@@ -915,6 +931,14 @@ $(function () {
             this.editPageBuild();//快速编辑
             this.simpleRedirector();//快速重定向
             this.editSettings();//编辑设置
+        }
+        this.initRCFunctions = function(){
+        	//加载最近更改页功能
+        	var wikiplus_field = $('<fieldset>').append(
+        		$('<legend>').text('Wikiplus')
+        	).addClass('rcoptions').attr('id','Wikiplus_RC_Functions')
+        	$('.rcoptions').after(wikiplus_field);
+        	this.uncollapseRecentChanges();//展开最近更改
         }
         this.initAdvancedFunctions = function () {
             //加载高级功能
