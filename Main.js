@@ -1,1122 +1,951 @@
+/// <reference path="../typings/jquery/jquery.d.ts"/>
 /**
 * Wikiplus
 * Author:+Eridanus Sora/@妹空酱
 * Github:https://github.com/Last-Order/Wikiplus
 */
-
-
-/**
-* 依赖组件 jQuery.ajaxq
-*/
-// AjaxQ jQuery Plugin
-// Copyright (c) 2012 Foliotek Inc.
-// MIT License
-// https://github.com/Foliotek/ajaxq
-
-(function($) {
-
-    var queues = {};
-
-    // Register an $.ajaxq function, which follows the $.ajax interface, but allows a queue name which will force only one request per queue to fire.
-    $.ajaxq = function(qname, opts) {
-
-        if (typeof opts === "undefined") {
-            throw ("AjaxQ: queue name is not provided");
-        }
-
-        // Will return a Deferred promise object extended with success/error/callback, so that this function matches the interface of $.ajax
-        var deferred = $.Deferred(),
-            promise = deferred.promise();
-
-        promise.success = promise.done;
-        promise.error = promise.fail;
-        promise.complete = promise.always;
-
-        // Create a deep copy of the arguments, and enqueue this request.
-        var clonedOptions = $.extend(true, {}, opts);
-        enqueue(function() {
-
-            // Send off the ajax request now that the item has been removed from the queue
-            var jqXHR = $.ajax.apply(window, [clonedOptions]).always(dequeue);
-
-            // Notify the returned deferred object with the correct context when the jqXHR is done or fails
-            // Note that 'always' will automatically be fired once one of these are called: http://api.jquery.com/category/deferred-object/.
-            jqXHR.done(function() {
-                deferred.resolve.apply(this, arguments);
-            });
-            jqXHR.fail(function() {
-                deferred.reject.apply(this, arguments);
-            });
-        });
-
-        return promise;
-
-        // If there is no queue, create an empty one and instantly process this item.
-        // Otherwise, just add this item onto it for later processing.
-        function enqueue(cb) {
-            if (!queues[qname]) {
-                queues[qname] = [];
-                cb();
-            }
-            else {
-                queues[qname].push(cb);
-            }
-        }
-
-        // Remove the next callback from the queue and fire it off.
-        // If the queue was empty (this was the last item), delete it from memory so the next one can be instantly processed.
-        function dequeue() {
-            if (!queues[qname]) {
-                return;
-            }
-            var nextCallback = queues[qname].shift();
-            if (nextCallback) {
-                nextCallback();
-            }
-            else {
-                delete queues[qname];
-            }
-        }
-    };
-
-    // Register a $.postq and $.getq method to provide shortcuts for $.get and $.post
-    // Copied from jQuery source to make sure the functions share the same defaults as $.get and $.post.
-    $.each( [ "getq", "postq" ], function( i, method ) {
-        $[ method ] = function( qname, url, data, callback, type ) {
-
-            if ( $.isFunction( data ) ) {
-                type = type || callback;
-                callback = data;
-                data = undefined;
-            }
-
-            return $.ajaxq(qname, {
-                type: method === "postq" ? "post" : "get",
-                url: url,
-                data: data,
-                success: callback,
-                dataType: type
-            });
-        };
-    });
-
-    var isQueueRunning = function(qname) {
-        return queues.hasOwnProperty(qname);
-    };
-
-    var isAnyQueueRunning = function() {
-        for (var i in queues) {
-            if (isQueueRunning(i)) return true;
-        }
-        return false;
-    };
-
-    $.ajaxq.isRunning = function(qname) {
-        if (qname) return isQueueRunning(qname);
-        else return isAnyQueueRunning();
-    };
-    
-    $.ajaxq.clear = function(qname) {
-        if (!qname) {
-            for (var i in queues) {
-                if (queues.hasOwnProperty(i)) {
-                    delete queues[i];
-                }
-            }
-        }
-        else {
-            if (queues[qname]) {
-                delete queues[qname];
-            }
-        }
-    };
-    
-})(jQuery);
-
 /**
 * 依赖组件:MoeNotification
 * https://github.com/Last-Order/MoeNotification
 */
-function MoeNotification(undefined){
+function MoeNotification(undefined) {
     var self = this;
-    this.display = function(text,type,callback){
-        console.log('New Notification:' + text);
-        var _callback = callback || function(){};
-        var _text = text  || '喵~';
+    this.display = function (text, type, callback) {
+        var _callback = callback || function () { };
+        var _text = text || '喵~';
         var _type = type || 'success';
         $("#MoeNotification").append(
             $("<div>").addClass('MoeNotification-notice')
-                      .addClass('MoeNotification-notice-' + _type)
-                      .append('<span>' + _text + '</span>')
-                      .fadeIn(300)
-        );
+                .addClass('MoeNotification-notice-' + _type)
+                .append('<span>' + _text + '</span>')
+                .fadeIn(300)
+            );
         self.bind();
         self.clear();
         _callback($("#MoeNotification").find('.MoeNotification-notice').last());
     }
     this.create = {
-        success : function(text,callback){
-            var _callback = callback || function(){};
-            self.display(text,'success',_callback);
+        success: function (text, callback) {
+            var _callback = callback || function () { };
+            self.display(text, 'success', _callback);
         },
-        warning : function(text,callback){
-            var _callback = callback || function(){};
-            self.display(text,'warning',_callback);
+        warning: function (text, callback) {
+            var _callback = callback || function () { };
+            self.display(text, 'warning', _callback);
         },
-        error : function(text,callback){
-            var _callback = callback || function(){};
-            self.display(text,'error',_callback);
+        error: function (text, callback) {
+            var _callback = callback || function () { };
+            self.display(text, 'error', _callback);
         }
     };
-    this.clear = function(){
-        if ($(".MoeNotification-notice").length>=10){
+    this.clear = function () {
+        if ($(".MoeNotification-notice").length >= 10) {
             //self.slideLeft($(".MoeNotification-notice").first());
-            $("#MoeNotification").children().first().fadeOut(150,function(){
+            $("#MoeNotification").children().first().fadeOut(150, function () {
                 $(this).remove();
             });
-            setTimeout(self.clear,300);
+            setTimeout(self.clear, 300);
         }
-        else{
+        else {
             return false;
         }
     }
-    this.bind = function(){
-        $(".MoeNotification-notice").mouseover(function(){
+    this.empty = function (f) {
+        $(".MoeNotification-notice").each(function (i) {
+            if ($.isFunction(f)) {
+                var object = this;
+                setTimeout(function () {
+                    f($(object));
+                }, 200 * i);
+            }
+            else {
+                $(this).delay(i * 200).fadeOut('fast', function () {
+                    $(this).remove();
+                })
+            }
+        })
+    }
+    this.bind = function () {
+        $(".MoeNotification-notice").mouseover(function () {
             self.slideLeft($(this));
         });
     }
-    window.slideLeft = this.slideLeft = function(object,speed){
-        object.css('position','relative');
+    window.slideLeft = this.slideLeft = function (object, speed) {
+        object.css('position', 'relative');
         object.animate({
             left: "-200%",
-            },
-            speed || 150, function() {
-                $(this).fadeOut('fast',function(){
+        },
+            speed || 150, function () {
+                $(this).fadeOut('fast', function () {
                     $(this).remove();
                 });
-        });
+            });
     }
-    this.init = function(){
+    this.init = function () {
         $("body").append('<div id="MoeNotification"></div>');
     }
-    if (!$("#MoeNotification").length>0){
+    if (!$("#MoeNotification").length > 0) {
         this.init();
     }
 }
-/** 
-* 主程序开始
-*/
 
-function Wikiplus(){
-    var self = this;
-    //self = class
-    this.Notification             = new MoeNotification();
-    this.Version                  = '1.6.5.6';
-    this.LastestUpdateDescription = '修复配置文件错误时无法进行编辑的问题';
-    this.isBeta                   = false;
-    this.ValidNamespaces          = [0,1,2,3,4,8,10,11,12,14,274,614,8964];
-    this.APILocation              = location.protocol +  '//' + location.host + wgScriptPath + '/api.php';
-    this.PreloadData              = {};
-    this.DefaultSettings          = {
-        '设置名' : '设置值',
-        '设置参考' : 'http://zh.moegirl.org/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
-    };
-    /**
-    * 模块:打印输出
-    * 输入:目标对象、输出文本、输出类型、回调函数
-    * 输出:无
-    */
-    this.OutputPrinter = function(object,text,type,callback){
-        var callback = arguments[3]?arguments[3]:function(){};
-        switch (type){
-            case 'fine':
-                object.append('<div class="output-fine">' + text + '</div>');
-                callback(object.find("div:last"));
-                break;
-            case 'warning':
-                object.append('<div class="output-warning">' + text + '</div>');
-                callback(object.find("div:last"));
-                break;
-            case 'error':
-                object.append('<div class="output-error">致命错误:' + text + '</div>');
-                callback(object.find("div:last"));
-                break;
-            default:
-                return false;
+//Wikiplus 主程序
+$(function () {
+    //包裹于函数避免污染全局
+
+    //功能性函数定义开始
+
+    //抛出格式化异常
+    //Params : (int) number, (string) message
+    function throwError(number, message) {
+        var e = new Error();
+        e.number = number;
+        e.message = message || '未知错误';
+        console.log('%c致命错误[' + e.number + ':' + e.message + ']抛出', 'color:red');
+        if ($('.Wikiplus-Banner').length > 0) {
+            $('.Wikiplus-Banner').text(e.message);
+            $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
         }
-    };
-    this.log = function(text){
-        console.log(text);
-    }
-    /**
-    * 模块:首次使用生成Cookie
-    * 输入:无
-    * 输出:无
-    */
-    this.Install = function(callback){
-        var _callback = callback || function(){};
-        localStorage.setItem('Wikiplus_StartUseAt',(new Date()).valueOf());
-        localStorage.setItem('Wikiplus_SrartEditCount',wgUserEditCount);
-        localStorage.setItem('Wikiplus_Version',self.Version);
-        localStorage.setItem('Wikiplus_LastUse',(new Date()).toLocaleDateString());
-        _callback();
-    }
-    /**
-    * 模块:获取页面基础信息
-    * 输入:回调函数
-    * 输出到回调函数:Object->[EditToken,TimeStamp]
-    */
-    this.getBasicInfomation = function(callback){
-        if (!(wgEnableAPI&&wgEnableWriteAPI)){
-            throw '本wiki未开启API或API不允许写入';
+        else {
+            (new MoeNotification()).create.error(e.message);
         }
-        console.time('获取基础信息用时');
-        $.ajaxq("MainQueue",{
-            type:"GET",
-            dataType:"json",
-            url:this.APILocation,
-            data:{
-                'action' : 'query',
-                'prop' : 'revisions|info',
-                'titles' : wgPageName.replace(/ /ig,'_'),
-                'rvprop' : 'timestamp',
-                'intoken' : 'edit',
-                'format' : 'json'
-            },
-            success:function(data){
-                if (data && data.query && typeof data.query.pages != "undefined"){
-                    for (key in data.query.pages){
-                        if (data.query.pages[key] && typeof data.query.pages[key].edittoken != "undefined"){
-                            var BasicInfomation = {};
-                            if (key!='-1'){
-                                try{
-                                    BasicInfomation.EditToken = data.query.pages[key].edittoken;
-                                    BasicInfomation.TimeStamp = data.query.pages[key].revisions[0].timestamp;
+        //throw e;
+    }
+    //抛出不致命异常
+    //Params : (int) number, (string) message
+    function throwWarning(number, message) {
+        var e = new Error();
+        e.number = number;
+        e.message = message || '未知错误';
+        console.log('%c非致命错误[' + e.number + ':' + e.message + ']抛出', 'color:#F3C421');
+    }
+
+    //检测值是否在数组中
+    //Params : (string) value, (array) array
+    //Returns : (boolean) True/False
+    window.inArray = inArray = function (value, array) {
+        if ($.inArray(value, array) === -1) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    //功能性函数定义结束
+
+    //Wikipage类构造函数
+    var Wikipage = function (page) {
+        var self = this;
+        console.log('正在构建页面类');
+        //可用性检测与权限检测
+        if (!mw.config.values.wgEnableAPI || !mw.config.values.wgEnableWriteAPI) {
+            throwError(1002, '本Wiki未开启可用的API');
+            return;
+        }
+        if (!inArray('autoconfirmed', mw.config.values.wgUserGroups)) {
+            throwError(1001, '非自动确认用户');
+            return;
+        }
+        //从MediaWiki定义的全局变量中获得信息
+        this.pageName = page || mw.config.values.wgPageName;
+        this.pageName = this.pageName.replace(/ /ig, '_');
+        this.revision = mw.config.values.wgRevisionId;
+        this.articleId = mw.config.values.wgArticleId;
+        this.API = location.protocol + '//' + location.host + mw.config.values.wgScriptPath + '/api.php';
+        console.log('正在获得页面基础信息');
+        //从API获得编辑令牌和起始时间戳
+        try {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: self.API,
+                data: {
+                    'action': 'query',
+                    'prop': 'revisions|info',
+                    'titles': self.pageName,
+                    'rvprop': 'timestamp',
+                    'intoken': 'edit',
+                    'format': 'json'
+                },
+                beforeSend: function () {
+                    console.time('获得页面基础信息耗时');
+                },
+                success: function (data) {
+                    if (data && data.query && data.query.pages) {
+                        var info = data.query.pages;
+                        for (key in info) {
+                            if (key != '-1') {
+                                if (info[key].revisions && info[key].revisions.length > 0) {
+                                    self.timeStamp = info[key].revisions[0].timestamp;
                                 }
-                                catch(e){
-                                    console.log('获取基础信息失败!可能是由于本页面不存在');
-                                    return false;
+                                else {
+                                    throwError(1004, '无法获得页面时间戳');
+                                }
+                                if (info[key].edittoken) {
+                                    if (info[key].edittoken != '+\\') {
+                                        self.editToken = info[key].edittoken;
+                                    }
+                                    else {
+                                        console.log('无法通过API获得编辑令牌，可能是空页面，尝试通过前端API获取通用编辑令牌');
+                                        self.editToken = mw.user.tokens.get('editToken');
+                                        if (self.editToken && self.editToken != '+\\') {
+                                            console.log('成功获得通用编辑令牌');
+                                        }
+                                        else {
+                                            throwError(1005, '无法获得页面编辑令牌 请确认登录状态');
+                                        }
+                                    }
                                 }
                             }
-                            else{
-                                //我觉得这里也不会执行到
+                            else {
+                                throwWarning(1003, '无法获得页面基础信息，请检查页面是否存在');
+                                console.log('无法通过API获得编辑令牌，可能是空页面，尝试通过前端API获取通用编辑令牌');
+                                self.editToken = mw.user.tokens.get('editToken');
+                                if (self.editToken && self.editToken != '+\\') {
+                                    console.log('成功获得通用编辑令牌');
+                                }
+                                else {
+                                    throwError(1005, '无法获得页面编辑令牌 请确认登录状态');
+                                }
                             }
-                            console.timeEnd('获取基础信息用时');
-                            callback(BasicInfomation);
-                        }
-                        else{
-                            console.log('该页面无基础信息');
-                            return false;
                         }
                     }
+                    console.timeEnd('获得页面基础信息耗时');
+                    self.inited = true;
                 }
-                else{
-                    try{
-                        self.OutputPrinter(self.OutputBox,"页面基础信息获取失败:未知原因",'error');
-                    }
-                    catch(e){
-                        throw '输出错误信息失败!'
-                    }
-                    return false;//这里应该不会执行
-                }
-            },
-            error:function(e){
-                self.OutputPrinter(self.OutputBox,"页面基础信息获取失败:网络原因",'error');
-                return false;
-            }
-        });
-    };
-    /**
-    * 模块:编辑页面
-    * 输入:页面名、内容、编辑摘要、段落编号(0为编辑整页)、回调函数
-    * 输出:输出到self.OutputBox
-    * 注:调用前需要先self.init();
-    */
-    this.editPage = function(pagename,content,summary,section,callback){
-        var callback = arguments[4]?arguments[4]:function(){};
-        var EditToken = this.EditToken;
-        var TimeStamp = this.TimeStamp;
-        var data = {'action':'edit','format':'json','title':pagename.replace(/ /ig,"_"),'text':content,'summary':summary,'token':EditToken,'basetimestamp':TimeStamp};
-        if (section !== 0){
-            data.section = section;
+            });
         }
-        $.ajaxq("MainQueue",{
-            type:"POST",
-            dataType:"json",
-            data:data,
-            url:this.APILocation,
-            success:function(data){
-                setTimeout(function(){
-                    self.OutputPrinter(self.OutputBox,"卡住了?!" + '<a href="http://miku.host.smartgslb.com/wikiplus/feedback.php?pagename=' + wgPageName + '&data=' + encodeURI(JSON.stringify(data)) + '" target="_blank">提报BUG！</a>','error');
-                },30000)
-                if (typeof data.edit.code != "undefined"){
-                    self.OutputPrinter(self.OutputBox,"编辑页面失败 " +  data.edit.code + ':' + data.edit.info,'error');
-                    if (data.edit.info.match(/AbuseFilter/)!==null){
-                        self.OutputPrinter(self.OutputBox,"触发防滥用过滤器 请按上一行所提示信息进行处理 并再次提交编辑",'error');
-                        $("button#wikiplus-quickedit-submit,textarea#quickedit").removeAttr('disabled');
-                        return false;
-                    }
-                }
-                if (typeof data.error == "undefined"){
-                    if (data.edit.result == "Success"){
-                        //self.Notification.create.success('编辑页面成功！');
-                        self.OutputPrinter(self.OutputBox,"编辑页面成功",'fine');
-                        localStorage.contentBackup = "";
+        catch (e) {
+            console.log('获取基础信息失败:' + e.message);
+        }
+    }
+
+    //通用编辑
+    Wikipage.prototype.edit = function (content, config, callback) {
+        var self = this;
+        data = {};
+        callback = callback || new Function();
+        //准备提交数据
+        data.action = 'edit';
+        data.format = 'json';
+        data.text = content;
+        data.title = this.pageName;
+        data.token = this.editToken;
+        data.basetimestamp = this.timeStamp;
+        $.ajax({
+            type: "POST",
+            url: self.API,
+            data: $.extend(data, config), //将自定义设置覆盖到默认设置
+            success: function (data) {
+                if (data && data.edit) {
+                    //分辨返回数据
+                    if (data.edit.result && data.edit.result == 'Success') {
+                        //编辑成功
                         callback();
                     }
-                    else{
-                        self.OutputPrinter(self.OutputBox,"编辑页面失败:未知原因",'error');
-                        return false;
+                    else {
+                        throwError(1085, '未知的编辑错误');
                     }
                 }
-                else{
-                    if (data.error.code = 'editconflict'){
-                        self.OutputPrinter(self.OutputBox,'发生编辑冲突！请不要慌张，请复制下方编辑框中的内容，然后刷新页面重新进行编辑！<br>提示:在进行复杂编辑、长时间编辑、对热点条目进行编辑时，请尽量避免使用Wikiplus','error');
-                        $('textarea').removeAttr('disabled');
+                else if (data && data.error) {
+                    switch (data.error.code) {
+                        case 'notitle': throwError(1006, '无法编辑空标题页面'); break;
+                        case 'notext': throwError(1007, '未设置页面目标内容'); break;
+                        case 'notoken': throwError(1008, '空的编辑令牌'); break;
+                        case 'invalidsection': throwError(1009, '段落编号非法'); break;
+                        case 'protectedtitle': throwError(1010, '无法被创建的标题'); break;
+                        case 'cantcreate': throwError(1011, '没有新建页面权限'); break;
+                        case 'cantcreate-anon': throwError(1012, '匿名用户无法新建页面'); break;
+                        case 'articleexists': throwError(1013, '无法创建已经存在的页面'); break;
+                        case 'noimageredirect-anon': throwError(1014, '匿名用户无法创建文件重定向'); break;
+                        case 'noimageredirect': throwError(1015, '没有创建文件重定向的权限'); break;
+                        case 'spamdetected': throwError(1016, '目标文本被SPAM过滤器拦截'); break;
+                        case 'filtered': throwError(1017, '过滤器拦截了本次编辑'); break;
+                        case 'contenttoobig': throwError(1018, '文本超过了最大字节限制'); break;
+                        case 'noedit-anon': throwError(1019, '匿名用户无法编辑页面'); break;
+                        case 'noedit': throwError(1020, '没有编辑页面的权限'); break;
+                        case 'pagedeleted': throwError(1021, '在编辑的时间里，页面被删除'); break;
+                        case 'emptypage': throwError(1022, '新页面不能为空内容'); break;
+                        case 'emptynewsection': throwError(1023, '新段落不能为空内容'); break;
+                        case 'editconflict': throwError(1024, '触发了编辑冲突'); break;
+                        case 'revwrongpage': throwError(1025, '目标修订版本与目标页面不匹配'); break;
+                        case 'undofailure': throwError(1026, '因为存在冲突的中间版本，无法撤销'); break;
+                        case 'missingtitle': throwError(1027, '我的天啊有生之年你能见到这个错误建议马上出门买彩票'); break;
+                        case 'mustbeposted': throwError(1028, '必须使用POST方式提交编辑'); break;
+                        case 'readapidenied': throwError(1029, '没有使用读取API的权限'); break;
+                        case 'writeapidenied': throwError(1030, '您没有权限通过API编辑此页面'); break;
+                        case 'noapiwrite': throwError(1031, '本Wiki未开启可用的写入API'); break;
+                        case 'badtoken': throwError(1032, '非法的编辑令牌'); break;
+                        case 'missingparam': throwError(1033, '页面名、页面ID必须有一项不为空值'); break;
+                        case 'invalidparammix': throwError(1034, '页面名、页面ID不能同时使用'); break;
+                        case 'invalidtitle': throwError(1035, '非法的标题'); break;
+                        case 'nosuchpageid': throwError(1036, '不存在的页面ID'); break;
+                        case 'pagecannotexist': throwError(1037, '该名称空间不允许创建一般页面'); break;
+                        case 'nosuchrevid': throwError(1038, '不存在的修订编号'); break;
+                        case 'badmd5': throwError(1039, '非法的MD5值'); break;
+                        case 'hookaborted': throwError(1040, '编辑被扩展Hook拦截'); break;
+                        case 'parseerror': throwError(1041, '无法解析所给的WikiText'); break;
+                        case 'summaryrequired': throwError(1042, '编辑摘要不能为空'); break;
+                        case 'blocked': throwError(1043, '您已经被封禁'); break;
+                        case 'ratelimited': throwError(1044, '达到操作速率上限，请稍后再试'); break;
+                        case 'unknownerror': throwError(1045, '未知错误'); break;
+                        case 'nosuchsection': throwError(1046, '不存在的段落'); break;
+                        case 'sectionsnotsupported': throwError(1047, '本页面不支持段落编辑'); break;
+                        case 'editnotsupported': throwError(1048, '该页面无法通过API编辑'); break;
+                        case 'appendnotsupported': throwError(1049, '该页面无法前后插入文本'); break;
+                        case 'redirect-appendonly': throwError(1050, '在遵循重定向的情况下，只能进行前后插入或创建新段落'); break;
+                        case 'badformat': throwError(1051, '错误的文本格式'); break;
+                        case 'customcssprotected': throwError(1052, '无法编辑用户CSS页'); break;
+                        case 'customjsprotected': throwError(1053, '无法编辑用户JS页'); break;
                     }
-                    try{
-                        self.OutputPrinter(self.OutputBox,'编辑页面失败:' + data.error.code + ':' + data.error.info,'error');
-                    }
-                    catch(e){
-                        console.log('Wikiplus主体致命错误 跳出并停止当前流程')
-                        self.OutputPrinter(self.OutputBox,'编辑页面失败:未知原因','error');
-                    }
-                    return false;
+                }
+                else {
+                    throwError(1086, '未知的编辑错误');
                 }
             },
-            error:function(e){
-                self.OutputPrinter(self.OutputBox,'编辑页面失败:网络原因','error');
-                localStorage.contentBackup = content;
+            error: function (e) {
+                throwError(1056, '由于网络原因或服务器故障导致编辑失败');
             }
         })
-    };
-    /**
-    * 模块:编辑页面分类
-    * 输入:新的分类(Array)、可选的回调函数
-    * 输出:
-    */
-    this.editCategories = function(categories,callback){
-        var callback = arguments[1]?arguments[1]:function(){};
-        if (self.getPreloadData(0)){
-            var content = self.getPreloadData(0);
-            content = content.replace(new RegExp('\\[\\[分类\\:.+?\\]\\]','ig'),"");
-            content = content.replace(new RegExp('\\[\\[category\\:.+?\\]\\]','ig'),"");
-            var newcategories = "";
-            for (i=0;i<categories.length;i++){
-                newcategories += "[[分类:" + categories[i] + ']]';
-            }
-            content += newcategories;
-            self.OutputPrinter(self.OutputBox,'原有分类:' + self.wgCategoriesBackup,'fine');
-            self.OutputPrinter(self.OutputBox,'修改后分类:' + categories,'fine');
-            self.OutputPrinter(self.OutputBox,'提交中..','fine');
-            self.editPage(wgPageName,content,'//修改分类 via Wikiplus',0,callback);
+    }
+    //Wikipage - editSection
+    //编辑段落
+    //Params : (string) content , (number) section , (function) callback
+    Wikipage.prototype.editSection = function (content, section, callback) {
+        var self = this;
+        var section = section || 0;
+        var callback = callback || new Function();
+        this.edit(content, {
+            'section': section
+        }, callback);
+    }
+    //Wikipage - redirectTo
+    //重定向至
+    //Params : (string) target
+    Wikipage.prototype.redirectTo = function (target, callback) {
+        var self = this;
+        var callback = callback || function () { };
+        if (!target) {
+            throwError(1055, '无法重定向至空页面');
         }
-        else{
-            self.OutputPrinter(self.OutputBox,'初始化未正确完成 请尝试页面','error');
-            return false;
+        else {
+            this.edit('#REDIRECT [[' + target + ']]', {
+                'summary': '重定向页面至[[' + this.pageName + ']] // Wikiplus'
+            }, callback);
         }
     }
-    /**
-    * 模块:获取Wiki代码的解析结果
-    * 输入:Wikitext,回调函数
-    * 输出:输出到回调函数:String
-    */
-    this.getPagePreview = function(wikitext,callback){
-        var callback = arguments[1]?arguments[1]:function(){};
-        $.ajaxq("MainQueue",{
-            type:"POST",
-            dataType:"json",
-            data:{'format':'json','action':'parse','text':wikitext,'title':wgPageName.replace(/ /ig,"_"),'pst':true},
-            url:this.APILocation,
-            success:function(data){
-                if (typeof data.parse.text != "undefined"){
-                    $.each(data.parse.text,function(index,item){
-                        if (index=="*"){
-                            callback(item);
-                        }
-                    })
-                }
-                else{
-                    self.OutputPrinter(self.OutputBox,"预览页面失败:未知原因",'error');
-                    $('#wikiplus-quickedit-preview-submit').removeAttr('disabled');
-                }
-            },
-            error:function(){
-                self.OutputPrinter(self.OutputBox,"预览页面失败:网络原因",'error');
-                $('#wikiplus-quickedit-preview-submit').removeAttr('disabled');
-            }
-        })
-    },
-    /**
-    * 模块:获取页面的Wikitext
-    * 输入:页面名、段落编号(0为整页)、修订版本号、回调函数
-    * 输出:输出到回调函数:String
-    */
-    this.getPageWikitext = function(pagename,section,revision,callback){
-        var callback = arguments[3] ? arguments[3] : function () { };
-        var url = location.protocol + '//' + location.host + wgScriptPath + '/index.php';
-        $.ajaxq("MainQueue", {
-            url : url,
+    //Wikipage - redirectFrom
+    //从~重定向
+    //Params : (string) origin
+    Wikipage.prototype.redirectFrom = function (origin, callback) {
+        var self = this;
+        var callback = callback || function () { };
+        if (!origin) {
+            throwError(1057, '未指定重定向源');
+        }
+        else {
+            this.edit('#重定向 [[' + this.pageName + ']]', {
+                'title': origin,
+                'summary': '重定向至[[' + this.pageName + ']] // Wikiplus'
+            }, callback)
+        }
+    }
+    //Wikipage - getWikiText
+    //获取页面的wiki文本
+    //Params : (function) callback
+    Wikipage.prototype.getWikiText = function (callback, config) {
+        var callback = callback || new Function();
+        var url = location.protocol + '//' + location.host + mw.config.values.wgScriptPath + '/index.php';
+        var data = {
+            'title': this.pageName,
+            'action': 'raw'
+        };
+        $.ajax({
+            url: url,
             type: "GET",
-            data : {
-                'title': pagename,
-                'oldid': revision,
-                'action': 'raw',
-                'section' : section || ''
+            dataType: "text",
+            cache: false,
+            data: $.extend(data, config),
+            beforeSend: function () {
+                console.time('获得页面文本耗时');
             },
-            dataType:"text",
-            url:url,
-            success:function(data){
-                callback(data);
+            success: function (data) {
+                if (data) {
+                    console.timeEnd('获得页面文本耗时');
+                    callback(data);
+                }
+                else {
+                    throwError(1054, '无法获得页面文本');
+                }
+            },
+            error: function (e) {
+                if (e.status == 404) {
+                    throwWarning(1101, '无法获得页面文本，可能由于段落或页面不存在');
+                }
+                else {
+                    throwError(1055, '无法获得页面文本(网络原因)' + '[' + e.status + ']');
+                }
             }
         })
-    },
-    /**
-    * 模块:预读取页面
-    * 输入:段落编号(0为整页)、回调函数
-    * 输出:无
-    */
-    this.preloadPage = function(section,callback){
-        if (self.getPreloadData(section)){
-            console.log('段落' + section + '已预读取，跳过');
-            return false;
+    }
+    //Wikipage - parseWikiText
+    //解析Wiki文本
+    //Params : (string) text , (function) callback
+    Wikipage.prototype.parseWikiText = function (text, callback) {
+        var self = this;
+        var data = {
+            'format': 'json',
+            'action': 'parse',
+            'text': text,
+            'title': this.pageName,
+            'pst': 'true'
         }
-        else{
-            this.getPageWikitext(wgPageName,section,wgRevisionId,function(data){
-                try{
-                    self.setPreloadData(section,data);
-                    console.log('完成段落' + section + '的预读取');
-                    callback();
-                } catch(e) {};
-            });
-        }
-    };
-    /**
-    * 模块:绑定快速编辑相关事件 第一部分 
-    * 主要负责载入编辑界面 显示页面的Wikitext
-    * 输入:段落编号(0为整页)、默认编辑摘要、回调函数
-    * 输出:无
-    */
-    this.initQuickEditStepOne = function(section,summary,callback){
-        var callback = arguments[2]?arguments[2]:function(){};
-        var sectionNumber = section!=0?section.data('section'):0;
-        var sectionName = section!=0?section.data('sectionName'):"";
-        var section = {
-            'sectionName' : sectionName || wgPageName,
-            'sectionNumber' : sectionNumber || "0"
-        }
-        //var section = section?section:{};
-        $('body').animate({scrollTop:0},200);
-        if (self.getPreloadData(sectionNumber)){
-            this.OutputPrinter(this.OutputBox,"本次编辑触发预读取，读取用时0ms",'fine',function(object){
-                object.delay(3000).fadeOut('fast');
-            });
-            $("#mw-content-text").html('<div id="wikiplus-quickedit-back" class="wikiplus-btn">返回</div><div id="wikiplus-quickedit-jump" class="wikiplus-btn"><a href="#quickedit">到编辑框</a></div><div class="clear" /><hr><div class="clear" /><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
-            $("textarea#quickedit").val(self.getPreloadData(sectionNumber));
-            $("input#wikiplus-quickedit-summary-input").val(self.getSetting('defaultSummary',section) || summary);
-            this.initQuickEditStepTwo(sectionNumber);
-        }
-        else{
-            console.time('加载用时')
-            this.OutputPrinter(this.OutputBox,"加载中..",'fine',function(object){
-                object.delay(3000).fadeOut('fast');
-            });
-            this.getPageWikitext(wgPageName,sectionNumber,wgRevisionId,function(data){
-                console.timeEnd('加载用时');
-                $("#mw-content-text").html('<div id="wikiplus-quickedit-back" class="wikiplus-btn">返回</div><div id="wikiplus-quickedit-jump" class="wikiplus-btn"><a href="#quickedit">到编辑框</a></div><div class="clear" /><hr><div id="wikiplus-quickedit-preview-ouput"></div><textarea id="quickedit"></textarea><input id="wikiplus-quickedit-summary-input" placeholder="编辑摘要"></input><button id="wikiplus-quickedit-submit">提交(Ctrl+Enter)</button><button id="wikiplus-quickedit-preview-submit">预览</button>');
-                if (localStorage.contentBackup){
-                    $("#mw-content-text #wikiplus-quickedit-jump").after('<div class="clear" /><div class="wikiplus-rescue-help">您有上回未提交成功的内容 本次备份将于下一次编辑后被删除</div><div class="wikiplus-btn" id="wikiplus-rescue-apply">覆盖到当前编辑框</div><div class="clear" />');
-                    $("#wikiplus-rescue-apply").click(function(){
-                        $("textarea#quickedit").val(localStorage.contentBackup);
-                    })
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            url: self.API,
+            success: function (data) {
+                if (data && data.parse && data.parse.text) {
+                    callback(data.parse.text['*']);
                 }
-                $("textarea#quickedit").val(data);
-                $("input#wikiplus-quickedit-summary-input").val(self.getSetting('defaultSummary',section) || summary);
-                self.initQuickEditStepTwo(sectionNumber);
-            })
-        }
+                else {
+                    throwError(1060, '无法解析页面文本');
+                }
+            }
+        })
+    }
+    //Wikipage - toString
+    //显示类信息
+    Wikipage.prototype.info = Wikipage.prototype.toString = function () {
+        return '(╯‵□′)╯︵┻━┻\r\n[Wikiplus - Wikipage]\r\n[页面名:' + this.pageName + ']\r\n(╯‵□′)╯︵┻━┻';
+    }
 
-    };
-    /**
-    * 模块:绑定快速编辑相关事件 第二部分
-    * 主要负责绑定
-    * 输入:段落编号、可选的回调函数
-    * 输出:无
-    */
-    this.initQuickEditStepTwo = function(section,callback){
-        var callback = arguments[1]?arguments[1]:function(){};
-        $("button#wikiplus-quickedit-submit").click(function(){
-            $('body').animate({scrollTop:0},200);
-            var content = $("textarea#quickedit").val();
-            var summary = $("input#wikiplus-quickedit-summary-input").val();
-            self.OutputPrinter(self.OutputBox,'正在提交...','fine');
-            $("textarea#quickedit,button#wikiplus-quickedit-submit,button#wikiplus-quickedit-preview-submit,input#wikiplus-quickedit-summary-input").attr('disabled','disabled');
-            self.editPage(wgPageName,content,summary,section,function(){
-                location.reload();
-            })
-        });
-        $("input#wikiplus-quickedit-summary-input,textarea#quickedit").keypress(function(e){
-            if (e.ctrlKey && e.which == 13 || e.which ==10){
-                $("button#wikiplus-quickedit-submit").trigger('click');
-            }
-        });
-        $("button#wikiplus-quickedit-preview-submit").click(function(){
-            $('body').animate({scrollTop:0},200);
-            $(this).attr('disabled','disabled');
-            self.OutputPrinter(self.OutputBox,'加载中...','fine',function(object){
-                object.delay(3000).fadeOut('fast');
-            })
-            var content = $("textarea#quickedit").val();
-            self.getPagePreview(content,function(content){
-                $("div#wikiplus-quickedit-preview-ouput").html(content);
-                $("button#wikiplus-quickedit-preview-submit").removeAttr('disabled');
-                self.OutputPrinter(self.OutputBox,'请收下您的预览~','fine',function(object){
-                    object.delay(3000).fadeOut('fast');
-                })
-            })
-        });
-        $("#wikiplus-quickedit-back").click(function(){
 
-            $("#mw-content-text").html(self.WikiContentBackup);
-            self.displayQuickEditInterface();
-        })
-    }
-    /**
-    * 模块:加载快速编辑界面
-    * 输入:回调函数
-    * 输出:无
-    */
-    this.displayQuickEditInterface = function(callback){
-        var callback = arguments[0]?arguments[0]:function(){};
-        $(".mw-editsection").each(function(){
-            $(this).append('<span>[</span><a href="javascript:void(0)" class="quickedit-section">快速编辑</a><span>]</span>');
-        });
-        $(".quickedit-section").each(function(i){
-            $(this).unbind();
-            var section = $(this).parent().find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(\d+)/)[1];
-            $(this).data('section',section);//将每个快速编辑按钮对应的段落编号用data的方式存储在自身
-            $(this).data('sectionName',$(this).parent().prev().text());
-            $(this).click(function(i){
-                self.initQuickEditStepOne($(this),"/*" + $(this).data('sectionName') + '*/ //快速编辑 via Wikiplus');
-            })
-        });
-        if ($("#wikiplus-quickedit-button-top").length>0){
-            //已有顶部按钮
-        }
-        else{
-            $("#ca-edit").before('<li id="ca-edit" class="wikiplus-quickedit-button-top"><span id="wikiplus-quickedit-button-top"><a href="javascript:void(0)" title="快速编辑~" id="wikiplus-quickedit-page">快速编辑</a></span></li>');
-        }
-        $("#wikiplus-quickedit-page").unbind();
-        $("#wikiplus-quickedit-page").click(function(){
-            self.initQuickEditStepOne(0,"//快速编辑 via Wikiplus");
-        })
-    }
-    /**
-    * 模块:加载分类编辑 第一部分
-    * 输出当前分类
-    * 输入:无
-    * 输出:无
-    */
-    this.initCategoriesManage = function(){
-        console.log('开始加载功能：分类管理');
-        if (typeof this.wgCategories != "undefined" && this.wgCategories.length != 0){
-            var manager = '<span class="wikiplus-categories">当前页面含有的非自动分类:';
-            for (i=0;i<this.wgCategories.length;i++){
-                manager += '<span class="wikiplus-category">' + this.wgCategories[i] + '</span><a href="javascript:void(0)" class="wikiplus-category-remove">(-)</a> ';
-            }
-            manager += '</span> <a href="javascript:void(0)" class="wikiplus-category-add">(+)</a>';
-            this.OutputPrinter(this.OutputBox,manager,'fine');
-            $(".wikiplus-category").each(function(i){
-                $(this).data('status','existed');//将原有分类为原有的。
-            });
-            self.OutputPrinter(self.OutputBox,'<button id="wikiplus-submitcategorychanges">提交分类修改</input>','fine',function(object){
-                object.css('display','none');
-            });
-            self.bindCategoriesManageEvent();
-        }
-    }
-    /**
-    * 模块:绑定分类编辑相关事件
-    * 输入:无
-    * 输出:无
-    */
-    this.bindCategoriesManageEvent = function(){
-        $(".wikiplus-categories").children().each(function(i){
-            $(this).unbind();
-        })
-        var ChangesSubmitter = $("button#wikiplus-submitcategorychanges");
-        ChangesSubmitter.unbind();
-        //移除分类
-        $(".wikiplus-category-remove").each(function(i){
-            $(this).click(function(){
-                var category = $(this).prev();
-                category.data('status','removed');
-                category.css({'color':'grey','text-decoration':'line-through'});
-                self.renewCategories();
-                category.unbind('click');
-                $(this).remove();
-                ChangesSubmitter.parent().fadeIn('fast');
-            })
-        });
-        //添加新分类
-        $(".wikiplus-category-add").click(function(){
-            $(this).unbind('click');
-            $(this).after('<input id="wikiplus-category-add-input" placeholder="请输入添加的分类名 多个以空格分隔" style="width:300px;"></input><button id="wikiplus-category-add-apply">应用</button>');
-            $(this).remove();
-            $("#wikiplus-category-add-apply").click(function(){
-                var categoreis = $("#wikiplus-category-add-input").val().split(" ");
-                var list = "";
-                if (categoreis.length>0){
-                    for (i=0;i<categoreis.length;i++){
-                        if (!($.inArray(categoreis[i],self.wgCategories)!='-1')){
-                            var category = categoreis[i];
-                            if (category){
-                                list += '<span class="wikiplus-category" data-status="added">' + category + '</span><a href="javascript:void(0)" class="wikiplus-category-remove">(-)</a> ';
-                                self.wgCategories.push(category);
-                            }
-                            else{
-                                continue;
-                            }
-                        }
-                        else{
-                            continue;
-                        }
-                    }
-                    ChangesSubmitter.parent().fadeIn('fast');
-                }
-                else{
-                    self.OutputPrinter(self.OutputBox,'空输入..干什么呀..','warning',function(object){
-                        object.delay(3000).fadeOut('fast');
-                    })
-                }
-                list += '<a href="javascript:void(0)" class="wikiplus-category-add">(+)</a>';
-                $(".wikiplus-categories").append(list);
-                $("#wikiplus-category-add-input,#wikiplus-category-add-apply").remove();
-                self.renewCategories();
-                self.bindCategoriesManageEvent();
-            })
-        })
-        //修改现有分类
-        $(".wikiplus-category").each(function(i){
-            $(this).click(function(){
-                var oldcategory = $(this).text();
-                var oldcategoryobj = $(this);
-                $(this).data('status','removed');
-                $(this).after('<input id="wikiplus-category-edit-input" placeholder="修改为什么呢"></input><button id="wikiplus-category-edit-apply">应用更改</button>');
-                $("#wikiplus-category-edit-input").val(oldcategory);
-                $(this).hide();
-                $("#wikiplus-category-edit-apply").click(function(){
-                    var newcategory = $(this).prev().val();
-                    if (newcategory == oldcategory){
-                        oldcategoryobj.data('status','existed');
-                        oldcategoryobj.fadeIn('fast');
-                        $(this).prev().remove();
-                        $(this).remove();
-                    }
-                    else{
-                        if ($.inArray(newcategory,self.wgCategories)!=-1){
-                            oldcategoryobj.remove();
-                            $(this).prev().remove();
-                            $(this).remove();
-                            self.renewCategories();
-                        }
-                        else{
-                            oldcategoryobj.text(newcategory);
-                            oldcategoryobj.data('status','edited')
-                            oldcategoryobj.fadeIn('fast');
-                            $(this).prev().remove();
-                            $(this).remove();
-                            ChangesSubmitter.parent().fadeIn('fast');
-                            self.renewCategories();
-                        }
-                    }
-                })
-            })
-        });
-        //提交分类编辑
-        ChangesSubmitter.click(function(){
-            self.renewCategories();
-            $(this).fadeOut('fast');
-            self.editCategories(self.wgCategories,function(){
-                self.OutputPrinter(self.OutputBox,'修改完毕!','fine');
-                location.reload();
-            })
-        })
-    }
-    /**
-    * 模块:更新分类列表
-    * 输入:无
-    * 输出:无
-    */
-    this.renewCategories = function(){
-        self.wgCategories = [];
-        $(".wikiplus-categories").find(".wikiplus-category").each(function(i){
-            var status = $(this).data('status');
-            if (status != "removed"){
-                self.wgCategories.push($(this).text());
-            }
-        })
-        console.log('现在的分类列表:'+self.wgCategories);
-    }
-    /**
-    * 模块:站点特性加载器
-    * 输入:无
-    * 输出:无s
-    */
-    this.siteFeatureLoader = function(){
-        var siteList = {
-            'mgp' : {
-                sitename : '萌娘百科',
-                feature : ''
-            },
-            'zwp' : {
-                sitename : '中文维基百科',
-                feature : ''
-            },
-            'msp' : {
-                site : '萌音物语',
-                feature : ''
-            }
+
+    //主界面显示及初始化
+    var Wikiplus = function () {
+        //再次包裹在函数内以优雅地安排变量作用域
+        //这不是一个严格意义上的Class 但是有其一定特性
+        var self = this;
+        this.showNotice = new MoeNotification();
+        this.isBeta = false;
+        this.version = '1.8.2';
+        this.lastestUpdateDesc = '支持在最近更改页展开所有更改';
+        this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
+        this.preloadData = {};
+        this.defaultSettings = {
+            '设置名': '设置值',
+            '设置参考': 'http://zh.moegirl.org/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
         };
-        var siteCode = null;
-        switch(location.host){
-            case 'zh.moegirl.org':
-                siteCode = 'mgp';
-                break;
-            case 'zh.wikipedia.org':
-                siteCode = 'zwp';
-                break;
-        }
-        console.log(siteList[siteCode]);
-    }
-    //各个基础功能模块 开始
-    /**
-    * 模块:快速创建重定向页
-    */
-    this.createRedirectPage = function(){
-        console.log('开始加载功能：创建重定向页');
-        if ($("#wikiplus-function").length>0){
-            $("#wikiplus-function").append('<li id="wikiplus-function-CRP">创建重定向页</li>');
-            $("#wikiplus-function-CRP").click(function(){
-                $("#wikiplus-function").children().fadeOut('fast',function(){
-                    $("#wikiplus-function").children().remove();
-                    $("#wikiplus-function").append('<div class="wikiplus-btn" id="wikiplus-function-reload">返回</div>');
-                    $("#wikiplus-function-reload").click(function(){
-                        self.initFunctionsStepTwo();
-                    });
-                    $("#wikiplus-function").append('<input id="wikiplus-function-CRP-input" placeholder="将哪个页面重定向至' + wgPageName + '?"></input><button id="wikiplus-function-CRP-submit">提交(Ctrl+Enter)</button>');
-                    $("#wikiplus-function-CRP-submit").click(function(){
-                        if ($("#wikiplus-function-CRP-input").val() != ""){
-                            var RedirectPageName = $("#wikiplus-function-CRP-input").val();
-                            self.OutputPrinter(self.OutputBox,'将' + RedirectPageName + '重定向至' + wgPageName + '...','fine');
-                            self.editPage(RedirectPageName,'#REDIRECT [[' + wgPageName + ']]','//将' + RedirectPageName + '重定向至' + wgPageName + ' via Wikiplus',0,function(){
-                                self.OutputPrinter(self.OutputBox,'创建重定向完毕','fine');
-                                location.href = location.protocol + '//' + location.host + '/' + wgScriptPath + 'index.php?title=' + RedirectPageName;
-                            })
-                        }
-                    });
-                    $("#wikiplus-function-CRP-input").keypress(function(e){
-                        if (e.ctrlKey && e.which == 13 || e.which ==10){
-                            $("#wikiplus-function-CRP-submit").trigger('click');
-                        }
-                    })
-                })
-            })
-        }
-        else{
-            self.OutputPrinter(self.OutputBox,'不能为空哦','warning',function(object){
-                object.delay(3000).fadeOut('fast');
-            });
-        }
-    };
-    /**
-    * 编辑设置
-    */
-    this.editSettings = function(){
-        console.log('开始加载功能：配置编辑');
-        if ($("#wikiplus-function").length>0){
-            $("#wikiplus-function").append('<li id="wikiplus-function-settings">设置</li>');
-            $("#wikiplus-function-settings").click(function(){
-                $("#wikiplus-function").children().fadeOut('fast',function(){
-                    $("#wikiplus-function").children().remove();
-                    $("#wikiplus-function").append('<div class="wikiplus-btn" id="wikiplus-function-reload">返回</div>');
-                    $("#wikiplus-function-reload").click(function(){
-                        self.initFunctionsStepTwo();
-                    });
-                    $("#wikiplus-function").append('<li id="wikiplus-function-RS" style="display:none;">重置统计数据</li>');
-                    $("#wikiplus-function").append('<li id="wikiplus-function-ESF" style="display:none;">配置设置文件</li>');
-                    $("#wikiplus-function-RS").fadeIn('fast',function(){
-                        $(this).click(function(){
-                            $(this).unbind();
-                            $("#wikiplus-function").children().fadeOut('fast',function(){
-                                $("#wikiplus-function").children().remove();
-                                $("#wikiplus-function").append('<button id="wikiplus-function-RS-comfirm">确认</button>');
-                                $("#wikiplus-function-RS-comfirm").click(function(){
-                                    $(this).attr('disabled','disabled');
-                                    $.removeCookie("Wikiplus_StartUseAt");
-                                    $.removeCookie("Wikiplus_SrartEditCount");
-                                    self.Install(function(){
-                                        location.reload();
-                                    })
-                                })
-                            })
-                        })
-                    });
-                    $("#wikiplus-function-ESF").fadeIn('fast',function(){
-                        $(this).click(function(){
-                            $(this).unbind();
-                            $("#wikiplus-function").append(
-                                $("<textarea></textarea>").css({'position':'relative','width':'80%','height':'400px','margin-top':'20px'})
-                                                          .val($.cookie('Wikiplus_Settings'))
-                                                          .attr('id','wikiplus-function-ESF-input')
-                            )
-                            $("#wikiplus-function-ESF-input").after('<br><button id="wikiplus-function-ESF-apply">提交(Ctrl+Enter)</button>');
-                            $("#wikiplus-function-ESF-apply").click(function(){
-                                $(this).unbind();
-                                var settings = $("#wikiplus-function-ESF-input").val();
-                                $.cookie('Wikiplus_Settings',settings,{'raw' : true , 'expires' : new Date(253402271999000) , 'path' : '/'});
-                                self.OutputPrinter(self.OutputBox,'修改设置完毕','fine');
-                                $("#wikiplus-function").children().fadeOut('fast',function(){
-                                    location.reload();
-                                })
-                            });
-                            $("#wikiplus-function-ESF-input").keypress(function(e){
-                                if (e.ctrlKey && e.which == 13 || e.which ==10){
-                                    $('#wikiplus-function-ESF-apply').trigger('click');
-                                }
-                            })
-                        })
-                    })
-                })
-            })
-        }
-    }
-    /**
-    * 获取设置值
-    * 输入:键名
-    * 存在 输出值 不存在 输出undefined
-    */
-    this.getSetting = function(key,object){
-        var w = object;
-        try{
-            var settings = $.parseJSON($.cookie('Wikiplus_Settings'));
-        }
-        catch(e){
-            self.Notification.create.error('配置文件存在错误!');
-            return false;
-        }
-        try{
-            var _setting = new Function('return ' + settings[key]);
-            if (typeof _setting == 'function'){
-                try{
-                    if (_setting()(w) === true){
-                        return undefined
-                    }
-                    else{
-                        return _setting()(w) || settings[key];
-                    }
-                }
-                catch (e){
-                    return settings[key];
-                }
-            }
-            else{
-                return settings[key];
-            }
-        }
-        catch (e){
-            try{
-                return settings[key];
-            }
-            catch (e){
-                return undefined;
-            }
-        }
-    }
-    /**
-    * 模块:读取预读取数据
-    * 输入:段落编号
-    * 输出:段落内容 || false
-    */
-    this.getPreloadData = function(id){
-        try{
-            var data = self.PreloadData['section' + id] || false;
-            return data;
-        }
-        catch (e){
-            return false;
-        }
-    }
-    /**
-    * 模块:设置预读取数据
-    * 输入:段落编号,内容
-    */
-    this.setPreloadData = function(id,data){
-        try{
-            self.PreloadData['section' + id] = data;
-        }
-        catch(e){
-            return false;
-        }
-    }
-    /**
-    * 模块:预读取
-    */
-    this.bindPreloadEvents = function(){
-        console.log('开始加载功能：Shimakaze Preloader')
-        $("#toc").children("ul").find("a").each(function(i){
-            $(this).mouseover(function(){
-                $(this).unbind('mouseover');
-                self.preloadPage(i+1,function(){});
-            });
-        }); 
-        //当鼠标划过目录时预加载对应段落
-        $(".quickedit-section").each(function(){
-            $(this).mouseover(function(){
-                var section = $(this).data('section');
-                self.preloadPage(section);
-            });
-        });
-        //当鼠标划过快速编辑按钮时加载对应段落
-    }
-    //各个基础功能模块 结束
-    /**
-    * 模块:初始化
-    * 输入:无
-    * 输出:无
-    */
-    this.init = function(){
-        console.log('Wikiplus正努力加载');
-        //获取页面基本信息并存储
-        window.onerror = function(){
-            console.log('Wikiplus初始化失败 版本:' + self.Version);
-        };
-        this.getBasicInfomation(function(BasicInfomation){
-            try{
-                self.EditToken = BasicInfomation.EditToken;
-                self.TimeStamp = BasicInfomation.TimeStamp;
-                self.WikiContentBackup = $("#mw-content-text").html();
-            } catch(e) {
-                //如果获取不到Token或Timestamp就终止
-                console.log('Wikiplus初始化失败');
-                return false;
-            };
+        //初始化
+        this.init = function () {
+            console.log('Wikiplus' + self.version + '正在加载');
             $("head").append("<link>");
             var css = $("head").children(":last");
             css.attr({
                 rel: "stylesheet",
                 type: "text/css",
-                href: location.protocol == 'http:' ? "http://miku.host.smartgslb.com/wikiplus/wikiplus.css" : "https://blog.kotori.moe/wikiplus/wikiplus.css"
+                href: location.protocol == 'http:' ? "http://miku.host.smartgslb.com/wikiplus/wikiplus_new.css" : "https://blog.kotori.moe/wikiplus/wikiplus_new.css"
             });
-            if (wgPageName!=wgMainPageTitle&&($.inArray(wgNamespaceNumber, self.ValidNamespaces)!='-1'&&wgIsArticle&&wgArticleId!=0)){
-                if (wgAction == 'view'){
-                    $("body").find(".firstHeading").after('<div class="wikiplus-output"></div><div id="wikiplus"><div id="wikiplus-main-button">W+</div><div id="wikiplus-function"></div><div style="clear:both;"></div></div>');
-                    self.OutputBox = $(".wikiplus-output");
+            if (mw.config.values.wgIsArticle && inArray(mw.config.values.wgNamespaceNumber, self.validNameSpaces) && mw.config.values.wgAction == 'view') {
+                self.kotori = new Wikipage();
+                //版本检查
+                var nowVersion = localStorage.Wikiplus_Version;
+                if (nowVersion != self.version){
+                    localStorage.Wikiplus_Version = self.version;
+                    self.showNotice.create.success('Wikiplus已经更新到版本:' + self.version);
+                    self.showNotice.create.success('更新内容:' + self.lastestUpdateDesc);
                 }
+                self.initBasicFunctions();
+                self.initAdvancedFunctions();
             }
-            else{
-                console.log('当前页面不输出，但您可以使用Wikiplus的开放接口');
-                return false;
+            else {
+                if (inArray(mw.config.values.wgPageName,['Special:最近更改','Special:RecentChanges'])){
+                    this.initRCFunctions();
+                }
+                else{
+                    console.log('不符合加载条件，程序终止。');
+                }
+                
             }
-            if (localStorage.Wikiplus_StartUseAt === undefined){
-                self.Install(function(){
-                    self.Notification.create.success('您已成功安装Wikiplus喵呜',function(object){
-                        setTimeout(function(){
-                            slideLeft(object);
-                        },6000);
-                    });
-                });
-            }
-            if (localStorage.Wikiplus_Settings === undefined){
-                localStorage.setItem('Wikiplus_Settings',JSON.stringify(self.DefaultSettings));
-            }
-            if (localStorage.Wikiplus_Version != self.Version){
-                self.Notification.create.warning('获得更新！当前版本:' + self.Version);
-                self.Notification.create.warning('更新内容:' + self.LastestUpdateDescription);
-                localStorage.setItem('Wikiplus_Version',self.Version);
-            }
-            var usetime = ((new Date()).valueOf() - parseInt(localStorage.Wikiplus_StartUseAt))/1000;
-            if (usetime<86400){
-                var timehint = usetime + '秒';
-            }
-            else if (usetime>86400&&usetime<31556900){
-                var timehint = Math.floor(usetime/86400) + '天有余';
-            }
-            else{
-                var timehint = Math.floor(usetime/31556900) + '年' + Math.floor((usetime-Math.floor(usetime/31556900)*31556900)/86400) + '天有余';
-            }
-            if (localStorage.Wikiplus_LastUse != (new Date()).toLocaleDateString()){
-                //以下通知每日提示一次
-                localStorage.Wikiplus_LastUse = (new Date()).toLocaleDateString();
-                if (self.isBeta){
-                    self.Notification.create.warning('您当前使用的是测试版本 可能存在功能异常、效率低下、逻辑错误、无法加载、抽风犯病等不可预知事件',function(object){
-                        setTimeout(function(){
-                            slideLeft(object);
-                        },3000);
+        }
+
+        /*
+        * 基础功能区
+        */
+        //检查安装
+        this.checkInstall = function () {
+            if (!localStorage.Wikiplus_Installed || localStorage.Wikiplus_Installed == 'False') {
+                //安装
+                var install = function () {
+                    localStorage.Wikiplus_Installed = 'True';//标记已安装
+                    localStorage.Wikiplus_Version = self.version;
+                    localStorage.Wikiplus_StartUseAt = new Date().valueOf();
+                    localStorage.Wikiplus_SrartEditCount = mw.config.values.wgUserEditCount;
+                    localStorage.Wikiplus_Settings = JSON.stringify(self.defaultSettings);
+                    $('.Wikiplus-InterBox').fadeOut('fast', function () {
+                        self.showNotice.create.success('成功安装Wikiplus' + self.version);
+                        $(this).remove();
                     })
                 }
-                self.Notification.create.success('Wikiplus已经陪伴您' + (wgUserEditCount - parseInt(localStorage.Wikiplus_SrartEditCount)) + '次编辑、' + timehint,function(object){
-                    setTimeout(function(){
-                        slideLeft(object);
-                    },6000);
+                var notice = $('<div>').text('您是否允许Wikiplus采集非敏感数据用于改进Wikiplus及为当前Wiki:' + mw.config.values.wgSiteName + '提供改进建议?').attr('id', 'Wikiplus-InterBox-Content');
+                var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Apply').text('好呀');
+                var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Cancel').text('窝拒绝');
+                var content = $('<div>').append(notice).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
+                self.createInterBox('安装Wikiplus', content, function () {
+                    $('#Wikiplus-InterBox-Content').css('text-align', 'left');
+                    $('#Wikiplus-Setting-Apply').click(function () {
+                        localStorage.Wikiplus_SendStatistics = 'True';
+                        install();
+                    });
+                    $('#Wikiplus-Setting-Cancel').click(function () {
+                        localStorage.Wikiplus_SendStatistics = 'False';
+                        install();
+                    });
+                }, 600)
+            }
+        }
+        ////核心功能：快速编辑 开始
+        //构建快速编辑相关入口
+        this.editPageBuild = function () {
+            self.contentBackup = $('#mw-content-text').html();//备份数据
+            var topBtn = $('<li>').attr('id', 'Wikiplus-Edit-TopBtn').html(
+                $('<span>').html(
+                    $('<a>').attr('href', 'javascript:void(0)').text('快速编辑')
+                    )
+                );
+            var sectionBtn = '[<a href="javascript:void(0)" class="Wikiplus-Edit-SectionBtn">快速编辑</a>]';
+            if (!$('#Wikiplus-Edit-TopBtn').length > 0) {
+                $('#ca-edit').before(topBtn);//顶部按钮
+            }
+            if ($('.mw-editsection').length > 0) {
+                //每个段落的按钮编辑
+                self.sectionMap = {};
+                $('.mw-editsection').each(function (i) {
+                    try{
+                        var sectionNumber = $(this).find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(\d+)/)[1];
+                    }
+                    catch(e){
+                        //可能是模板说明页 这里实现有问题 需要修改整体逻辑
+                        //
+                        try{
+                           var sectionNumber = $(this).find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(.+)/)[1];
+                        }
+                        catch(e){
+                           self.showNotice.create.error('致命错误 你确定这是一个正常的页面？');
+                        }
+                    }
+                    var sectionName = $(this).prev().text();
+                    self.sectionMap[sectionNumber] = sectionName;
+                    $(this).append(sectionBtn);
+                    $(this).find('.Wikiplus-Edit-SectionBtn').data('id', sectionNumber);
+                    $(this).find('.Wikiplus-Edit-SectionBtn').data('name', sectionName);
+                })
+            }
+            this.editPageBind();
+        }
+        //加载快速编辑相关界面 事件绑定
+        this.editPageBind = function () {
+            if ($('.noarticletext').length > 0) {
+                self.preloadData['page'] = '<!-- 该页当前没有内容 请删去本行注释后进行创建 -->';//页面不存在的话变为创建模式
+            }
+            $('#Wikiplus-Edit-TopBtn').click(function () {
+                self.initQuickEditStepOne('page', '//Edit via Wikiplus')
+            });
+            $('.Wikiplus-Edit-SectionBtn').each(function () {
+                $(this).click(function () {
+                    self.initQuickEditStepOne($(this).data('id'), '//Edit via Wikiplus');
+                })
+            });
+            //预读取事件
+            //鼠标扫过目录对应段落
+            $("#toc").children("ul").find("a").each(function (i) {
+                $(this).mouseover(function () {
+                    $(this).unbind('mouseover');
+                    self.preload(i + 1);
+                });
+            });
+            //鼠标扫过快速编辑按钮
+            $(".Wikiplus-Edit-SectionBtn").each(function (i) {
+                $(this).mouseover(function () {
+                    self.preload(i + 1);
+                });
+            });
+            //默认读取整页
+            self.preload(-1);
+        }
+        //快速编辑相关事件 第一步
+        this.initQuickEditStepOne = function (section, summary) {
+            if (section.match(/T.+/) && section.match(/T.+/).length > 0 ){
+                if (!mw.config.values.wgPageName.match(/^.+\/doc$/)){
+                    self.showNotice.create.error('暂不支持在模板页对模板说明页编辑，正在为您跳转到编辑页面');
+                    location.href = mw.config.values.wgArticlePath.replace(/\$1/,mw.config.values.wgPageName) + '/doc';
+                    return false;
+                }
+            }
+            var backBtn = $('<div>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text('返回');//返回按钮
+            var jumpBtn = $('<div>').attr('id', 'Wikiplus-Quickedit-Jump').addClass('Wikiplus-Btn').append(
+                $('<a>').attr('href', '#Wikiplus-Quickedit').text('到编辑框')
+                );//到编辑框
+            var inputBox = $('<textarea>').attr('id', 'Wikiplus-Quickedit');//主编辑框
+            var previewBox = $('<div>').attr('id', 'Wikiplus-Quickedit-Preview-Output');//预览输出
+            var summaryBox = $('<input>').attr('id', 'Wikiplus-Quickedit-Summary-Input').attr('placeholder', '请输入编辑摘要');//编辑摘要输入
+            var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text('提交编辑(Ctrl+Enter)');//提交按钮
+            var previewSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Preview-Submit').text('预览');//预览按钮
+            //插DOM
+            var showUI = function (text, summary, contentBackup) {
+                self.createInterBox('快速编辑', undefined, function () {
+                    var summary = self.getSetting('defaultSummary', {
+                        'sectionName': section == 'page' ? mw.config.values.wgPageName : self.sectionMap[section],
+                        'sectionNumber': section == 'page' ? -1 : section
+                    });
+                    if (!summary) {
+                        if (section == 'page') {
+                            summary = '//Edit via Wikiplus';
+                        }
+                        else {
+                            summary = '/* ' + self.sectionMap[section] + ' */' + ' //Edit via Wikiplus';
+                        }
+                    }
+                    $('.Wikiplus-InterBox-Content').html(backBtn).append(jumpBtn).append(previewBox).append(inputBox).append(summaryBox).append(editSubmitBtn).append(previewSubmitBtn);
+                    $('#Wikiplus-Quickedit-Summary-Input').val(summary);
+                    $('#Wikiplus-Quickedit').val(text);
+                    $('.Wikiplus-InterBox-Content').css('text-align', 'left');
+                    $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);//返回顶部
+                    self.initQuickEditStepTwo(section, contentBackup);
+                    //魔法 勿移 Magic! Please do not modify it unless you have figured it out.
+                    //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
+                }, window.innerWidth * 0.8);
+            }
+            if (self.kotori.inited) {
+                //判断页面类是否已经拿到token
+                if (self.getPreloadData(section)) {
+                    //如果已经预读取了内容
+                    showUI(self.getPreloadData(section), summary);
+                }
+                else {
+                    self.showNotice.create.success('载入编辑数据中...');
+                    var timer = new Date().valueOf();
+                    self.kotori.getWikiText(function (data) {
+                        showUI(data, summary);
+                        self.showNotice.create.success('载入完成，用时' + new String(new Date().valueOf() - timer) + 'ms', function () {
+                            setTimeout(function () {
+                                self.showNotice.empty(slideLeft);
+                            }, 3000);
+                        });
+                    }, {
+                            'section': section
+                        });
+                }
+            }
+            else {
+                self.showNotice.create.error('页面模块未加载，请尝试刷新页面');
+            }
+        }
+        //快速编辑界面加载第二步，主要是相关事件的绑定
+        //Params : (string) section / page表示整页 , contentBackup 原内容备份
+        this.initQuickEditStepTwo = function (section) {
+            var section = (section == 'page') ? undefined : section;
+            //返回
+            $("#Wikiplus-Quickedit-Back").click(function () {
+                $('.Wikiplus-InterBox').fadeOut('fast', function () {
+                    $(this).remove();
+                })
+            });
+            //预览
+            var onPreload = $('<div>').addClass('Wikiplus-Banner').text('正在载入预览');
+            $('#Wikiplus-Quickedit-Preview-Submit').click(function () {
+                var wikiText = $('#Wikiplus-Quickedit').val();
+                $(this).attr('disabled', 'disabled');
+                $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
+                    $('#Wikiplus-Quickedit-Preview-Output').html(onPreload);
+                    $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
+                });
+                $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);//返回顶部
+                self.kotori.parseWikiText(wikiText, function (data) {
+                    $('#Wikiplus-Quickedit-Preview-Output').fadeOut('100', function () {
+                        $('#Wikiplus-Quickedit-Preview-Output').html('<hr><div class="mw-body-content">' + data + '</div><hr>');
+                        $('#Wikiplus-Quickedit-Preview-Output').fadeIn('100');
+                        $('#Wikiplus-Quickedit-Preview-Submit').removeAttr('disabled');
+                    });
+                })
+            });
+            //提交
+            $('#Wikiplus-Quickedit-Submit').click(function () {
+                var wikiText = $('#Wikiplus-Quickedit').val();
+                var summary = $('#Wikiplus-Quickedit-Summary-Input').val();
+                $(this).attr('disabled', 'disabled');
+                $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
+                var timer = new Date().valueOf();
+                //self.showNotice.create.success('正在提交编辑...');
+                $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);
+                var onEdit = $('<div>').addClass('Wikiplus-Banner').text('正在提交编辑');
+                $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
+                    $('#Wikiplus-Quickedit-Preview-Output').html(onEdit);
+                    $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
+                });
+                self.kotori.edit(wikiText, {
+                    'summary': summary,
+                    'section': section,
+                }, function () {
+                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
+                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + (new Date().valueOf() - timer) + 'ms');
+                        setTimeout(function () {
+                            location.reload();
+                        }, 500);
+                    })
+            })
+            //Ctrl+Enter提交
+            $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input').each(function () {
+                $(this).keypress(function (e) {
+                    if (e.ctrlKey && e.which == 13 || e.which == 10) {
+                        $('#Wikiplus-Quickedit-Submit').click();
+                    }
+                })
+            })
+        }
+        ////核心功能：快速编辑 结束
+
+        //重定向相关
+        this.simpleRedirector = function () {
+            self.addFunctionButton('将页面重定向至此', 'Wikiplus-SR-Intro', function () {
+                var input = $('<input>').addClass('Wikiplus-InterBox-Input');
+                var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Apply').text('提交');
+                var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Cancel').text('取消');
+                var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
+                self.createInterBox('请输入需要重定向到此页面的页面名', content, function () {
+                    $('#Wikiplus-SR-Apply').click(function () {
+                        if ($('.Wikiplus-InterBox-Input').val() != '') {
+                            var title = $('.Wikiplus-InterBox-Input').val()
+                            $('.Wikiplus-InterBox-Content').html('<div class="Wikiplus-Banner">提交中</div>');
+                            self.kotori.redirectFrom(title, function () {
+                                $('.Wikiplus-Banner').text('重定向完成!');
+                                $('.Wikiplus-InterBox').fadeOut(300);
+                                location.href = mw.config.values.wgArticlePath.replace(/\$1/ig, title);
+                            });
+                        }
+                        else {
+                            self.showNotice.create.warning('输入不能为空');
+                        }
+                    });
+                    $('#Wikiplus-SR-Cancel').click(function () {
+                        $('.Wikiplus-InterBox').fadeOut(300, function () {
+                            $(this).remove();
+                        });
+                    })
+                }, 600);
+            })
+        }
+        //编辑设置
+        this.editSettings = function () {
+            self.addFunctionButton('Wikiplus设置', 'Wikiplus-Settings-Intro', function () {
+                var input = $('<textarea>').attr('id', 'Wikiplus-Setting-Input').attr('rows', '10');
+                var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Apply').text('提交');
+                var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Cancel').text('取消');
+                var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
+                self.createInterBox('请在下方编辑框修改设置值', content, function () {
+                    if (localStorage.Wikiplus_Settings) {
+                        $('#Wikiplus-Setting-Input').val(localStorage.Wikiplus_Settings);
+                    }
+                    else {
+                        $('Wikiplus-Setting-Input').attr('placeholder', '当前设置为空，请在下方根据规范编辑');
+                    }
+                    $('#Wikiplus-Setting-Apply').click(function () {
+                        var settings = $('#Wikiplus-Setting-Input').val();
+                        try {
+                            settings = JSON.parse(settings);
+                        }
+                        catch (e) {
+                            self.showNotice.create.error('设置存在语法错误!请检查!');
+                            return;
+                        }
+                        localStorage.Wikiplus_Settings = JSON.stringify(settings);
+                        $('.Wikiplus-InterBox-Content').html('<div class="Wikiplus-Banner">设置已保存</div>');
+                        $('.Wikiplus-InterBox').fadeOut(300, function () {
+                            $(this).remove();
+                        });
+                    })
+                    $('#Wikiplus-Setting-Cancel').click(function () {
+                        $('.Wikiplus-InterBox').fadeOut(300, function () {
+                            $(this).remove();
+                        });
+                    })
+                }, 600);
+            });
+        }
+        //展开最近更改列表
+        this.uncollapseRecentChanges = function(){
+            $('#Wikiplus_RC_Functions').append(
+                $('<span>').addClass('Wikiplus-Btn').text('展开所有最近更改').attr('id','Wikiplus_RC_UncollapseRecentChanges')
+            )
+            $('#Wikiplus_RC_UncollapseRecentChanges').click(function(){
+                $('.mw-enhancedchanges-arrow').click();
+                $(this).text($(this).text() == '展开所有最近更改' ? '折叠所有最近更改' : '展开所有最近更改');
+            })
+        }
+        /*
+        * 基础功能区 结束
+        */
+
+        /*
+        * 通用函数起始点
+        */
+        //增加一个功能按钮
+        //(string) text : 按钮文本 , (string) id : 按钮的id , (function) event : 点击按钮触发的事件
+        this.addFunctionButton = function (text, id, event) {
+            var button = $('<li></li>').attr('id', id).append($('<a></a>').attr('href', 'javascript:void(0);').text(text));
+            if ($('#p-cactions .menu').length > 0) {
+                $('#p-cactions .menu ul').append(button);
+                $('#p-cactions .menu ul').find('li').last().click(event);
+            }
+            else {
+                throwError(1080, '未知错误：无法增加功能按钮');
+            }
+        }
+        //创建一个悬浮交互框
+        //(string) title : 标题 , (element) content : 内容 , (function) callback : 回调函数
+        this.createInterBox = function (title, content, callback, width) {
+            var callback = callback || function () { };
+            if ($('.Wikiplus-InterBox').length > 0) {
+                $('.Wikiplus-InterBox').each(function () {
+                    $(this).remove();
                 });
             }
-            self.displayQuickEditInterface();
-            self.initFunctions();
-            self.preloadPage(0,function(){
-                self.preloadPage(1);
-                if (typeof self.PreloadData.section0 != "undefined"){
-                    self.wgCategoriesBackup = wgCategories;
-                    self.wgCategories = [];
-                    var content = self.PreloadData.section0;
-                    var regexp = new RegExp("\\[\\[(?:category|分类)\\:(.+?)\\]\\]","ig");
-                    while ((result = regexp.exec(content))!=null){
-                        if ($.inArray(result[1], self.wgCategoriesBackup)==-1){
-                            continue;
-                        }
-                        else{
-                            self.wgCategories.push(result[1]);//正则分析页面Wikitext并找出所含分类
-                        }
+            var cwidth = document.body.clientWidth;
+            var cheight = document.body.clientHeight;
+            $('body').append(
+                $('<div>').addClass('Wikiplus-InterBox')
+                    .css('margin-left', cwidth / 2 - (width / 2))
+                    .append(
+                    $('<div>').addClass('Wikiplus-InterBox-Header')
+                        .text(title)
+                    )
+                    .append(
+                    $('<div>').addClass('Wikiplus-InterBox-Content')
+                        .append(content)
+                    )
+                    .append(
+                    $('<i>').text('×').addClass('Wikiplus-InterBox-Close')
+                    )
+                );
+            $('.Wikiplus-InterBox').width(width);
+            $('.Wikiplus-InterBox').fadeIn(500);
+            $('.Wikiplus-InterBox-Close').click(function(){
+                $(this).parent().fadeOut('fast',function(){
+                    $(this).remove();
+                })
+            })
+            callback();
+        }
+        //预加载页面Wiki文本
+        //Params : (section) section
+        //-1 代表整个页面
+        this.preload = function (section) {
+            try {
+                if (section == -1) {
+                    if (self.preloadData['page']) {
+                        console.log('对于 整页 的预读取已经进行过，跳过。');
                     }
-                    if (wgIsArticle&&(($.inArray('autoconfirmed', wgUserGroups)!=-1)||wgUserName=="妹空酱")){
-                    console.log('已启用Wikiplus的高级功能，请谨慎并正确的使用，遵守当前Wiki: ' + wgSiteName + ' 的相关方针。');
-                    console.log('%cWikiplus概不对您可能造成的非技术性原因的意外后果负责。','color:red');
-                    self.initAdvancedFunctions();
+                    else {
+                        self.kotori.getWikiText(function (text) {
+                            self.preloadData['page'] = text;
+                            console.log('成功预读取 整页 ');
+                        });
                     }
                 }
-            });
-            $("#wikiplus-main-button").click(function(){
-                $(this).remove();
-                $("#wikiplus-function").fadeIn();
-            })
-            console.log('Wikiplus初始化完成');
-        })
+                else {
+                    if (self.preloadData[section]) {
+                        console.log('对于段落 ' + section + ' 的预读取已经进行过，跳过');
+                    }
+                    else {
+                        console.time('预读取段落' + section + '用时');
+                        self.kotori.getWikiText(function (text) {
+                            self.preloadData[section] = text;
+                            console.timeEnd('预读取段落' + section + '用时');
+                        }, {
+                                'section': section
+                            });
+                    }
+                }
+            }
+            catch (e) {
+                self.showNotice.create.error(e.number + ':' + e.message);
+            }
+        }
+        //获得预读取数据
+        //page - 整页 , [0-9]{1,infinity} 段落
+        this.getPreloadData = function (key) {
+            if (self.preloadData[key]) {
+                return self.preloadData[key];
+            }
+            else {
+                return false;
+            }
+        }
+        //获取设置值
+        //Params : key
+        //存在 输出值 不存在 输出undefined
+        this.getSetting = function (key, object) {
+            var w = object;
+            try {
+                var settings = $.parseJSON(localStorage.Wikiplus_Settings);
+            }
+            catch (e) {
+                return localStorage.Wikiplus_Settings || '';
+            }
+            try {
+                var _setting = new Function('return ' + settings[key]);
+                if (typeof _setting == 'function') {
+                    try {
+                        if (_setting()(w) === true) {
+                            return undefined
+                        }
+                        else {
+                            return _setting()(w) || settings[key];
+                        }
+                    }
+                    catch (e) {
+                        return settings[key];
+                    }
+                }
+                else {
+                    return settings[key];
+                }
+            }
+            catch (e) {
+                try {
+                    return settings[key];
+                }
+                catch (e) {
+                    return undefined;
+                }
+            }
+        }
+        /*
+        * 通用函数终止点
+        */
+        this.initBasicFunctions = function () {
+            //加载基础功能
+            setTimeout(this.checkInstall, 1000);//检查安装
+            this.editPageBuild();//快速编辑
+            this.simpleRedirector();//快速重定向
+            this.editSettings();//编辑设置
+        }
+        this.initRCFunctions = function(){
+            //加载最近更改页功能
+            var wikiplus_field = $('<fieldset>').append(
+                $('<legend>').text('Wikiplus')
+            ).addClass('rcoptions').attr('id','Wikiplus_RC_Functions')
+            $('.rcoptions').after(wikiplus_field);
+            this.uncollapseRecentChanges();//展开最近更改
+        }
+        this.initAdvancedFunctions = function () {
+            //加载高级功能
+        }
+        this.init();
     }
-    /**
-    * 模块:初始化高级功能(提供给自动确认以上用户使用)
-    * 输入:无
-    * 输出:无
-    */
-    this.initAdvancedFunctions = function(){
-        this.initCategoriesManage();
-    };
-    /**
-    * 模块:初始化各功能
-    * 输入:无
-    * 输出:无
-    */
-    this.initFunctions = function(){
-        this.initFunctionsStepTwo();
-        this.bindPreloadEvents();
-        
-    }
-    this.initFunctionsStepTwo = function(){
-        $("#wikiplus-function").html('');
-        this.createRedirectPage();
-        this.editSettings();
-    }
-}
-$(document).ready(function(){
-    wikiplus = new Wikiplus();
-    wikiplus.init();
+    $(function () {
+        window.Wikiplus = new Wikiplus();
+    })
 })
