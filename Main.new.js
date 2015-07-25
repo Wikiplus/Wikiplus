@@ -584,8 +584,8 @@ $(function () {
                     return false;
                 }
             }
-            var backBtn = $('<div>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text('返回');//返回按钮
-            var jumpBtn = $('<div>').attr('id', 'Wikiplus-Quickedit-Jump').addClass('Wikiplus-Btn').append(
+            var backBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text('返回');//返回按钮
+            var jumpBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Jump').addClass('Wikiplus-Btn').append(
                 $('<a>').attr('href', '#Wikiplus-Quickedit').text('到编辑框')
                 );//到编辑框
             var inputBox = $('<textarea>').attr('id', 'Wikiplus-Quickedit');//主编辑框

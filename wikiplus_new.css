@@ -1,6 +1,9 @@
 .clear{
 	clear: both;
 }
+#Wikiplus-Quickedit-Summary-Input{
+	width: 300px;
+}
 .Wikiplus-Btn{
 	cursor: pointer;
 	position: relative;
