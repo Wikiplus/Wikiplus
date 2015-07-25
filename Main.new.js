@@ -267,7 +267,7 @@ $(function () {
                         case 'pagedeleted': throwError(1021, '在编辑的时间里，页面被删除'); break;
                         case 'emptypage': throwError(1022, '新页面不能为空内容'); break;
                         case 'emptynewsection': throwError(1023, '新段落不能为空内容'); break;
-                        case 'editconflict': throwError(1024, '触发了编辑冲突'); break;
+                        case 'editconflict': throwError(1024, '编辑冲突！请不要紧张 请比对当前内容与页面后重新提交'); break;
                         case 'revwrongpage': throwError(1025, '目标修订版本与目标页面不匹配'); break;
                         case 'undofailure': throwError(1026, '因为存在冲突的中间版本，无法撤销'); break;
                         case 'missingtitle': throwError(1027, '我的天啊有生之年你能见到这个错误建议马上出门买彩票'); break;
@@ -297,6 +297,8 @@ $(function () {
                         case 'badformat': throwError(1051, '错误的文本格式'); break;
                         case 'customcssprotected': throwError(1052, '无法编辑用户CSS页'); break;
                         case 'customjsprotected': throwError(1053, '无法编辑用户JS页'); break;
+                        case 'cascadeprotected' : throwError(1100, '无法编辑被级联保护的页面');break;
+                        default : throwError(1099,'未知的编辑错误')
                     }
                 }
                 else {
@@ -430,8 +432,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.2';
-        this.lastestUpdateDesc = '支持在最近更改页展开所有更改';
+        this.version = '1.8.3';
+        this.lastestUpdateDesc = '优化对编辑错误的处理';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
