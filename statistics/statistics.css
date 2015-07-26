@@ -1,0 +1,10 @@
+body{
+	background-color: rgba(226, 233, 234, 0.69);
+}
+.Main{
+	text-align: center;
+}
+#RecentUseTime{
+	width: 100%;
+	height: 400px;
+}
