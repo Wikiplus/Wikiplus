@@ -75,9 +75,22 @@ if (isValid(array('action'))){
 			$siteName = escapeParameters(array('sitename'),$mysqli)['sitename'];
 			$fromDate = date('Y') . '-' . date('m') . '-' . date('d') . ' 00:00:00';
 			$query = "SELECT * FROM `wikiplus_statistics` WHERE `wikiname` = '$siteName' AND `timestamp` >= '$fromDate'";
-			$res = $mysqli->query($query)->fetch_all();
+			$res = $mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
 			if (count($res) > 0){
-				//存在该wiki 开始计算时间
+				$usetime = array();
+				foreach ($res as $item) {
+					$editDate = substr($item['timestamp'], 0, 10);
+					if (isset($usetime[$editDate])){
+						$usetime[$editDate] = ($usetime[$editDate] + $item['usetime'])/2;
+					}
+					else{
+						$usetime[$editDate] = $item['usetime'];
+					}
+				}
+				foreach ($usetime as $key => &$value) {
+					$value = (int)$value;
+				}
+				var_dump($usetime);
 			}
 			else{
 				$json = array(
