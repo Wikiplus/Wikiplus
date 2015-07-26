@@ -432,8 +432,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.3';
-        this.lastestUpdateDesc = '优化对编辑错误的处理';
+        this.version = '1.8.4';
+        this.lastestUpdateDesc = '关闭快速编辑浮动框后返回原位置';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -535,7 +535,7 @@ $(function () {
                            var sectionNumber = $(this).find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(.+)/)[1];
                         }
                         catch(e){
-                           self.showNotice.create.error('致命错误 你确定这是一个正常的页面？');
+                           console.log('Wikiplus致命错误');
                         }
                     }
                     var sectionName = $(this).prev().text();
@@ -614,9 +614,10 @@ $(function () {
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     $('#Wikiplus-Quickedit').val(text);
                     $('.Wikiplus-InterBox-Content').css('text-align', 'left');
+                    self.heightBefore = $(document).scrollTop();//记住当前高度
                     $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);//返回顶部
                     self.initQuickEditStepTwo(section, contentBackup);
-                    //魔法 勿移 Magic! Please do not modify it unless you have figured it out.
+                    //魔法 勿移
                     //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
                 }, window.innerWidth * 0.8);
             }
@@ -651,6 +652,7 @@ $(function () {
             var section = (section == 'page') ? undefined : section;
             //返回
             $("#Wikiplus-Quickedit-Back").click(function () {
+                $('body').animate({ scrollTop: self.heightBefore }, 200);//回到操作前高度
                 $('.Wikiplus-InterBox').fadeOut('fast', function () {
                     $(this).remove();
                 })
