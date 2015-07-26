@@ -432,8 +432,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.4';
-        this.lastestUpdateDesc = '关闭快速编辑浮动框后返回原位置';
+        this.version = '1.8.5';
+        this.lastestUpdateDesc = '增加数据统计';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -693,8 +693,11 @@ $(function () {
                     'summary': summary,
                     'section': section,
                 }, function () {
+                        var useTime = new Date().valueOf() - timer;
                         $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
-                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + (new Date().valueOf() - timer) + 'ms');
+                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + useTime + 'ms');
+                        //发送统计数据
+                        self.sendStatistic(useTime);
                         setTimeout(function () {
                             location.reload();
                         }, 500);
@@ -709,6 +712,30 @@ $(function () {
                 })
             })
         }
+
+        this.sendStatistic = function(useTime){
+            if (localStorage.Wikiplus_SendStatistics && localStorage.Wikiplus_SendStatistics == 'True'){
+                $.ajax({
+                    url : location.protocol == 'http:' ? 'http://miku.host.smartgslb.com/wikiplus/statistic.php' : 'https://blog.kotori.moe/wikiplus/statistic.php',
+                    type : "GET",
+                    dataType : "json",
+                    data : {
+                        'wikiname' : mw.config.values.wgSiteName,
+                        'usetime' : useTime,
+                        'username' : mw.config.values.wgUserName,
+                        'pagename' : mw.config.values.wgPageName
+                    },
+                    success:function(data){
+                        //提交成功
+                    }
+                })
+            }
+            else{
+                //用户不同意发送数据
+                return false;
+            }
+        }
+
         ////核心功能：快速编辑 结束
 
         //重定向相关
