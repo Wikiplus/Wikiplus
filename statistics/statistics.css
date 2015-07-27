@@ -8,6 +8,15 @@ body{
 	width: 100%;
 	height: 400px;
 }
-#p2{
+.process-bar{
+	width: 100%;
+}
+#contribution-raking,#hotspot-ranking{
+	height: 500px;
+}
+#first-statistics,#second-statistics{
+	display: none;
+}
+#first-statistics table,#second-statistics table{
 	width: 100%;
 }

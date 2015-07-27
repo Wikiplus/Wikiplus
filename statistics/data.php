@@ -73,7 +73,8 @@ if (isValid(array('action'))){
 
 		if (isValid(array('sitename'))){
 			$siteName = escapeParameters(array('sitename'),$mysqli)['sitename'];
-			$fromDate = date('Y') . '-' . date('m') . '-' . date('d') . ' 00:00:00';
+			$timestamp = strtotime('-7 days',strtotime('today'));
+			$fromDate = date('Y-m-d',$timestamp) . ' 00:00:00';
 			$query = "SELECT * FROM `wikiplus_statistics` WHERE `wikiname` = '$siteName' AND `timestamp` >= '$fromDate'";
 			$res = $mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
 			if (count($res) > 0){
@@ -90,11 +91,64 @@ if (isValid(array('action'))){
 				foreach ($usetime as $key => &$value) {
 					$value = (int)$value;
 				}
-				var_dump($usetime);
+				$json = array(
+					'sitename' => $siteName,
+					'usetime' => $usetime
+				);
+				exit(json_encode($json));
 			}
 			else{
 				$json = array(
 					'sitename' => $siteName,
+				);
+				exit(json_encode($json));
+			}
+		}
+	}
+	elseif ($action == 'ranking'){
+		if (isValid(array('sitename'))){
+			$siteName = escapeParameters(array('sitename'),$mysqli)['sitename'];
+			$timestamp = strtotime('-7 days',strtotime('today'));
+			$fromDate = date('Y-m-d',$timestamp) . ' 00:00:00';
+			$query = "SELECT * FROM `wikiplus_statistics` WHERE `wikiname` = '$siteName' AND `timestamp` >= '$fromDate'";
+			$res = $mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
+
+			if (count($res) > 0){
+				//开始处理数据
+				$contributionRanking = array();
+				$hotpageRanking = array();
+
+				foreach ($res as $item) {
+					if (isset($contributionRanking[$item['username']])){
+						$contributionRanking[$item['username']] = $contributionRanking[$item['username']] + 1;
+					}
+					else{
+						$contributionRanking[$item['username']] = 1;
+					}
+					if (isset($hotpageRanking[$item['pagename']])){
+						$hotpageRanking[$item['pagename']] = $hotpageRanking[$item['pagename']] + 1;
+					}
+					else{
+						$hotpageRanking[$item['pagename']] = 1;
+					}
+
+				}
+				arsort($contributionRanking);
+				arsort($hotpageRanking);
+
+				$contributionRanking = array_slice($contributionRanking, 0, 20);
+				$hotpageRanking = array_slice($hotpageRanking, 0, 20);
+
+				$json = array(
+					'sitename' => $siteName,
+					'contributionRanking' => $contributionRanking,
+					'hotpageRanking' => $hotpageRanking
+				);
+				exit(json_encode($json));
+			}
+			else{
+				$json = array(
+					'sitename' => $siteName
 				);
 				exit(json_encode($json));
 			}
