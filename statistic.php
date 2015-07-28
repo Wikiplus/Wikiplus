@@ -3,6 +3,7 @@
 * Wikiplus 数据收集和统计系统
 */
 
+
 header('Access-Control-Allow-Origin : *');//允许跨域
 
 //数据库信息定义

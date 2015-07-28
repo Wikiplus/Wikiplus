@@ -79,17 +79,20 @@ if (isValid(array('action'))){
 			$res = $mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
 			if (count($res) > 0){
 				$usetime = array();
+				$editcount = array();
 				foreach ($res as $item) {
 					$editDate = substr($item['timestamp'], 0, 10);
 					if (isset($usetime[$editDate])){
-						$usetime[$editDate] = ($usetime[$editDate] + $item['usetime'])/2;
+						$usetime[$editDate] = $usetime[$editDate] + $item['usetime'];
+						$editcount[$editDate] = $editcount[$editDate] + 1;
 					}
 					else{
 						$usetime[$editDate] = $item['usetime'];
+						$editcount[$editDate] = 1;
 					}
 				}
 				foreach ($usetime as $key => &$value) {
-					$value = (int)$value;
+					$value = (int)($value / $editcount[$key]);
 				}
 				$json = array(
 					'sitename' => $siteName,
