@@ -67,6 +67,15 @@ if (isValid(array('action'))){
 				);
 				exit(json_encode($json));
 			}
+		}else{
+			$query = "SELECT count(*) FROM `wikiplus_statistics`";
+			$res = $mysqli->query($query);
+			if ($res){
+				$json = array(
+					'editcount' => $res->fetch_row()[0]
+				);
+				exit(json_encode($json));
+			}
 		}
 	}
 	elseif ($action == 'recentusetime') {

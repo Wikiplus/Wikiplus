@@ -215,9 +215,19 @@ $(document).ready(function () {
 		})
 	}
 	else{
-		$('.Headline h2').after(
-			$('<h5>').text('总统计页面 施工中 请在页面地址后加“#站点名”来查看分站点统计')
-		);
+		$.ajax({
+			url : 'data.php',
+			type : "GET",
+			dataType : "json",
+			data : {'action':'meta'},
+			success : function(data){
+				if (data.editcount){
+					$('.Headline h2').after(
+						$('<h5>').html('当前Wikiplus共处理了 ' + data.editcount + ' 次编辑<br>请在页面地址后加“#站点名”来查看分站点统计')
+					);
+				}
+			}
+		})
 		$('#process-bar-main').fadeOut('slow',function(){
 			$(this).remove();
 		})
