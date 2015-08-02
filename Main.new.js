@@ -189,7 +189,7 @@ $(function () {
                                         console.log('无法通过API获得编辑令牌，可能是空页面，尝试通过前端API获取通用编辑令牌');
                                         self.editToken = mw.user.tokens.get('editToken');
                                         if (self.editToken && self.editToken != '+\\') {
-                                            console.log('成功获得通用编辑令牌');
+                                            console.log('成功获得通用编辑令牌 来自API');
                                         }
                                         else {
                                             throwError(1005, '无法获得页面编辑令牌 请确认登录状态');
@@ -432,8 +432,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.5';
-        this.lastestUpdateDesc = '增加数据统计';
+        this.version = '1.8.6';
+        this.lastestUpdateDesc = '允许选择标记为小编辑';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -595,6 +595,13 @@ $(function () {
             var summaryBox = $('<input>').attr('id', 'Wikiplus-Quickedit-Summary-Input').attr('placeholder', '请输入编辑摘要');//编辑摘要输入
             var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text('提交编辑(Ctrl+Enter)');//提交按钮
             var previewSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Preview-Submit').text('预览');//预览按钮
+            var isMinorEdit = $('<div>').append(
+                                            $('<input>').attr({'type':'checkbox','id':'Wikiplus-Quickedit-MinorEdit'})
+                                        )
+                                        .append(
+                                            $('<label>').attr('for','Wikiplus-Quickedit-MinorEdit').text('标记为小编辑')
+                                        )
+                                        .css({'margin':'5px 5px 5px -3px','display':'inline'});    
             //插DOM
             var showUI = function (text, summary, contentBackup) {
                 self.createInterBox('快速编辑', undefined, function () {
@@ -610,7 +617,7 @@ $(function () {
                             summary = '/* ' + self.sectionMap[section] + ' */' + ' //Edit via Wikiplus';
                         }
                     }
-                    $('.Wikiplus-InterBox-Content').html(backBtn).append(jumpBtn).append(previewBox).append(inputBox).append(summaryBox).append(editSubmitBtn).append(previewSubmitBtn);
+                    $('.Wikiplus-InterBox-Content').html(backBtn).append(jumpBtn).append(previewBox).append(inputBox).append(summaryBox).append('<br>').append(isMinorEdit).append(editSubmitBtn).append(previewSubmitBtn);
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     $('#Wikiplus-Quickedit').val(text);
                     $('.Wikiplus-InterBox-Content').css('text-align', 'left');
@@ -677,22 +684,23 @@ $(function () {
             });
             //提交
             $('#Wikiplus-Quickedit-Submit').click(function () {
-                var wikiText = $('#Wikiplus-Quickedit').val();
-                var summary = $('#Wikiplus-Quickedit-Summary-Input').val();
+                var wikiText        = $('#Wikiplus-Quickedit').val();
+                var summary         = $('#Wikiplus-Quickedit-Summary-Input').val();
+                var timer           = new Date().valueOf();
+                var onEdit          = $('<div>').addClass('Wikiplus-Banner').text('正在提交编辑');
+                var addtionalConfig = {
+                    'summary': summary,
+                    'section': section,
+                    'minor' : $('#Wikiplus-Quickedit-MinorEdit').is(':checked') ? 'true' : false
+                };
                 $(this).attr('disabled', 'disabled');
                 $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
-                var timer = new Date().valueOf();
-                //self.showNotice.create.success('正在提交编辑...');
                 $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);
-                var onEdit = $('<div>').addClass('Wikiplus-Banner').text('正在提交编辑');
                 $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
                     $('#Wikiplus-Quickedit-Preview-Output').html(onEdit);
                     $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                 });
-                self.kotori.edit(wikiText, {
-                    'summary': summary,
-                    'section': section,
-                }, function () {
+                self.kotori.edit(wikiText, addtionalConfig, function () {
                         var useTime = new Date().valueOf() - timer;
                         $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
                         $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + useTime + 'ms');

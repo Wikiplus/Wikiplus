@@ -70,7 +70,9 @@
 	margin: 3px 7px;
 	font-size: 20px;
 }
-
+.Wikiplus-InterBox label{
+	font-size: 13px;
+}
 #Wikiplus-Quickedit-Preview-Output{
 	margin:5px 0px 5px 0px;
 	clear: both;
