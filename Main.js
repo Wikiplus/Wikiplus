@@ -189,7 +189,7 @@ $(function () {
                                         console.log('无法通过API获得编辑令牌，可能是空页面，尝试通过前端API获取通用编辑令牌');
                                         self.editToken = mw.user.tokens.get('editToken');
                                         if (self.editToken && self.editToken != '+\\') {
-                                            console.log('成功获得通用编辑令牌');
+                                            console.log('成功获得通用编辑令牌 来自API');
                                         }
                                         else {
                                             throwError(1005, '无法获得页面编辑令牌 请确认登录状态');
@@ -267,7 +267,7 @@ $(function () {
                         case 'pagedeleted': throwError(1021, '在编辑的时间里，页面被删除'); break;
                         case 'emptypage': throwError(1022, '新页面不能为空内容'); break;
                         case 'emptynewsection': throwError(1023, '新段落不能为空内容'); break;
-                        case 'editconflict': throwError(1024, '触发了编辑冲突'); break;
+                        case 'editconflict': throwError(1024, '编辑冲突！请不要紧张 请比对当前内容与页面后重新提交'); break;
                         case 'revwrongpage': throwError(1025, '目标修订版本与目标页面不匹配'); break;
                         case 'undofailure': throwError(1026, '因为存在冲突的中间版本，无法撤销'); break;
                         case 'missingtitle': throwError(1027, '我的天啊有生之年你能见到这个错误建议马上出门买彩票'); break;
@@ -297,6 +297,8 @@ $(function () {
                         case 'badformat': throwError(1051, '错误的文本格式'); break;
                         case 'customcssprotected': throwError(1052, '无法编辑用户CSS页'); break;
                         case 'customjsprotected': throwError(1053, '无法编辑用户JS页'); break;
+                        case 'cascadeprotected' : throwError(1100, '无法编辑被级联保护的页面');break;
+                        default : throwError(1099,'未知的编辑错误')
                     }
                 }
                 else {
@@ -429,9 +431,9 @@ $(function () {
         //这不是一个严格意义上的Class 但是有其一定特性
         var self = this;
         this.showNotice = new MoeNotification();
-        this.isBeta = false;
-        this.version = '1.8.2';
-        this.lastestUpdateDesc = '支持在最近更改页展开所有更改';
+        this.isBeta = true;
+        this.version = '1.8.7';
+        this.lastestUpdateDesc = '最近更改页面允许隐藏上传日志';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -533,7 +535,7 @@ $(function () {
                            var sectionNumber = $(this).find(".mw-editsection-bracket:first").next().attr('href').match(/&section\=(.+)/)[1];
                         }
                         catch(e){
-                           self.showNotice.create.error('致命错误 你确定这是一个正常的页面？');
+                           console.log('Wikiplus致命错误');
                         }
                     }
                     var sectionName = $(this).prev().text();
@@ -584,8 +586,8 @@ $(function () {
                     return false;
                 }
             }
-            var backBtn = $('<div>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text('返回');//返回按钮
-            var jumpBtn = $('<div>').attr('id', 'Wikiplus-Quickedit-Jump').addClass('Wikiplus-Btn').append(
+            var backBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text('返回');//返回按钮
+            var jumpBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Jump').addClass('Wikiplus-Btn').append(
                 $('<a>').attr('href', '#Wikiplus-Quickedit').text('到编辑框')
                 );//到编辑框
             var inputBox = $('<textarea>').attr('id', 'Wikiplus-Quickedit');//主编辑框
@@ -593,6 +595,13 @@ $(function () {
             var summaryBox = $('<input>').attr('id', 'Wikiplus-Quickedit-Summary-Input').attr('placeholder', '请输入编辑摘要');//编辑摘要输入
             var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text('提交编辑(Ctrl+Enter)');//提交按钮
             var previewSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Preview-Submit').text('预览');//预览按钮
+            var isMinorEdit = $('<div>').append(
+                                            $('<input>').attr({'type':'checkbox','id':'Wikiplus-Quickedit-MinorEdit'})
+                                        )
+                                        .append(
+                                            $('<label>').attr('for','Wikiplus-Quickedit-MinorEdit').text('标记为小编辑')
+                                        )
+                                        .css({'margin':'5px 5px 5px -3px','display':'inline'});    
             //插DOM
             var showUI = function (text, summary, contentBackup) {
                 self.createInterBox('快速编辑', undefined, function () {
@@ -608,13 +617,14 @@ $(function () {
                             summary = '/* ' + self.sectionMap[section] + ' */' + ' //Edit via Wikiplus';
                         }
                     }
-                    $('.Wikiplus-InterBox-Content').html(backBtn).append(jumpBtn).append(previewBox).append(inputBox).append(summaryBox).append(editSubmitBtn).append(previewSubmitBtn);
+                    $('.Wikiplus-InterBox-Content').html(backBtn).append(jumpBtn).append(previewBox).append(inputBox).append(summaryBox).append('<br>').append(isMinorEdit).append(editSubmitBtn).append(previewSubmitBtn);
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     $('#Wikiplus-Quickedit').val(text);
                     $('.Wikiplus-InterBox-Content').css('text-align', 'left');
+                    self.heightBefore = $(document).scrollTop();//记住当前高度
                     $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);//返回顶部
                     self.initQuickEditStepTwo(section, contentBackup);
-                    //魔法 勿移 Magic! Please do not modify it unless you have figured it out.
+                    //魔法 勿移
                     //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
                 }, window.innerWidth * 0.8);
             }
@@ -649,6 +659,7 @@ $(function () {
             var section = (section == 'page') ? undefined : section;
             //返回
             $("#Wikiplus-Quickedit-Back").click(function () {
+                $('body').animate({ scrollTop: self.heightBefore }, 200);//回到操作前高度
                 $('.Wikiplus-InterBox').fadeOut('fast', function () {
                     $(this).remove();
                 })
@@ -673,24 +684,28 @@ $(function () {
             });
             //提交
             $('#Wikiplus-Quickedit-Submit').click(function () {
-                var wikiText = $('#Wikiplus-Quickedit').val();
-                var summary = $('#Wikiplus-Quickedit-Summary-Input').val();
+                var wikiText        = $('#Wikiplus-Quickedit').val();
+                var summary         = $('#Wikiplus-Quickedit-Summary-Input').val();
+                var timer           = new Date().valueOf();
+                var onEdit          = $('<div>').addClass('Wikiplus-Banner').text('正在提交编辑');
+                var addtionalConfig = {
+                    'summary': summary,
+                    'section': section,
+                    'minor' : $('#Wikiplus-Quickedit-MinorEdit').is(':checked') ? 'true' : false
+                };
                 $(this).attr('disabled', 'disabled');
                 $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
-                var timer = new Date().valueOf();
-                //self.showNotice.create.success('正在提交编辑...');
                 $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);
-                var onEdit = $('<div>').addClass('Wikiplus-Banner').text('正在提交编辑');
                 $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
                     $('#Wikiplus-Quickedit-Preview-Output').html(onEdit);
                     $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                 });
-                self.kotori.edit(wikiText, {
-                    'summary': summary,
-                    'section': section,
-                }, function () {
+                self.kotori.edit(wikiText, addtionalConfig, function () {
+                        var useTime = new Date().valueOf() - timer;
                         $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
-                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + (new Date().valueOf() - timer) + 'ms');
+                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + useTime + 'ms');
+                        //发送统计数据
+                        self.sendStatistic(useTime);
                         setTimeout(function () {
                             location.reload();
                         }, 500);
@@ -705,6 +720,30 @@ $(function () {
                 })
             })
         }
+
+        this.sendStatistic = function(useTime){
+            if (localStorage.Wikiplus_SendStatistics && localStorage.Wikiplus_SendStatistics == 'True'){
+                $.ajax({
+                    url : location.protocol == 'http:' ? 'http://miku.host.smartgslb.com/wikiplus/statistic.php' : 'https://blog.kotori.moe/wikiplus/statistic.php',
+                    type : "GET",
+                    dataType : "json",
+                    data : {
+                        'wikiname' : mw.config.values.wgSiteName,
+                        'usetime' : useTime,
+                        'username' : mw.config.values.wgUserName,
+                        'pagename' : mw.config.values.wgPageName
+                    },
+                    success:function(data){
+                        //提交成功
+                    }
+                })
+            }
+            else{
+                //用户不同意发送数据
+                return false;
+            }
+        }
+
         ////核心功能：快速编辑 结束
 
         //重定向相关
@@ -782,6 +821,22 @@ $(function () {
             $('#Wikiplus_RC_UncollapseRecentChanges').click(function(){
                 $('.mw-enhancedchanges-arrow').click();
                 $(this).text($(this).text() == '展开所有最近更改' ? '折叠所有最近更改' : '展开所有最近更改');
+            })
+        }
+        //隐藏上传日志
+        this.hideUploadLogs = function(){
+            $('#Wikiplus_RC_Functions').append(
+                $('<span>').addClass('Wikiplus-Btn').text('隐藏上传日志').attr('id','Wikiplus_RC_HideUploadLogs')
+            )
+            $('#Wikiplus_RC_HideUploadLogs').click(function(){
+                if ($(this).text() == '隐藏上传日志'){
+                    $('.mw-changeslist-log-upload').hide();
+                    $(this).text('显示上传日志');
+                }
+                else{
+                    $('.mw-changeslist-log-upload').show();
+                    $(this).text('隐藏上传日志');
+                }
             })
         }
         /*
@@ -939,6 +994,7 @@ $(function () {
             ).addClass('rcoptions').attr('id','Wikiplus_RC_Functions')
             $('.rcoptions').after(wikiplus_field);
             this.uncollapseRecentChanges();//展开最近更改
+            this.hideUploadLogs();//隐藏上传日志
         }
         this.initAdvancedFunctions = function () {
             //加载高级功能

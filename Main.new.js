@@ -432,8 +432,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.6';
-        this.lastestUpdateDesc = '允许选择标记为小编辑';
+        this.version = '1.8.7';
+        this.lastestUpdateDesc = '最近更改页面允许隐藏上传日志';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -823,6 +823,22 @@ $(function () {
         		$(this).text($(this).text() == '展开所有最近更改' ? '折叠所有最近更改' : '展开所有最近更改');
         	})
         }
+        //隐藏上传日志
+        this.hideUploadLogs = function(){
+            $('#Wikiplus_RC_Functions').append(
+                $('<span>').addClass('Wikiplus-Btn').text('隐藏上传日志').attr('id','Wikiplus_RC_HideUploadLogs')
+            )
+            $('#Wikiplus_RC_HideUploadLogs').click(function(){
+                if ($(this).text() == '隐藏上传日志'){
+                    $('.mw-changeslist-log-upload').hide();
+                    $(this).text('显示上传日志');
+                }
+                else{
+                    $('.mw-changeslist-log-upload').show();
+                    $(this).text('隐藏上传日志');
+                }
+            })
+        }
         /*
         * 基础功能区 结束
         */
@@ -978,6 +994,7 @@ $(function () {
         	).addClass('rcoptions').attr('id','Wikiplus_RC_Functions')
         	$('.rcoptions').after(wikiplus_field);
         	this.uncollapseRecentChanges();//展开最近更改
+            this.hideUploadLogs();//隐藏上传日志
         }
         this.initAdvancedFunctions = function () {
             //加载高级功能
