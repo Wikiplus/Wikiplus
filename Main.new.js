@@ -432,8 +432,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.7';
-        this.lastestUpdateDesc = '最近更改页面允许隐藏上传日志';
+        this.version = '1.8.8';
+        this.lastestUpdateDesc = '修正小编辑标记异常';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -689,10 +689,14 @@ $(function () {
                 var timer           = new Date().valueOf();
                 var onEdit          = $('<div>').addClass('Wikiplus-Banner').text('正在提交编辑');
                 var addtionalConfig = {
-                    'summary': summary,
-                    'section': section,
-                    'minor' : $('#Wikiplus-Quickedit-MinorEdit').is(':checked') ? 'true' : false
+                    'summary': summary
                 };
+                if (section){
+                    addtionalConfig['section'] = section;
+                }
+                if ($('#Wikiplus-Quickedit-MinorEdit').is(':checked')){
+                    addtionalConfig['minor'] = 'true';
+                }
                 $(this).attr('disabled', 'disabled');
                 $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
                 $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);

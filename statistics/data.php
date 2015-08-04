@@ -166,6 +166,32 @@ if (isValid(array('action'))){
 			}
 		}
 	}
+	elseif ($action == 'weekly'){
+		if (isValid(array('sitename'))){
+			$siteName = escapeParameters(array('sitename'),$mysqli)['sitename'];
+			$timestamp = strtotime('-7 days',strtotime('today'));
+			$fromDate = date('Y-m-d',$timestamp) . ' 00:00:00';
+			$query = "SELECT * FROM `wikiplus_statistics` WHERE `wikiname` = '$siteName' AND `timestamp` >= '$fromDate'";
+			$res = $mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
+
+			if (count($res) > 0){
+				$average = 0;
+				foreach ($res as $item) {
+					$average += $item['usetime'];
+				}
+
+				$average = $average / count($res);
+
+				$json = array(
+					'sitename' => $siteName,
+					'editcount' => count($res),
+					'average' => $average
+				);
+
+				exit(json_encode($json));
+			}
+		}
+	}
 	else{
 		exit();
 	}
