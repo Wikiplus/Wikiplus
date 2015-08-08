@@ -443,8 +443,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.10';
-        this.lastestUpdateDesc = '修正编辑后不能重试的问题 优化对防滥用过滤器的处理';
+        this.version = '1.8.11';
+        this.lastestUpdateDesc = '快速编辑时不再滚动到顶';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -632,8 +632,8 @@ $(function () {
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     $('#Wikiplus-Quickedit').val(text);
                     $('.Wikiplus-InterBox-Content').css('text-align', 'left');
+                    $('.Wikiplus-InterBox').css('top',$(document).scrollTop());
                     self.heightBefore = $(document).scrollTop();//记住当前高度
-                    $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);//返回顶部
                     self.initQuickEditStepTwo(section, contentBackup);
                     //魔法 勿移
                     //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
@@ -670,7 +670,6 @@ $(function () {
             var section = (section == 'page') ? undefined : section;
             //返回
             $("#Wikiplus-Quickedit-Back").click(function () {
-                $('body').animate({ scrollTop: self.heightBefore }, 200);//回到操作前高度
                 $('.Wikiplus-InterBox').fadeOut('fast', function () {
                     $(this).remove();
                 })
@@ -684,7 +683,7 @@ $(function () {
                     $('#Wikiplus-Quickedit-Preview-Output').html(onPreload);
                     $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                 });
-                $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);//返回顶部
+                $('body').animate({ scrollTop: self.heightBefore }, 200);//返回顶部
                 self.kotori.parseWikiText(wikiText, function (data) {
                     $('#Wikiplus-Quickedit-Preview-Output').fadeOut('100', function () {
                         $('#Wikiplus-Quickedit-Preview-Output').html('<hr><div class="mw-body-content">' + data + '</div><hr>');
@@ -709,7 +708,7 @@ $(function () {
                     addtionalConfig['minor'] = 'true';
                 }
                 $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
-                $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);
+                $('body').animate({ scrollTop: self.heightBefore }, 200);
                 $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
                     $('#Wikiplus-Quickedit-Preview-Output').html(onEdit);
                     $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
