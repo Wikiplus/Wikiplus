@@ -432,8 +432,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.8';
-        this.lastestUpdateDesc = '修正小编辑标记异常';
+        this.version = '1.8.9';
+        this.lastestUpdateDesc = '修正焦点位于小编辑单选框时无法ctrl+enter提交的问题';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -716,7 +716,7 @@ $(function () {
                     })
             })
             //Ctrl+Enter提交
-            $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input').each(function () {
+            $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input,#Wikiplus-Quickedit-MinorEdit').each(function () {
                 $(this).keypress(function (e) {
                     if (e.ctrlKey && e.which == 13 || e.which == 10) {
                         $('#Wikiplus-Quickedit-Submit').click();
