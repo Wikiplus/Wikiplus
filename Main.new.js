@@ -40,7 +40,6 @@ function MoeNotification(undefined) {
     };
     this.clear = function () {
         if ($(".MoeNotification-notice").length >= 10) {
-            //self.slideLeft($(".MoeNotification-notice").first());
             $("#MoeNotification").children().first().fadeOut(150, function () {
                 $(this).remove();
             });
@@ -103,7 +102,7 @@ $(function () {
         e.message = message || '未知错误';
         console.log('%c致命错误[' + e.number + ':' + e.message + ']抛出', 'color:red');
         if ($('.Wikiplus-Banner').length > 0) {
-            $('.Wikiplus-Banner').text(e.message);
+            $('.Wikiplus-Banner').html(e.message);
             $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
         }
         else {
@@ -241,10 +240,16 @@ $(function () {
                     //分辨返回数据
                     if (data.edit.result && data.edit.result == 'Success') {
                         //编辑成功
-                        callback();
+                        callback('success');
                     }
                     else {
-                        throwError(1085, '未知的编辑错误');
+                        if (data.edit.code){
+                            throwError(1101, '触发防滥用过滤器:' + data.edit.info.replace(/Hit AbuseFilter: /ig, '') + '<br><small>' + data.edit.warning + '</small>')
+                        }
+                        else{
+                            throwError(1085, '未知的编辑错误');
+                        }
+                        callback('fail');
                     }
                 }
                 else if (data && data.error) {
@@ -300,9 +305,15 @@ $(function () {
                         case 'cascadeprotected' : throwError(1100, '无法编辑被级联保护的页面');break;
                         default : throwError(1099,'未知的编辑错误')
                     }
+                    callback('fail');
+                }
+                else if (data.code){
+                    throwError(1100, '编辑错误:' + data.code);
+                    callback('fail');
                 }
                 else {
                     throwError(1086, '未知的编辑错误');
+                    callback('success')
                 }
             },
             error: function (e) {
@@ -432,8 +443,8 @@ $(function () {
         var self = this;
         this.showNotice = new MoeNotification();
         this.isBeta = true;
-        this.version = '1.8.9';
-        this.lastestUpdateDesc = '修正焦点位于小编辑单选框时无法ctrl+enter提交的问题';
+        this.version = '1.8.10';
+        this.lastestUpdateDesc = '修正编辑后不能重试的问题 优化对防滥用过滤器的处理';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -697,22 +708,28 @@ $(function () {
                 if ($('#Wikiplus-Quickedit-MinorEdit').is(':checked')){
                     addtionalConfig['minor'] = 'true';
                 }
-                $(this).attr('disabled', 'disabled');
-                $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
+                $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
                 $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);
                 $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
                     $('#Wikiplus-Quickedit-Preview-Output').html(onEdit);
                     $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                 });
-                self.kotori.edit(wikiText, addtionalConfig, function () {
-                        var useTime = new Date().valueOf() - timer;
-                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
-                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + useTime + 'ms');
-                        //发送统计数据
-                        self.sendStatistic(useTime);
-                        setTimeout(function () {
-                            location.reload();
-                        }, 500);
+                self.kotori.edit(wikiText, addtionalConfig, function (status) {
+                        if (status == 'success'){
+                            //编辑成功
+                            var useTime = new Date().valueOf() - timer;
+                            $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
+                            $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + useTime + 'ms');
+                            //发送统计数据
+                            self.sendStatistic(useTime);
+                            setTimeout(function () {
+                                location.reload();
+                            }, 500);
+                        }
+                        else{
+                            //编辑失败
+                            $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').removeAttr('disabled');
+                        }
                     })
             })
             //Ctrl+Enter提交
