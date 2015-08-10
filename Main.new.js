@@ -357,7 +357,7 @@ $(function () {
             throwError(1057, '未指定重定向源');
         }
         else {
-            this.edit('#重定向 [[' + this.pageName + ']]', {
+            this.edit('#REDIRECT [[' + this.pageName + ']]', {
                 'title': origin,
                 'summary': '重定向至[[' + this.pageName + ']] // Wikiplus'
             }, callback)
@@ -442,9 +442,8 @@ $(function () {
         //这不是一个严格意义上的Class 但是有其一定特性
         var self = this;
         this.showNotice = new MoeNotification();
-        this.isBeta = true;
-        this.version = '1.8.11';
-        this.lastestUpdateDesc = '快速编辑时不再滚动到顶';
+        this.version = '1.8.12';
+        this.lastestUpdateDesc = '修正一处手滑';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {

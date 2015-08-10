@@ -40,7 +40,6 @@ function MoeNotification(undefined) {
     };
     this.clear = function () {
         if ($(".MoeNotification-notice").length >= 10) {
-            //self.slideLeft($(".MoeNotification-notice").first());
             $("#MoeNotification").children().first().fadeOut(150, function () {
                 $(this).remove();
             });
@@ -103,7 +102,7 @@ $(function () {
         e.message = message || '未知错误';
         console.log('%c致命错误[' + e.number + ':' + e.message + ']抛出', 'color:red');
         if ($('.Wikiplus-Banner').length > 0) {
-            $('.Wikiplus-Banner').text(e.message);
+            $('.Wikiplus-Banner').html(e.message);
             $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
         }
         else {
@@ -241,10 +240,16 @@ $(function () {
                     //分辨返回数据
                     if (data.edit.result && data.edit.result == 'Success') {
                         //编辑成功
-                        callback();
+                        callback('success');
                     }
                     else {
-                        throwError(1085, '未知的编辑错误');
+                        if (data.edit.code){
+                            throwError(1101, '触发防滥用过滤器:' + data.edit.info.replace(/Hit AbuseFilter: /ig, '') + '<br><small>' + data.edit.warning + '</small>')
+                        }
+                        else{
+                            throwError(1085, '未知的编辑错误');
+                        }
+                        callback('fail');
                     }
                 }
                 else if (data && data.error) {
@@ -300,9 +305,15 @@ $(function () {
                         case 'cascadeprotected' : throwError(1100, '无法编辑被级联保护的页面');break;
                         default : throwError(1099,'未知的编辑错误')
                     }
+                    callback('fail');
+                }
+                else if (data.code){
+                    throwError(1100, '编辑错误:' + data.code);
+                    callback('fail');
                 }
                 else {
                     throwError(1086, '未知的编辑错误');
+                    callback('success')
                 }
             },
             error: function (e) {
@@ -346,7 +357,7 @@ $(function () {
             throwError(1057, '未指定重定向源');
         }
         else {
-            this.edit('#重定向 [[' + this.pageName + ']]', {
+            this.edit('#REDIRECT [[' + this.pageName + ']]', {
                 'title': origin,
                 'summary': '重定向至[[' + this.pageName + ']] // Wikiplus'
             }, callback)
@@ -431,9 +442,8 @@ $(function () {
         //这不是一个严格意义上的Class 但是有其一定特性
         var self = this;
         this.showNotice = new MoeNotification();
-        this.isBeta = true;
-        this.version = '1.8.7';
-        this.lastestUpdateDesc = '最近更改页面允许隐藏上传日志';
+        this.version = '1.8.12';
+        this.lastestUpdateDesc = '修正一处手滑';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -621,8 +631,8 @@ $(function () {
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     $('#Wikiplus-Quickedit').val(text);
                     $('.Wikiplus-InterBox-Content').css('text-align', 'left');
+                    $('.Wikiplus-InterBox').css('top',$(document).scrollTop());
                     self.heightBefore = $(document).scrollTop();//记住当前高度
-                    $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);//返回顶部
                     self.initQuickEditStepTwo(section, contentBackup);
                     //魔法 勿移
                     //这里有个坑……这句话不能放在里面，否则元素还没插完就下一步导致无法绑定事件
@@ -659,7 +669,6 @@ $(function () {
             var section = (section == 'page') ? undefined : section;
             //返回
             $("#Wikiplus-Quickedit-Back").click(function () {
-                $('body').animate({ scrollTop: self.heightBefore }, 200);//回到操作前高度
                 $('.Wikiplus-InterBox').fadeOut('fast', function () {
                     $(this).remove();
                 })
@@ -673,7 +682,7 @@ $(function () {
                     $('#Wikiplus-Quickedit-Preview-Output').html(onPreload);
                     $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                 });
-                $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);//返回顶部
+                $('body').animate({ scrollTop: self.heightBefore }, 200);//返回顶部
                 self.kotori.parseWikiText(wikiText, function (data) {
                     $('#Wikiplus-Quickedit-Preview-Output').fadeOut('100', function () {
                         $('#Wikiplus-Quickedit-Preview-Output').html('<hr><div class="mw-body-content">' + data + '</div><hr>');
@@ -689,30 +698,40 @@ $(function () {
                 var timer           = new Date().valueOf();
                 var onEdit          = $('<div>').addClass('Wikiplus-Banner').text('正在提交编辑');
                 var addtionalConfig = {
-                    'summary': summary,
-                    'section': section,
-                    'minor' : $('#Wikiplus-Quickedit-MinorEdit').is(':checked') ? 'true' : false
+                    'summary': summary
                 };
-                $(this).attr('disabled', 'disabled');
-                $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
-                $('body').animate({ scrollTop: window.innerHeight * 0.2 }, 200);
+                if (section){
+                    addtionalConfig['section'] = section;
+                }
+                if ($('#Wikiplus-Quickedit-MinorEdit').is(':checked')){
+                    addtionalConfig['minor'] = 'true';
+                }
+                $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
+                $('body').animate({ scrollTop: self.heightBefore }, 200);
                 $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
                     $('#Wikiplus-Quickedit-Preview-Output').html(onEdit);
                     $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                 });
-                self.kotori.edit(wikiText, addtionalConfig, function () {
-                        var useTime = new Date().valueOf() - timer;
-                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
-                        $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + useTime + 'ms');
-                        //发送统计数据
-                        self.sendStatistic(useTime);
-                        setTimeout(function () {
-                            location.reload();
-                        }, 500);
+                self.kotori.edit(wikiText, addtionalConfig, function (status) {
+                        if (status == 'success'){
+                            //编辑成功
+                            var useTime = new Date().valueOf() - timer;
+                            $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
+                            $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + useTime + 'ms');
+                            //发送统计数据
+                            self.sendStatistic(useTime);
+                            setTimeout(function () {
+                                location.reload();
+                            }, 500);
+                        }
+                        else{
+                            //编辑失败
+                            $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').removeAttr('disabled');
+                        }
                     })
             })
             //Ctrl+Enter提交
-            $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input').each(function () {
+            $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input,#Wikiplus-Quickedit-MinorEdit').each(function () {
                 $(this).keypress(function (e) {
                     if (e.ctrlKey && e.which == 13 || e.which == 10) {
                         $('#Wikiplus-Quickedit-Submit').click();
