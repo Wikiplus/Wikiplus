@@ -449,9 +449,9 @@ $(function () {
         //这不是一个严格意义上的Class 但是有其一定特性
         var self = this;
         this.showNotice = new MoeNotification();
-        this.version = '1.9';
+        this.version = '1.9.1';
         this.API = location.protocol + '//' + location.host + mw.config.values.wgScriptPath + '/api.php';
-        this.lastestUpdateDesc = '最近更改页快速查看差异';
+        this.lastestUpdateDesc = '修正手滑';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -492,7 +492,7 @@ $(function () {
         }
         //返回页面地址
         this.U = function(title, revision){
-            return location.protocol + '//' + location.host + mw.config.values.wgArticlePath + '/' + '?title=' + encodeURI(title) + '&oldid=' + revision;
+            return location.protocol + '//' + location.host + mw.config.values.wgArticlePath.replace(/\$1/ig, '')  + '?title=' + encodeURI(title) + '&oldid=' + revision;
         }
         /*
         * 基础功能区
@@ -913,13 +913,13 @@ $(function () {
                                                  $('<table>').append(
                                                     $('<tr>').append(
                                                         $('<td>').width('450px').append(
-                                                            $('<a>').attr({'href' : self.U(mw.config.values.wgPageName, oldid), 'target' : '_blank'})
+                                                            $('<a>').attr({'href' : self.U('反正怎么填都行那这里就卖个萌吧', oldid), 'target' : '_blank'})
                                                                     .text('版本' + oldid)
                                                         )
                                                     )
                                                     .append(
                                                         $('<td>').width('450px').append(
-                                                            $('<a>').attr({'href' : self.U(mw.config.values.wgPageName, curid), 'target' : '_blank'})
+                                                            $('<a>').attr({'href' : self.U('反正怎么填都行那这里就卖个萌吧', curid), 'target' : '_blank'})
                                                                     .text('版本' + curid)
                                                         )
                                                     )
