@@ -428,6 +428,12 @@ $(function () {
             }
         })
     }
+    //Wikipage - compare
+    Wikipage.prototype.compare = function(curid, oldid, callback){
+        var self = this;
+        var callback = callback || new Function();
+
+    }
     //Wikipage - toString
     //显示类信息
     Wikipage.prototype.info = Wikipage.prototype.toString = function () {
@@ -442,8 +448,9 @@ $(function () {
         //这不是一个严格意义上的Class 但是有其一定特性
         var self = this;
         this.showNotice = new MoeNotification();
-        this.version = '1.8.14';
-        this.lastestUpdateDesc = '修正在部分中文wiki无法启用最近更改页功能的问题';
+        this.version = '1.9';
+        this.API = location.protocol + '//' + location.host + mw.config.values.wgScriptPath + '/api.php';
+        this.lastestUpdateDesc = '最近更改页快速查看差异';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -882,7 +889,50 @@ $(function () {
             $('.Wikiplus-RC-ViewDiff').click(function(){
                 var curid = $(this).data('curid');
                 var oldid = $(this).data('oldid');
-                self.createInterBox('查看差异')
+                self.createInterBox('查看差异','<div class="Wikiplus-Banner">载入中</div>',function(){
+                    var data = {
+                        'action' : 'compare',
+                        'fromrev' : oldid,
+                        'torev' : curid,
+                        'format' : 'json'
+                    };
+                    $.ajax({
+                        type : "GET",
+                        dataType : "json",
+                        data : data,
+                        url : self.API,
+                        success : function(data){
+                            if (data.compare['*']){
+                                $('.Wikiplus-InterBox-Content').html(
+                                    $('<div>').addClass('Wikiplus_Diff_Container').addClass('mw-body-content')
+                                             .css({'text-align':'left'}).attr({'id':'mw-content-text'})
+                                             .append(
+                                                 $('<table>').append(
+                                                    $('<tr>').append(
+                                                        $('<td>').text('版本' + oldid).width('450px')
+                                                    )
+                                                    .append(
+                                                        $('<td>').text('版本' + curid).width('450px')
+                                                    )
+                                                    .css('text-align', 'center')
+                                                 )
+                                             )
+                                             .append(
+                                             $('<table>').addClass('diff').addClass('diff-contentalign-left')
+                                                         .append(
+                                                            $('<tbody>').append(
+                                                                data.compare['*']
+                                                            )
+                                                         )
+                                             )
+                                )
+                            }
+                            else{
+                                throwError(1111, '无法获得页面差异');
+                            }
+                        }
+                    })
+                }, 900);
             })
             $('.Wikiplus-RC-ViewDiff').before(' | ');
         }
