@@ -442,8 +442,8 @@ $(function () {
         //这不是一个严格意义上的Class 但是有其一定特性
         var self = this;
         this.showNotice = new MoeNotification();
-        this.version = '1.8.13';
-        this.lastestUpdateDesc = '修正重定向悬浮窗错位';
+        this.version = '1.8.14';
+        this.lastestUpdateDesc = '修正在部分中文wiki无法启用最近更改页功能的问题';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -473,7 +473,7 @@ $(function () {
                 self.initAdvancedFunctions();
             }
             else {
-            	if (inArray(mw.config.values.wgPageName,['Special:最近更改','Special:RecentChanges'])){
+            	if (inArray(mw.config.values.wgPageName,['Special:最近更改','Special:RecentChanges','特殊:最近更改'])){
             		this.initRCFunctions();
             	}
             	else{
@@ -1045,7 +1045,7 @@ $(function () {
         	$('.rcoptions').after(wikiplus_field);
         	this.uncollapseRecentChanges();//展开最近更改
             this.hideUploadLogs();//隐藏上传日志
-            //this.viewDifference();//快速查看差异
+            this.viewDifference();//快速查看差异
         }
         this.initAdvancedFunctions = function () {
             //加载高级功能
