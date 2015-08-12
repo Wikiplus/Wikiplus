@@ -318,6 +318,7 @@ $(function () {
             },
             error: function (e) {
                 throwError(1056, '由于网络原因或服务器故障导致编辑失败');
+                callback('fail');
             }
         })
     }
@@ -489,7 +490,10 @@ $(function () {
                 
             }
         }
-
+        //返回页面地址
+        this.U = function(title, revision){
+            return location.protocol + '//' + location.host + mw.config.values.wgArticlePath + '/' + '?title=' + encodeURI(title) + '&oldid=' + revision;
+        }
         /*
         * 基础功能区
         */
@@ -872,7 +876,6 @@ $(function () {
                 //没有更优雅的选取方法了 只能一个个判断链接
                 var href = $(this).attr('href');
                 if (href.match(/^.+\&diff=(\d+)\&oldid=(\d+)/) && inArray($(this).text(), ['之前','差异']) ){
-                    $(this).css({'color':'red'}); // 调试用 标红
                     var regexResult = href.match(/^.+\&diff=(\d+)\&oldid=(\d+)/);
                     var curid = regexResult[1];
                     var oldid = regexResult[2];
@@ -909,10 +912,16 @@ $(function () {
                                              .append(
                                                  $('<table>').append(
                                                     $('<tr>').append(
-                                                        $('<td>').text('版本' + oldid).width('450px')
+                                                        $('<td>').width('450px').append(
+                                                            $('<a>').attr({'href' : self.U(mw.config.values.wgPageName, oldid), 'target' : '_blank'})
+                                                                    .text('版本' + oldid)
+                                                        )
                                                     )
                                                     .append(
-                                                        $('<td>').text('版本' + curid).width('450px')
+                                                        $('<td>').width('450px').append(
+                                                            $('<a>').attr({'href' : self.U(mw.config.values.wgPageName, curid), 'target' : '_blank'})
+                                                                    .text('版本' + curid)
+                                                        )
                                                     )
                                                     .css('text-align', 'center')
                                                  )
