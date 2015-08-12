@@ -442,8 +442,8 @@ $(function () {
         //这不是一个严格意义上的Class 但是有其一定特性
         var self = this;
         this.showNotice = new MoeNotification();
-        this.version = '1.8.12';
-        this.lastestUpdateDesc = '修正一处手滑';
+        this.version = '1.8.13';
+        this.lastestUpdateDesc = '修正重定向悬浮窗错位';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -858,6 +858,34 @@ $(function () {
                 }
             })
         }
+        //快速查看差异
+        this.viewDifference = function(){
+            var self = this;
+            $('.mw-changeslist a').each(function(){
+                //没有更优雅的选取方法了 只能一个个判断链接
+                var href = $(this).attr('href');
+                if (href.match(/^.+\&diff=(\d+)\&oldid=(\d+)/) && inArray($(this).text(), ['之前','差异']) ){
+                    $(this).css({'color':'red'}); // 调试用 标红
+                    var regexResult = href.match(/^.+\&diff=(\d+)\&oldid=(\d+)/);
+                    var curid = regexResult[1];
+                    var oldid = regexResult[2];
+                    $(this).after(
+                        $('<a>').text('查看差异').attr({'href' : 'javascript:void(0);'})
+                                .addClass('Wikiplus-RC-ViewDiff')
+                                .data({
+                                    'curid' : curid,
+                                    'oldid' : oldid
+                                })
+                    );
+                }
+            });
+            $('.Wikiplus-RC-ViewDiff').click(function(){
+                var curid = $(this).data('curid');
+                var oldid = $(this).data('oldid');
+                self.createInterBox('查看差异')
+            })
+            $('.Wikiplus-RC-ViewDiff').before(' | ');
+        }
         /*
         * 基础功能区 结束
         */
@@ -890,7 +918,10 @@ $(function () {
             var cheight = document.body.clientHeight;
             $('body').append(
                 $('<div>').addClass('Wikiplus-InterBox')
-                    .css('margin-left', cwidth / 2 - (width / 2))
+                    .css({
+                        'margin-left' : cwidth / 2 - (width / 2), 
+                        'top' : $(document).scrollTop() + document.body.clientHeight * 0.2
+                    })
                     .append(
                     $('<div>').addClass('Wikiplus-InterBox-Header')
                         .text(title)
@@ -900,9 +931,9 @@ $(function () {
                         .append(content)
                     )
                     .append(
-                    $('<i>').text('×').addClass('Wikiplus-InterBox-Close')
+                    $('<span>').text('×').addClass('Wikiplus-InterBox-Close')
                     )
-                );
+                )
             $('.Wikiplus-InterBox').width(width);
             $('.Wikiplus-InterBox').fadeIn(500);
             $('.Wikiplus-InterBox-Close').click(function(){
@@ -1014,6 +1045,7 @@ $(function () {
         	$('.rcoptions').after(wikiplus_field);
         	this.uncollapseRecentChanges();//展开最近更改
             this.hideUploadLogs();//隐藏上传日志
+            //this.viewDifference();//快速查看差异
         }
         this.initAdvancedFunctions = function () {
             //加载高级功能
