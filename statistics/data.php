@@ -168,7 +168,7 @@ if (isValid(array('action'))){
 	}
 	elseif ($action == 'weekly'){
 		if (isValid(array('sitename'))){
-			$siteName = escapeParameters(array('sitename'),$mysqli)['sitename'];
+			$siteName = escapeParameters(array('sitename'), $mysqli)['sitename'];
 			$timestamp = strtotime('-7 days',strtotime('today'));
 			$fromDate = date('Y-m-d',$timestamp) . ' 00:00:00';
 			$query = "SELECT * FROM `wikiplus_statistics` WHERE `wikiname` = '$siteName' AND `timestamp` >= '$fromDate'";
@@ -191,6 +191,35 @@ if (isValid(array('action'))){
 				exit(json_encode($json));
 			}
 		}
+	}
+	elseif ($action = 'rank'){
+		$data = array();
+		//最长的编辑时间
+		if (isValid(array('sitename'))){
+			$siteName = escapeParameters(array('sitename'), $mysqli)['sitename'];
+			$query = "SELECT * FROM `wikiplus_statistics` WHERE `wikiname` = '$siteName' ORDER BY `wikiplus_statistics`.`usetime` DESC LIMIT 10";
+		}
+		else{
+			$query = "SELECT * FROM `wikiplus_statistics` ORDER BY `wikiplus_statistics`.`usetime` DESC LIMIT 10";
+		}
+		$res = $mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
+		if (count($res) > 0){
+			$data['longest'] = $res;
+		}
+		//最短的编辑时间
+		if (isValid(array('sitename'))){
+			$siteName = escapeParameters(array('sitename'), $mysqli)['sitename'];
+			$query = "SELECT * FROM `wikiplus_statistics` WHERE `wikiname` = '$siteName' ORDER BY `wikiplus_statistics`.`usetime` ASC LIMIT 10";
+		}
+		else{
+			$query = "SELECT * FROM `wikiplus_statistics` ORDER BY `wikiplus_statistics`.`usetime` ASC LIMIT 10";
+		}
+		$res = $mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
+		if (count($res) > 0){
+			$data['shortest'] = $res;
+		}
+
+		exit(json_encode($data));
 	}
 	else{
 		exit();
