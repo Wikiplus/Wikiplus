@@ -449,9 +449,9 @@ $(function () {
         //这不是一个严格意义上的Class 但是有其一定特性
         var self = this;
         this.showNotice = new MoeNotification();
-        this.version = '1.9.1';
+        this.version = '1.9.4';
         this.API = location.protocol + '//' + location.host + mw.config.values.wgScriptPath + '/api.php';
-        this.lastestUpdateDesc = '修正手滑';
+        this.lastestUpdateDesc = '优化对页面误关确认的判断';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -681,6 +681,7 @@ $(function () {
             //返回
             $("#Wikiplus-Quickedit-Back").click(function () {
                 $('.Wikiplus-InterBox').fadeOut('fast', function () {
+                    window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                     $(this).remove();
                 })
             });
@@ -731,6 +732,7 @@ $(function () {
                             $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text('编辑成功~用时' + useTime + 'ms');
                             //发送统计数据
                             self.sendStatistic(useTime);
+                            window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                             setTimeout(function () {
                                 location.reload();
                             }, 500);
@@ -748,7 +750,14 @@ $(function () {
                         $('#Wikiplus-Quickedit-Submit').click();
                     }
                 })
-            })
+            });
+            //由于是异步提交 Wikiplus即使编辑失败 也不会丢失数据 唯一丢失数据的可能性是手滑关了页面
+            //第一 关闭页面确认
+            $('#Wikiplus-Quickedit').keydown(function(){
+                window.onclose = window.onbeforeunload = function(){
+                    return '[Wikiplus] 您确定要关闭/刷新编辑界面?';
+                }
+            });
         }
 
         this.sendStatistic = function(useTime){
