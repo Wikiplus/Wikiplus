@@ -82,7 +82,7 @@ if (isValid(array('action'))){
 
 		if (isValid(array('sitename'))){
 			$siteName = escapeParameters(array('sitename'),$mysqli)['sitename'];
-			$timestamp = strtotime('-7 days',strtotime('today'));
+			$timestamp = strtotime('-30 days',strtotime('today'));
 			$fromDate = date('Y-m-d',$timestamp) . ' 00:00:00';
 			$query = "SELECT * FROM `wikiplus_statistics` WHERE `wikiname` = '$siteName' AND `timestamp` >= '$fromDate'";
 			$res = $mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
