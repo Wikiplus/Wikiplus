@@ -21,7 +21,7 @@ $(document).ready(function () {
 				var myChart = ec.init(document.getElementById('RecentUseTime'));
 				var option = {
 					title: {
-						text: '最近一周平均编辑提交时间',
+						text: '最近30日平均编辑提交时间',
 						subtext: '不是虚构'
 					},
 					tooltip: {
