@@ -252,7 +252,7 @@ $(function () {
                         callback('fail');
                     }
                 }
-                else if (data && data.error) {
+                else if (data && data.error && data.error.code) {
                     switch (data.error.code) {
                         case 'notitle': throwError(1006, '无法编辑空标题页面'); break;
                         case 'notext': throwError(1007, '未设置页面目标内容'); break;
@@ -303,16 +303,16 @@ $(function () {
                         case 'customcssprotected': throwError(1052, '无法编辑用户CSS页'); break;
                         case 'customjsprotected': throwError(1053, '无法编辑用户JS页'); break;
                         case 'cascadeprotected' : throwError(1100, '无法编辑被级联保护的页面');break;
-                        default : throwError(1099,'未知的编辑错误')
+                        default : throwError(1099,'未知的编辑错误' + '(' + data.error.code + ')')
                     }
                     callback('fail');
                 }
                 else if (data.code){
-                    throwError(1100, '编辑错误:' + data.code);
+                    throwError(1100, '编辑错误:' + '(' + data.code + ')');
                     callback('fail');
                 }
                 else {
-                    throwError(1086, '未知的编辑错误');
+                    throwError(1086, '未知的编辑错误(unknownerror)');
                     callback('success')
                 }
             },
@@ -449,9 +449,9 @@ $(function () {
         //这不是一个严格意义上的Class 但是有其一定特性
         var self = this;
         this.showNotice = new MoeNotification();
-        this.version = '1.9.4';
+        this.version = '1.9.8';
         this.API = location.protocol + '//' + location.host + mw.config.values.wgScriptPath + '/api.php';
-        this.lastestUpdateDesc = '优化对页面误关确认的判断';
+        this.lastestUpdateDesc = '调整快捷键设置';
         this.validNameSpaces = [0, 1, 2, 3, 4, 8, 10, 11, 12, 14, 274, 614, 8964];
         this.preloadData = {};
         this.defaultSettings = {
@@ -614,13 +614,13 @@ $(function () {
             var inputBox = $('<textarea>').attr('id', 'Wikiplus-Quickedit');//主编辑框
             var previewBox = $('<div>').attr('id', 'Wikiplus-Quickedit-Preview-Output');//预览输出
             var summaryBox = $('<input>').attr('id', 'Wikiplus-Quickedit-Summary-Input').attr('placeholder', '请输入编辑摘要');//编辑摘要输入
-            var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text('提交编辑(Ctrl+Enter)');//提交按钮
+            var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text('提交编辑(Ctrl+S)');//提交按钮
             var previewSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Preview-Submit').text('预览');//预览按钮
             var isMinorEdit = $('<div>').append(
                                             $('<input>').attr({'type':'checkbox','id':'Wikiplus-Quickedit-MinorEdit'})
                                         )
                                         .append(
-                                            $('<label>').attr('for','Wikiplus-Quickedit-MinorEdit').text('标记为小编辑')
+                                            $('<label>').attr('for','Wikiplus-Quickedit-MinorEdit').text('标记为小编辑(Ctrl+Shift+S)')
                                         )
                                         .css({'margin':'5px 5px 5px -3px','display':'inline'});    
             //插DOM
@@ -743,14 +743,17 @@ $(function () {
                         }
                     })
             })
-            //Ctrl+Enter提交
-            $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input,#Wikiplus-Quickedit-MinorEdit').each(function () {
-                $(this).keypress(function (e) {
-                    if (e.ctrlKey && e.which == 13 || e.which == 10) {
-                        $('#Wikiplus-Quickedit-Submit').click();
+            //快捷键
+            //Ctrl+S提交 Ctrl+Shift+S小编辑
+            $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input,#Wikiplus-Quickedit-MinorEdit').keydown(function (e) {
+                if (e.ctrlKey && e.which == 83) {
+                    if (e.shiftKey){
+                        $('#Wikiplus-Quickedit-MinorEdit').click();
                     }
-                })
-            });
+                    $('#Wikiplus-Quickedit-Submit').click();
+                    e.preventDefault();
+                }
+            })
             //由于是异步提交 Wikiplus即使编辑失败 也不会丢失数据 唯一丢失数据的可能性是手滑关了页面
             //第一 关闭页面确认
             $('#Wikiplus-Quickedit').keydown(function(){
@@ -884,18 +887,23 @@ $(function () {
             $('.mw-changeslist a').each(function(){
                 //没有更优雅的选取方法了 只能一个个判断链接
                 var href = $(this).attr('href');
-                if (href.match(/^.+\&diff=(\d+)\&oldid=(\d+)/) && inArray($(this).text(), ['之前','差异']) ){
-                    var regexResult = href.match(/^.+\&diff=(\d+)\&oldid=(\d+)/);
-                    var curid = regexResult[1];
-                    var oldid = regexResult[2];
-                    $(this).after(
-                        $('<a>').text('查看差异').attr({'href' : 'javascript:void(0);'})
-                                .addClass('Wikiplus-RC-ViewDiff')
-                                .data({
-                                    'curid' : curid,
-                                    'oldid' : oldid
-                                })
-                    );
+                try{
+                    if (href.match(/^.+\&diff=(\d+)\&oldid=(\d+)/) && inArray($(this).text(), ['之前','差异']) ){
+                        var regexResult = href.match(/^.+\&diff=(\d+)\&oldid=(\d+)/);
+                        var curid = regexResult[1];
+                        var oldid = regexResult[2];
+                        $(this).after(
+                            $('<a>').text('查看差异').attr({'href' : 'javascript:void(0);'})
+                                    .addClass('Wikiplus-RC-ViewDiff')
+                                    .data({
+                                        'curid' : curid,
+                                        'oldid' : oldid
+                                    })
+                        );
+                    }
+                }
+                catch(e){
+                    //continue;
                 }
             });
             $('.Wikiplus-RC-ViewDiff').click(function(){
@@ -1006,6 +1014,7 @@ $(function () {
             $('.Wikiplus-InterBox').fadeIn(500);
             $('.Wikiplus-InterBox-Close').click(function(){
                 $(this).parent().fadeOut('fast',function(){
+                    window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                     $(this).remove();
                 })
             })
