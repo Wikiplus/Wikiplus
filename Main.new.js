@@ -481,12 +481,12 @@ $(function () {
                 self.initAdvancedFunctions();
             }
             else {
-            	if (inArray(mw.config.values.wgPageName,['Special:最近更改','Special:RecentChanges','特殊:最近更改'])){
-            		this.initRCFunctions();
-            	}
-            	else{
-            		console.log('不符合加载条件，程序终止。');
-            	}
+                if (inArray(mw.config.values.wgPageName,['Special:最近更改','Special:RecentChanges','特殊:最近更改'])){
+                    this.initRCFunctions();
+                }
+                else{
+                    console.log('不符合加载条件，程序终止。');
+                }
                 
             }
         }
@@ -752,6 +752,7 @@ $(function () {
                     }
                     $('#Wikiplus-Quickedit-Submit').click();
                     e.preventDefault();
+                    e.stopPropagation();
                 }
             })
             //由于是异步提交 Wikiplus即使编辑失败 也不会丢失数据 唯一丢失数据的可能性是手滑关了页面
@@ -857,13 +858,13 @@ $(function () {
         }
         //展开最近更改列表
         this.uncollapseRecentChanges = function(){
-        	$('#Wikiplus_RC_Functions').append(
-        		$('<span>').addClass('Wikiplus-Btn').text('展开所有最近更改').attr('id','Wikiplus_RC_UncollapseRecentChanges')
-        	)
-        	$('#Wikiplus_RC_UncollapseRecentChanges').click(function(){
-        		$('.mw-enhancedchanges-arrow').click();
-        		$(this).text($(this).text() == '展开所有最近更改' ? '折叠所有最近更改' : '展开所有最近更改');
-        	})
+            $('#Wikiplus_RC_Functions').append(
+                $('<span>').addClass('Wikiplus-Btn').text('展开所有最近更改').attr('id','Wikiplus_RC_UncollapseRecentChanges')
+            )
+            $('#Wikiplus_RC_UncollapseRecentChanges').click(function(){
+                $('.mw-enhancedchanges-arrow').click();
+                $(this).text($(this).text() == '展开所有最近更改' ? '折叠所有最近更改' : '展开所有最近更改');
+            })
         }
         //隐藏上传日志
         this.hideUploadLogs = function(){
@@ -1115,12 +1116,12 @@ $(function () {
             this.editSettings();//编辑设置
         }
         this.initRCFunctions = function(){
-        	//加载最近更改页功能
-        	var wikiplus_field = $('<fieldset>').append(
-        		$('<legend>').text('Wikiplus')
-        	).addClass('rcoptions').attr('id','Wikiplus_RC_Functions')
-        	$('.rcoptions').after(wikiplus_field);
-        	this.uncollapseRecentChanges();//展开最近更改
+            //加载最近更改页功能
+            var wikiplus_field = $('<fieldset>').append(
+                $('<legend>').text('Wikiplus')
+            ).addClass('rcoptions').attr('id','Wikiplus_RC_Functions')
+            $('.rcoptions').after(wikiplus_field);
+            this.uncollapseRecentChanges();//展开最近更改
             this.hideUploadLogs();//隐藏上传日志
             this.viewDifference();//快速查看差异
         }
