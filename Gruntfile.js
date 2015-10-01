@@ -1,16 +1,38 @@
-require('load-grunt-tasks')(grunt); // npm install --save-dev load-grunt-tasks 
+module.exports = function (grunt) {
+    require('load-grunt-tasks')(grunt); // npm install --save-dev load-grunt-tasks 
  
-grunt.initConfig({
-    babel: {
-        options: {
-            sourceMap: true
+    grunt.initConfig({
+        uglify: {
+            options: {
+            },
+            app_task: {
+                files: {
+                    './Main.min.js': './Main.js'
+                }
+            }
         },
-        dist: {
-            files: {
-                'Wikiplus.new.js': 'Wikiplus.js'
+        babel: {
+            options: {
+                sourceMap: true
+            },
+            dist: {
+                files: {
+                    './Main.js': './Main.new.js'
+                }
+            }
+        },
+        watch: {
+            another: {
+                files: ['./Main.new.js'],
+                tasks: ['babel','uglify'],
+                options: {
+                    // Start another live reload server on port 1337
+                    livereload: 1337
+                }
             }
         }
-    }
-});
- 
-grunt.registerTask('default', ['babel']);
+    });
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.registerTask('default', ['watch']);
+}
