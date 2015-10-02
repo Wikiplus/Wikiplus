@@ -11,6 +11,8 @@
 */
 'use strict';
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function MoeNotification(undefined) {
@@ -85,10 +87,120 @@ function MoeNotification(undefined) {
     }
 }
 $(function () {
-    var Wikipage = function Wikipage(mw) {
-        _classCallCheck(this, Wikipage);
+    var Wikipage = (function () {
+        function Wikipage() {
+            var pageName = arguments.length <= 0 || arguments[0] === undefined ? window.mw.config.values.wgPageName : arguments[0];
 
-        var self = this;
-    };
+            _classCallCheck(this, Wikipage);
+
+            var self = this;
+            console.log('Now Loading Wikiplus');
+            //可用性和权限检测
+            if (!window.mw) {
+                console.log('页面Javascript载入不完全或这不是一个Mediawiki站点');
+                return;
+            }
+            if (!window.mw.config.values.wgEnableAPI || !window.mw.config.values.wgEnableWriteAPI) {
+                self.throwError(1000, '无可用的API');
+                return;
+            }
+            if (!self.inArray('autoconfirmed', window.mw.config.values.wgUserGroups)) {
+                self.throwError(1001, '非自动确认用户');
+                return;
+            }
+            //从MediaWiki定义的全局变量中获得信息
+            self.pageName = pageName.replace(/ /ig, '_'); // Mediawiki处理空格时可能会出错
+            self.revisionId = window.mw.config.values.wgRevisionId;
+            self.articleId = window.mw.config.values.wgArticleId;
+            self.API = location.protocol + '//' + location.host + window.mw.config.values.wgScriptPath + '/api.php';
+            //从API获得编辑令牌和起始时间戳
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url: self.API,
+                data: {
+                    'action': 'query',
+                    'prop': 'revisions|info',
+                    'titles': self.pageName,
+                    'rvprop': 'timestamp',
+                    'intoken': 'edit',
+                    'format': 'json'
+                },
+                beforeSend: function beforeSend() {
+                    console.time('获得页面基础信息时间耗时');
+                },
+                success: function success(data) {
+                    if (data && data.query && data.query.pages) {
+                        var info = data.query.pages;
+                        for (var key in info) {
+                            if (key !== '-1') {
+                                if (info[key].revisions && info[key].revisions.length > 0) {
+                                    self.timeStamp = info[key].revisions[0].timestamp;
+                                } else {
+                                    self.throwError(1004, '无法获得页面时间戳');
+                                }
+                                if (info[key].edittoken) {
+                                    if (info[key].edittoken != '+\\') {
+                                        self.editToken = info[key].edittoken;
+                                    } else {
+                                        console.log('无法通过API获得编辑令牌，可能是空页面，尝试通过前端API获取通用编辑令牌');
+                                        self.editToken = window.mw.user.tokens.get('editToken');
+                                        if (self.editToken && self.editToken != '+\\') {
+                                            console.log('成功获得通用编辑令牌 来自前端API');
+                                        } else {
+                                            self.throwError(1005, '无法获得页面编辑令牌 请确认登录状态');
+                                        }
+                                    }
+                                }
+                            } else {
+                                //原来版本这里依然会试着用前端API来获取Token，但是这样就没有了起始时间戳，有产生编辑覆盖的可能性
+                                self.throwError(1007, '无法获得页面基础信息');
+                                self.inited = true;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        _createClass(Wikipage, [{
+            key: 'throwError',
+            value: function throwError() {
+                var number = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+                var message = arguments.length <= 1 || arguments[1] === undefined ? '未知错误' : arguments[1];
+
+                console.log('%c致命错误[' + number + ']:' + message, 'color:red');
+            }
+        }, {
+            key: 'throwWarning',
+            value: function throwWarning() {
+                var number = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+                var message = arguments.length <= 1 || arguments[1] === undefined ? '未知异常' : arguments[1];
+
+                console.log('%c异常[' + number + ']:' + message, 'color:#F3C421');
+            }
+        }, {
+            key: 'inArray',
+            value: function inArray(value, array) {
+                if ($.inArray(value, array) === -1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }]);
+
+        return Wikipage;
+    })();
+
+    $(document).ready(function () {
+        var Wikiplus = function Wikiplus() {
+            _classCallCheck(this, Wikiplus);
+
+            var self = this;
+            self.kotori = new Wikipage();
+        };
+
+        new Wikiplus();
+    });
 });
-//# sourceMappingURL=Main.js.map
