@@ -90,9 +90,31 @@ function MoeNotification(undefined) {
 }
 $(function () {
     class Wikipage {
+        throwError(number = 0, message = '未知错误') {
+            var e = new Error();
+            e.number = number;
+            e.message = message;
+            console.log(`%c致命错误[${number}]:${message}`, 'color:red');
+            return e;
+        }
+        throwWarning(number = 0, message = '未知异常') {
+            var e = new Error();
+            e.number = number;
+            e.message = message;
+            console.log(`%c异常[${number}]:${message}`, 'color:#F3C421');
+            return e;
+        }
+        inArray(value, array = []) {
+            if ($.inArray(value, array) === -1) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
         constructor(pageName = window.mw.config.values.wgPageName) {
             var self = this;
-            console.log('Now Loading Wikiplus');
+            console.log('页面类构建中');
             //可用性和权限检测
             if (!window.mw) {
                 console.log('页面Javascript载入不完全或这不是一个Mediawiki站点');
@@ -162,21 +184,47 @@ $(function () {
                         }
                     }
                 }
+            }).done(function () {
+                console.timeEnd('获得页面基础信息时间耗时');
             })
         }
-        throwError(number = 0, message = '未知错误') {
-            console.log(`%c致命错误[${number}]:${message}`, 'color:red');
-        }
-        throwWarning(number = 0, message = '未知异常') {
-            console.log(`%c异常[${number}]:${message}`, 'color:#F3C421');
-        }
-        inArray(value, array) {
-            if ($.inArray(value, array) === -1) {
-                return false;
+        //通用页面编辑
+        edit(title = self.pageName, content = '', config = {}, callback = {
+            'success': new Function(),
+            'fail': new Function()
+        }) {
+            var self = this;
+            if (self.inited) {
+                $.ajax({
+                    type: 'POST',
+                    url: self.API,
+                    data: $.extend({
+                        'action': 'edit',
+                        'format' : 'json',
+                        'text' : content,
+                        'title' : title,
+                        'token' : self.editToken,
+                        'basetimestamp' : self.timeStamp
+                    },config),
+                    success : function(data){
+                        if (data && data.edit){
+                            if (data.edit.result && data.edit.result == 'Success'){
+                                callback.success();
+                            }
+                            else{
+                                if (data.edit.code){
+                                    //防滥用过滤器
+                                    callback.fail(self.throwError(1018, `触发防滥用过滤器:${data.edit.info.replace('/Hit AbuseFilter: /ig', '')}<br><small>${data.edit.warning}</small>`));
+                                }
+                            }
+                        }
+                    }
+                })
             }
             else {
-                return true;
+                callback.fail(self.throwError(1017, '页面类未加载完成'));
             }
+
         }
     }
 
@@ -184,10 +232,10 @@ $(function () {
         class Wikiplus {
             constructor() {
                 var self = this;
+                console.log('正在加载Wikiplus');
                 self.kotori = new Wikipage();
             }
         }
-
         new Wikiplus();
     })
 })

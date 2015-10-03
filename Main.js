@@ -88,13 +88,50 @@ function MoeNotification(undefined) {
 }
 $(function () {
     var Wikipage = (function () {
+        _createClass(Wikipage, [{
+            key: 'throwError',
+            value: function throwError() {
+                var number = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+                var message = arguments.length <= 1 || arguments[1] === undefined ? '未知错误' : arguments[1];
+
+                var e = new Error();
+                e.number = number;
+                e.message = message;
+                console.log('%c致命错误[' + number + ']:' + message, 'color:red');
+                return e;
+            }
+        }, {
+            key: 'throwWarning',
+            value: function throwWarning() {
+                var number = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+                var message = arguments.length <= 1 || arguments[1] === undefined ? '未知异常' : arguments[1];
+
+                var e = new Error();
+                e.number = number;
+                e.message = message;
+                console.log('%c异常[' + number + ']:' + message, 'color:#F3C421');
+                return e;
+            }
+        }, {
+            key: 'inArray',
+            value: function inArray(value) {
+                var array = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
+                if ($.inArray(value, array) === -1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }]);
+
         function Wikipage() {
             var pageName = arguments.length <= 0 || arguments[0] === undefined ? window.mw.config.values.wgPageName : arguments[0];
 
             _classCallCheck(this, Wikipage);
 
             var self = this;
-            console.log('Now Loading Wikiplus');
+            console.log('页面类构建中');
             //可用性和权限检测
             if (!window.mw) {
                 console.log('页面Javascript载入不完全或这不是一个Mediawiki站点');
@@ -160,33 +197,54 @@ $(function () {
                         }
                     }
                 }
+            }).done(function () {
+                console.timeEnd('获得页面基础信息时间耗时');
             });
         }
 
+        //通用页面编辑
+
         _createClass(Wikipage, [{
-            key: 'throwError',
-            value: function throwError() {
-                var number = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-                var message = arguments.length <= 1 || arguments[1] === undefined ? '未知错误' : arguments[1];
-
-                console.log('%c致命错误[' + number + ']:' + message, 'color:red');
-            }
-        }, {
-            key: 'throwWarning',
-            value: function throwWarning() {
-                var number = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-                var message = arguments.length <= 1 || arguments[1] === undefined ? '未知异常' : arguments[1];
-
-                console.log('%c异常[' + number + ']:' + message, 'color:#F3C421');
-            }
-        }, {
-            key: 'inArray',
-            value: function inArray(value, array) {
-                if ($.inArray(value, array) === -1) {
-                    return false;
-                } else {
-                    return true;
-                }
+            key: 'edit',
+            value: function edit() {
+                var title = arguments.length <= 0 || arguments[0] === undefined ? self.pageName : arguments[0];
+                var content = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+                var config = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+                var callback = arguments.length <= 3 || arguments[3] === undefined ? {
+                    'success': new Function(),
+                    'fail': new Function()
+                } : arguments[3];
+                return (function () {
+                    var self = this;
+                    if (self.inited) {
+                        $.ajax({
+                            type: 'POST',
+                            url: self.API,
+                            data: $.extend({
+                                'action': 'edit',
+                                'format': 'json',
+                                'text': content,
+                                'title': title,
+                                'token': self.editToken,
+                                'basetimestamp': self.timeStamp
+                            }, config),
+                            success: function success(data) {
+                                if (data && data.edit) {
+                                    if (data.edit.result && data.edit.result == 'Success') {
+                                        callback.success();
+                                    } else {
+                                        if (data.edit.code) {
+                                            //防滥用过滤器
+                                            callback.fail(self.throwError(1018, '触发防滥用过滤器:' + data.edit.info.replace('/Hit AbuseFilter: /ig', '') + '<br><small>' + data.edit.warning + '</small>'));
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        callback.fail(self.throwError(1017, '页面类未加载完成'));
+                    }
+                }).apply(this, arguments);
             }
         }]);
 
@@ -198,6 +256,7 @@ $(function () {
             _classCallCheck(this, Wikiplus);
 
             var self = this;
+            console.log('正在加载Wikiplus');
             self.kotori = new Wikipage();
         };
 
