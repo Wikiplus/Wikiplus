@@ -3,7 +3,7 @@ $(document).ready(function () {
 	var showRecentUseTime = function(useTime){
 		var useTimeDate = [];
 		var useTimeTime = [];
-		for (key in useTime){
+		for (var key in useTime){
 			useTimeDate.push(key);
 			useTimeTime.push(useTime[key]);
 		}
@@ -86,7 +86,38 @@ $(document).ready(function () {
 	window.onhashchange = function(){
 		location.reload();
 	}
-
+	//创建表格
+	var initTable = function(container, titles){
+		container.append(
+			$('<table>').addClass('mdl-data-table').addClass('mdl-js-data-table').addClass('mdl-shadow--2dp')
+		);
+		container.find('table').append(
+			$('<thead>').append('<tr>')
+		);
+		for (var item in titles){
+			container.find('table thead tr').append(
+				$('<th>').addClass('mdl-data-table__cell--non-numeric').text(titles[item])
+			);
+		}
+		container.find('table').append(
+			$('<tbody>')
+		)
+		return container.find('table');
+	}
+	//为表格添加项目
+	var addTableElement = function(table, values){
+		var tbody = table.find('tbody').last();
+		tbody.append(
+			$('<tr>')
+		);
+		for (var key in values){
+			tbody.find('tr').last().append(
+				$('<td>').addClass('mdl-data-table__cell--non-numeric').text(values[key])
+			);
+		}
+	}
+	
+	
 	if (siteName){
 		$('.Headline h2').text('数据统计 于 ' + siteName);
 

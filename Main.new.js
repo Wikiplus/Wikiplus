@@ -1,108 +1,29 @@
 /// <reference path="../typings/jquery/jquery.d.ts"/>
-/* global mw,inArray */
 /**
 * Wikiplus
 * Author:+Eridanus Sora/@妹空酱
 * Github:https://github.com/Last-Order/Wikiplus
 */
-/**
-* 依赖组件:MoeNotification
-* https://github.com/Last-Order/MoeNotification
-*/
-function MoeNotification(undefined) {
-    var self = this;
-    this.display = function (text, type, callback) {
-        var _callback = callback || function () { };
-        var _text = text || '喵~';
-        var _type = type || 'success';
-        $("#MoeNotification").append(
-            $("<div>").addClass('MoeNotification-notice')
-                .addClass('MoeNotification-notice-' + _type)
-                .append('<span>' + _text + '</span>')
-                .fadeIn(300)
-            );
-        self.bind();
-        self.clear();
-        _callback($("#MoeNotification").find('.MoeNotification-notice').last());
-    }
-    this.create = {
-        success: function (text, callback) {
-            var _callback = callback || function () { };
-            self.display(text, 'success', _callback);
-        },
-        warning: function (text, callback) {
-            var _callback = callback || function () { };
-            self.display(text, 'warning', _callback);
-        },
-        error: function (text, callback) {
-            var _callback = callback || function () { };
-            self.display(text, 'error', _callback);
-        }
-    };
-    this.clear = function () {
-        if ($(".MoeNotification-notice").length >= 10) {
-            $("#MoeNotification").children().first().fadeOut(150, function () {
-                $(this).remove();
-            });
-            setTimeout(self.clear, 300);
-        }
-        else {
-            return false;
-        }
-    }
-    this.empty = function (f) {
-        $(".MoeNotification-notice").each(function (i) {
-            if ($.isFunction(f)) {
-                var object = this;
-                setTimeout(function () {
-                    f($(object));
-                }, 200 * i);
-            }
-            else {
-                $(this).delay(i * 200).fadeOut('fast', function () {
-                    $(this).remove();
-                })
-            }
+$(function () {
+    var i18nData = {};
+    function loadLanguage(language){
+        $.ajax({
+            url : 'path',
+            dataType : 'json',
+            success : function(data){
+                if (data.__language){                 // Example:
+                    i18nData[data.__language] = data; // { 
+                }                                     //   '__language' : 'zh-cn'
+                                                      //   'key' : 'value'
+            }                                         // }
         })
     }
-    this.bind = function () {
-        $(".MoeNotification-notice").mouseover(function () {
-            self.slideLeft($(this));
-        });
+    function i18n(key){
+
     }
-    window.slideLeft = this.slideLeft = function (object, speed) {
-        object.css('position', 'relative');
-        object.animate({
-            left: "-200%",
-        },
-            speed || 150, function () {
-                $(this).fadeOut('fast', function () {
-                    $(this).remove();
-                });
-            });
-    }
-    this.init = function () {
-        $("body").append('<div id="MoeNotification"></div>');
-    }
-    if (!($("#MoeNotification").length > 0)) {
-        this.init();
-    }
-}
-$(function () {
     class Wikipage {
-        throwError(number = 0, message = '未知错误') {
-            var e = new Error();
-            e.number = number;
-            e.message = message;
-            console.log(`%c致命错误[${number}]:${message}`, 'color:red');
-            return e;
-        }
-        throwWarning(number = 0, message = '未知异常') {
-            var e = new Error();
-            e.number = number;
-            e.message = message;
-            console.log(`%c异常[${number}]:${message}`, 'color:#F3C421');
-            return e;
+        throwError(name) {
+
         }
         inArray(value, array = []) {
             if ($.inArray(value, array) === -1) {
@@ -133,6 +54,35 @@ $(function () {
             self.revisionId = window.mw.config.values.wgRevisionId;
             self.articleId = window.mw.config.values.wgArticleId;
             self.API = `${location.protocol}//${location.host}${window.mw.config.values.wgScriptPath}/api.php`;
+            //多语言
+            self.languages = {};
+            //预载入中文的
+            self.languages['zh-cn'] = {
+                'fail_to_get_timestamp' : '无法获得页面时间戳'
+            }
+            self.i18n = function (stringName) {
+            }
+            //定义错误列表
+            self.errorList = {
+                'fail_to_get_timestamp': {
+                    'number': 1004,
+                    'message': self.i18n('fail_to_get_timestamp')
+                }
+            }
+            //抛出错误
+            self.throwError = function (name) {
+                var self = this;
+                if (!self.errorList[name]) {
+                    name = 'unknown_error_name';
+                }
+                var e = new Error();
+                console.log(self.errorList[name]);
+                e.number = self.errorList[name].number;
+                e.message = self.errorList[name].message;
+                console.log(`%c致命错误[${e.number}]:${e.message}`, 'color:red');
+                return e;
+            }
+            self.throwError('fail_to_get_timestamp');
             //从API获得编辑令牌和起始时间戳
             $.ajax({
                 type: 'GET',
@@ -189,7 +139,7 @@ $(function () {
             })
         }
         //通用页面编辑
-        edit(title = self.pageName, content = '', config = {}, callback = {
+        edit(title = this.pageName, content = '', config = {}, callback = {
             'success': new Function(),
             'fail': new Function()
         }) {
@@ -200,22 +150,30 @@ $(function () {
                     url: self.API,
                     data: $.extend({
                         'action': 'edit',
-                        'format' : 'json',
-                        'text' : content,
-                        'title' : title,
-                        'token' : self.editToken,
-                        'basetimestamp' : self.timeStamp
-                    },config),
-                    success : function(data){
-                        if (data && data.edit){
-                            if (data.edit.result && data.edit.result == 'Success'){
+                        'format': 'json',
+                        'text': content,
+                        'title': title,
+                        'token': self.editToken,
+                        'basetimestamp': self.timeStamp
+                    }, config),
+                    success: function (data) {
+                        if (data && data.edit) {
+                            if (data.edit.result && data.edit.result == 'Success') {
                                 callback.success();
                             }
-                            else{
-                                if (data.edit.code){
+                            else {
+                                if (data.edit.code) {
                                     //防滥用过滤器
-                                    callback.fail(self.throwError(1018, `触发防滥用过滤器:${data.edit.info.replace('/Hit AbuseFilter: /ig', '')}<br><small>${data.edit.warning}</small>`));
+                                    callback.fail(self.throwError(1018, `触发防滥用过滤器:${data.edit.info.replace('/Hit AbuseFilter: /ig', '') }<br><small>${data.edit.warning}</small>`));
                                 }
+                                else {
+                                    callback.fail(self.throwError(1019, '未知编辑错误'));
+                                }
+                            }
+                        }
+                        else if (data && data.error && data.error.code) {
+                            switch (data.error.code) {
+
                             }
                         }
                     }
@@ -232,6 +190,8 @@ $(function () {
         class Wikiplus {
             constructor() {
                 var self = this;
+                this.version = '2.0';
+                this.releaseNote = '重构;'
                 console.log('正在加载Wikiplus');
                 self.kotori = new Wikipage();
             }

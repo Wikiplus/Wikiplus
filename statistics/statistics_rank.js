@@ -12,7 +12,7 @@ $(document).ready(function(){
 		container.find('table').append(
 			$('<thead>').append('<tr>')
 		);
-		for (item in titles){
+		for (var item in titles){
 			container.find('table thead tr').append(
 				$('<th>').addClass('mdl-data-table__cell--non-numeric').text(titles[item])
 			);
@@ -28,9 +28,9 @@ $(document).ready(function(){
 		tbody.append(
 			$('<tr>')
 		);
-		for (k in values){
+		for (var key in values){
 			tbody.find('tr').last().append(
-				$('<td>').addClass('mdl-data-table__cell--non-numeric').text(values[k])
+				$('<td>').addClass('mdl-data-table__cell--non-numeric').text(values[key])
 			);
 		}
 	}
@@ -53,7 +53,7 @@ $(document).ready(function(){
 				}
 				if (data.shortest){
 					var table = initTable($('.shortest'), ['Wiki', '页面名', '用时', '用户名']);
-					for (k in data.shortest){
+					for (var k in data.shortest){
 						addTableElement(table, [
 							data.shortest[k].wikiname,
 							data.shortest[k].pagename,
