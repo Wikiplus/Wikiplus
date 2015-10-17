@@ -181,7 +181,7 @@ $(document).ready(function () {
 													$('<tbody>')
 												)
 								);
-								for (key in data.contributionRanking){
+								for (var key in data.contributionRanking){
 									var table = $('#contribution-raking tbody');
 									table.append(
 										$('<tr>').append(
