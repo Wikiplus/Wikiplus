@@ -74,9 +74,17 @@ $(function () {
         customcssprotected: '无法编辑用户CSS页',
         customjsprotected: '无法编辑用户JS页',
         cascadeprotected: '该页面被级联保护',
-        network_edit_error: '由于网络原因编辑失败'
+        network_edit_error: '由于网络原因编辑失败',
+        redirect_to_summary: '重定向页面至 [[$1]] // Wikiplus',
+        redirect_from_summary: '将[[$1]]重定向至[[$2]] // Wikiplus',
+        need_init: '页面类未加载完成'
 
     };
+    /**
+     * 多语言转换
+     * @param {stirng} key 字段标识名
+     * @return {string} 经过转换的内容 如未找到对应的多语言字段 则返回简体中文
+     */
     function i18n(key) {
         var language = window.navigator.language.toLowerCase();
         if (i18nData[language][key]) {
@@ -274,6 +282,9 @@ $(function () {
             },
             network_edit_error: {
                 number: 1061
+            },
+            need_init: {
+                number: 1062
             }
         };
         if (errorList[name]) {
@@ -423,6 +434,7 @@ $(function () {
                 }
             }).done(function () {
                 console.timeEnd('获得页面基础信息时间耗时');
+                self.inited = true;
             });
         }
 
@@ -486,6 +498,69 @@ $(function () {
                     callback.fail(self.throwError(1017, '页面类未加载完成'));
                 }
             }
+
+            /**
+             * 编辑段落
+             * @param {number} section 段落编号
+             * @param {string} content 内容
+             * @param {string} title 页面标题
+             * @param {object} config 设置 
+             * @param {object} callback 回调函数 
+             */
+        }, {
+            key: 'editSection',
+            value: function editSection(section, content) {
+                var title = arguments.length <= 2 || arguments[2] === undefined ? this.pageName : arguments[2];
+                var config = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+                var callback = arguments.length <= 4 || arguments[4] === undefined ? {
+                    success: new Function(),
+                    fail: new Function()
+                } : arguments[4];
+
+                this.edit(content, title, $.extend({
+                    'section': section
+                }, config), callback);
+            }
+
+            /**
+             * 重定向页面至
+             * @param {string} target 目标页面标题
+             * @param {string} title 页面名 默认为当前页面
+             * @param {object} callback 回调函数
+             */
+        }, {
+            key: 'redirectTo',
+            value: function redirectTo(target) {
+                var title = arguments.length <= 1 || arguments[1] === undefined ? this.pageName : arguments[1];
+                var callback = arguments.length <= 2 || arguments[2] === undefined ? {
+                    success: new Function(),
+                    fail: new Function()
+                } : arguments[2];
+
+                this.edit('#REDIRECT [[' + target + ']]', title, {
+                    'summary': i18n('redirect_to_summary').replace(/\$1/ig, target)
+                }, callback);
+            }
+
+            /**
+             * 重定向自
+             * @param {string} origin 重定向页标题
+             * @param {string} title 重定向目标页标题 默认为当前页
+             * @param {object} callback
+             */
+        }, {
+            key: 'redirectFrom',
+            value: function redirectFrom(origin) {
+                var title = arguments.length <= 1 || arguments[1] === undefined ? this.pageName : arguments[1];
+                var callback = arguments.length <= 2 || arguments[2] === undefined ? {
+                    success: new Function(),
+                    fail: new Function()
+                } : arguments[2];
+
+                this.edit('#REDIRECT [[' + title + ']]', origin, {
+                    summary: i18n('redirect_from_summary').replace(/\$1/ig, origin).replace(/\$2/ig, title)
+                }, callback);
+            }
         }]);
 
         return Wikipage;
@@ -502,6 +577,6 @@ $(function () {
             self.kotori = new Wikipage();
         };
 
-        new Wikiplus();
+        window.Wikiplus = new Wikiplus();
     });
 });
