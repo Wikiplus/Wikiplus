@@ -79,7 +79,10 @@ $(function () {
         redirect_to_summary: '重定向页面至 [[$1]] // Wikiplus',
         redirect_from_summary: '将[[$1]]重定向至[[$2]] // Wikiplus',
         need_init: '页面类未加载完成',
-        fail_to_get_wikitext: '无法获得页面文本'
+        fail_to_get_wikitext: '无法获得页面文本',
+        quickedit_topbtn: '快速编辑',
+        quickedit_sectionbtn: '快速编辑',
+        fail_to_init_quickedit: '无法加载快速编辑'
 
     };
     /**
@@ -290,6 +293,9 @@ $(function () {
             },
             fail_to_get_wikitext: {
                 number: 1063
+            },
+            fail_to_init_quickedit: {
+                number: 1064
             }
         };
         if (errorList[name]) {
@@ -331,40 +337,32 @@ $(function () {
             }
         });
     }
+    /**
+     * 判断值是否存在于数组
+     * @param {string} value
+     * @param {array} array
+     * @return {boolean} whether the value is in the array
+    */
+    function inArray(value) {
+        var array = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
+        return $.inArray(value, array) === -1 ? false : true;
+    }
+    /** 
+     * 抛出错误
+     * @param {string} name
+     * @return boolean
+    */
+    function throwError(name, message) {
+        var errInfo = getErrorInfo(name);
+        var e = new Error();
+        e.number = errInfo.number;
+        e.message = message || errInfo.message;
+        console.log('%c致命错误[' + e.number + ']:' + e.message, 'color:red');
+        return e;
+    }
 
     var Wikipage = (function () {
-        _createClass(Wikipage, [{
-            key: 'inArray',
-
-            /**
-             * 判断值是否存在于数组
-             * @param {string} value
-             * @param {array} array
-             * @return {boolean} whether array is in the array
-             */
-            value: function inArray(value) {
-                var array = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
-
-                return $.inArray(value, array) === -1 ? false : true;
-            }
-
-            /** 
-             * 抛出错误
-             * @param {string} name
-             * @return boolean
-            */
-        }, {
-            key: 'throwError',
-            value: function throwError(name, message) {
-                var errInfo = getErrorInfo(name);
-                var e = new Error();
-                e.number = errInfo.number;
-                e.message = message || errInfo.message;
-                console.log('%c致命错误[' + e.number + ']:' + e.message, 'color:red');
-                return e;
-            }
-        }]);
-
         function Wikipage() {
             var pageName = arguments.length <= 0 || arguments[0] === undefined ? window.mw.config.values.wgPageName : arguments[0];
 
@@ -378,11 +376,11 @@ $(function () {
                 return;
             }
             if (!window.mw.config.values.wgEnableAPI || !window.mw.config.values.wgEnableWriteAPI) {
-                self.throwError('api_unaccessiable');
+                throwError('api_unaccessiable');
                 return;
             }
-            if (!self.inArray('autoconfirmed', window.mw.config.values.wgUserGroups)) {
-                self.throwError('not_autoconfirmed_user');
+            if (!inArray('autoconfirmed', window.mw.config.values.wgUserGroups)) {
+                throwError('not_autoconfirmed_user');
                 return;
             }
             //从MediaWiki定义的全局变量中获得信息
@@ -414,7 +412,7 @@ $(function () {
                                 if (info[key].revisions && info[key].revisions.length > 0) {
                                     self.timeStamp = info[key].revisions[0].timestamp;
                                 } else {
-                                    self.throwError('fail_to_get_timestamp');
+                                    throwError('fail_to_get_timestamp');
                                 }
                                 if (info[key].edittoken) {
                                     if (info[key].edittoken != '+\\') {
@@ -425,13 +423,13 @@ $(function () {
                                         if (self.editToken && self.editToken != '+\\') {
                                             console.log('成功获得通用编辑令牌 来自前端API');
                                         } else {
-                                            self.throwError('fail_to_get_edittoken');
+                                            throwError('fail_to_get_edittoken');
                                         }
                                     }
                                 }
                             } else {
                                 //原来版本这里依然会试着用前端API来获取Token，但是这样就没有了起始时间戳，有产生编辑覆盖的可能性
-                                self.throwError('fail_to_get_pageinfo');
+                                throwError('fail_to_get_pageinfo');
                                 self.inited = true;
                             }
                         }
@@ -447,8 +445,8 @@ $(function () {
          * 页面编辑
          * @param {string} content 页面内容
          * @param {string} title  页面标题 默认为当前页面标题
+         * @param {object} callback 回调函数
          * @param {object} config 设置 覆盖到默认的设置
-         * @param {object} callback 
          */
 
         _createClass(Wikipage, [{
@@ -456,13 +454,12 @@ $(function () {
             value: function edit() {
                 var content = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
                 var title = arguments.length <= 1 || arguments[1] === undefined ? this.pageName : arguments[1];
-                var config = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-                var callback = arguments.length <= 3 || arguments[3] === undefined ? {
-                    'success': new Function(),
-                    'fail': new Function()
-                } : arguments[3];
+                var callback = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+                var config = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
 
                 var self = this;
+                callback.success = callback.success || new Function();
+                callback.fail = callback.fail || new Function();
                 if (self.inited) {
                     $.ajax({
                         type: 'POST',
@@ -482,25 +479,25 @@ $(function () {
                                 } else {
                                     if (data.edit.code) {
                                         //防滥用过滤器
-                                        callback.fail(self.throwError('hit_abusefilter', '触发防滥用过滤器:' + data.edit.info.replace('/Hit AbuseFilter: /ig', '') + '<br><small>' + data.edit.warning + '</small>'));
+                                        callback.fail(throwError('hit_abusefilter', '触发防滥用过滤器:' + data.edit.info.replace('/Hit AbuseFilter: /ig', '') + '<br><small>' + data.edit.warning + '</small>'));
                                     } else {
-                                        callback.fail(self.throwError('unknown_edit_error'));
+                                        callback.fail(throwError('unknown_edit_error'));
                                     }
                                 }
                             } else if (data && data.error && data.error.code) {
-                                callback.fail(self.throwError(data.error.code.replace(/-/ig, '_')), i18n('unknown_edit_error_message').replace(/\$1/ig, data.error.code));
+                                callback.fail(throwError(data.error.code.replace(/-/ig, '_')), i18n('unknown_edit_error_message').replace(/\$1/ig, data.error.code));
                             } else if (data.code) {
-                                callback.fail(self.throwError('unknown_edit_error'), i18n('unknown_edit_error_message').replace(/\$1/ig, data.code));
+                                callback.fail(throwError('unknown_edit_error'), i18n('unknown_edit_error_message').replace(/\$1/ig, data.code));
                             } else {
-                                callback.fail(self.throwError('unknown_edit_error'));
+                                callback.fail(throwError('unknown_edit_error'));
                             }
                         },
                         error: function error(e) {
-                            callback.fail(self.throwError('network_edit_error'));
+                            callback.fail(throwError('network_edit_error'));
                         }
                     });
                 } else {
-                    callback.fail(self.throwError(1017, '页面类未加载完成'));
+                    callback.fail(throwError(1017, '页面类未加载完成'));
                 }
             }
 
@@ -509,22 +506,21 @@ $(function () {
              * @param {number} section 段落编号
              * @param {string} content 内容
              * @param {string} title 页面标题
-             * @param {object} config 设置 
              * @param {object} callback 回调函数 
+             * @param {object} config 设置 
              */
         }, {
             key: 'editSection',
             value: function editSection(section, content) {
                 var title = arguments.length <= 2 || arguments[2] === undefined ? this.pageName : arguments[2];
                 var config = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
-                var callback = arguments.length <= 4 || arguments[4] === undefined ? {
-                    success: new Function(),
-                    fail: new Function()
-                } : arguments[4];
+                var callback = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
 
-                this.edit(content, title, $.extend({
+                callback.success = callback.success || new Function();
+                callback.fail = callback.fail || new Function();
+                this.edit(content, title, callback, $.extend({
                     'section': section
-                }, config), callback);
+                }, config));
             }
 
             /**
@@ -537,14 +533,13 @@ $(function () {
             key: 'redirectTo',
             value: function redirectTo(target) {
                 var title = arguments.length <= 1 || arguments[1] === undefined ? this.pageName : arguments[1];
-                var callback = arguments.length <= 2 || arguments[2] === undefined ? {
-                    success: new Function(),
-                    fail: new Function()
-                } : arguments[2];
+                var callback = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
-                this.edit('#REDIRECT [[' + target + ']]', title, {
+                callback.success = callback.success || new Function();
+                callback.fail = callback.fail || new Function();
+                this.edit('#REDIRECT [[' + target + ']]', title, callback, {
                     'summary': i18n('redirect_to_summary').replace(/\$1/ig, target)
-                }, callback);
+                });
             }
 
             /**
@@ -557,33 +552,30 @@ $(function () {
             key: 'redirectFrom',
             value: function redirectFrom(origin) {
                 var title = arguments.length <= 1 || arguments[1] === undefined ? this.pageName : arguments[1];
-                var callback = arguments.length <= 2 || arguments[2] === undefined ? {
-                    success: new Function(),
-                    fail: new Function()
-                } : arguments[2];
+                var callback = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
-                this.edit('#REDIRECT [[' + title + ']]', origin, {
+                callback.success = callback.success || new Function();
+                callback.fail = callback.fail || new Function();
+                this.edit('#REDIRECT [[' + title + ']]', origin, callback, {
                     summary: i18n('redirect_from_summary').replace(/\$1/ig, origin).replace(/\$2/ig, title)
-                }, callback);
+                });
             }
 
             /**
              * 获得页面维基文本
-             * @param {string} title 页面标题 默认为当前页面
              * @param {object} callback 回调函数
-             * @param {object} config 
+             * @param {string} title 页面标题 默认为当前页面
+             * @param {object} config 设置
              */
         }, {
             key: 'getWikiText',
             value: function getWikiText() {
-                var title = arguments.length <= 0 || arguments[0] === undefined ? this.pageName : arguments[0];
-                var callback = arguments.length <= 1 || arguments[1] === undefined ? {
-                    success: new Function(),
-                    fail: new Function()
-                } : arguments[1];
+                var callback = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+                var title = arguments.length <= 1 || arguments[1] === undefined ? this.pageName : arguments[1];
                 var config = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
-                var self = this;
+                callback.success = callback.success || new Function();
+                callback.fail = callback.fail || new Function();
                 $.ajax({
                     url: location.protocol + '//' + location.host + mw.config.values.wgScriptPath + '/index.php',
                     type: "GET",
@@ -600,7 +592,7 @@ $(function () {
                         callback.success(data);
                     },
                     error: function error(e) {
-                        callback.fail(self.throwError('fail_to_get_wikitext'));
+                        callback.fail(throwError('fail_to_get_wikitext'));
                     }
                 });
             }
@@ -610,15 +602,95 @@ $(function () {
     })();
 
     $(document).ready(function () {
-        var Wikiplus = function Wikiplus() {
-            _classCallCheck(this, Wikiplus);
+        var Wikiplus = (function () {
+            _createClass(Wikiplus, [{
+                key: 'initQuickEdit',
 
-            var self = this;
-            this.version = '2.0';
-            this.releaseNote = '重构';
-            console.log('正在加载Wikiplus');
-            self.kotori = new Wikipage();
-        };
+                /**
+                 * 加载快速编辑 第一步 插入页面按钮并绑定入口事件
+                 */
+                value: function initQuickEdit() {
+                    var callback = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+                    var self = this;
+                    callback.success = callback.success || new Function();
+                    callback.fail = callback.fail || new Function();
+                    //顶部编辑入口
+                    var topBtn = $('<li>').attr('id', 'Wikiplus-Edit-TopBtn').html($('<span>').html($('<a>').attr('href', 'javascript:void(0)').text(i18n('quickedit_topbtn'))));
+                    //段落编辑入口
+                    var sectionBtn = $('<a>').attr('href', 'javascript:void(0)').addClass('Wikiplus-Edit-SectionBtn').text(i18n('quickedit_sectionbtn'));
+                    if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length == 0) {
+                        $('ca-edit').before(topBtn);
+                    }
+                    if ($('.mw-editsection').length > 0) {
+                        self.sectionMap = {};
+                        $('.mw-editsection').each(function (i) {
+                            try {
+                                var editURL = $(this).find(".mw-editsection-bracket:first").next().attr('href');
+                                var sectionNumber = editURL.match(/&section\=(.+)/)[1];
+                                var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
+                                var sectionName = $(this).prev().text();
+                                self.sectionMap[sectionNumber] = sectionName;
+                                $(this).append(sectionBtn.data({
+                                    'target': sectionTargetName,
+                                    'number': sectionNumber,
+                                    'name': sectionName
+                                }));
+                            } catch (e) {
+                                throwError('fail_to_init_quickedit');
+                            }
+                        });
+                    }
+                }
+            }, {
+                key: 'preload',
+                value: function preload() {
+                    var section = arguments.length <= 0 || arguments[0] === undefined ? -1 : arguments[0];
+                    var title = arguments.length <= 1 || arguments[1] === undefined ? this.kotori.pageName : arguments[1];
+
+                    var self = this;
+                    if (!this.preloadData) {
+                        this.preloadData = {};
+                    }
+                    if (this.preloadData[title + '.' + section]) {
+                        console.log(title + '页面' + section + '段落已经预读取 跳过本次预读取');
+                        return false;
+                    }
+                    this.kotori.getWikiText({
+                        success: function success(data) {
+                            self.preloadData[title + '.' + section] = data;
+                        },
+                        fail: function fail(e) {
+                            console.log('预读取' + title + '.' + section + '失败:' + e.message);
+                        }
+                    }, title);
+                }
+            }, {
+                key: 'initBasicFunctions',
+                value: function initBasicFunctions() {
+                    this.initQuickEdit(); //加载快速编辑
+                }
+            }, {
+                key: 'initRecentChangesPageFunctions',
+                value: function initRecentChangesPageFunctions() {}
+            }, {
+                key: 'initAdvancedFunctions',
+                value: function initAdvancedFunctions() {}
+            }]);
+
+            function Wikiplus() {
+                _classCallCheck(this, Wikiplus);
+
+                var self = this;
+                this.version = '2.0.0';
+                this.releaseNote = '修正了版本号过低的问题';
+                console.log('正在加载Wikiplus');
+                this.kotori = new Wikipage();
+                this.initBasicFunctions();
+            }
+
+            return Wikiplus;
+        })();
 
         window.Wikiplus = new Wikiplus();
     });
