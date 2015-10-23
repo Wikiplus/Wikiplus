@@ -1,3 +1,4 @@
+/* global mw */
 /// <reference path="../typings/jquery/jquery.d.ts"/>
 /**
 * Wikiplus
@@ -71,7 +72,8 @@ $(function () {
         network_edit_error: '由于网络原因编辑失败',
         redirect_to_summary: '重定向页面至 [[$1]] // Wikiplus',
         redirect_from_summary: '将[[$1]]重定向至[[$2]] // Wikiplus',
-        need_init : '页面类未加载完成'
+        need_init: '页面类未加载完成',
+        fail_to_get_wikitext: '无法获得页面文本'
 
     }
     /**
@@ -279,8 +281,11 @@ $(function () {
             network_edit_error: {
                 number: 1061
             },
-            need_init : {
-                number : 1062
+            need_init: {
+                number: 1062
+            },
+            fail_to_get_wikitext: {
+                number: 1063
             }
         };
         if (errorList[name]) {
@@ -428,14 +433,13 @@ $(function () {
          * 页面编辑
          * @param {string} content 页面内容
          * @param {string} title  页面标题 默认为当前页面标题
+         * @param {object} callback 回调函数
          * @param {object} config 设置 覆盖到默认的设置
-         * @param {object} callback 
          */
-        edit(content = '', title = this.pageName, config = {}, callback = {
-            'success': new Function(),
-            'fail': new Function()
-        }) {
+        edit(content = '', title = this.pageName, callback = {}, config = {}) {
             var self = this;
+            callback.success = callback.success || new Function();
+            callback.fail = callback.fail || new Function();
             if (self.inited) {
                 $.ajax({
                     type: 'POST',
@@ -487,16 +491,15 @@ $(function () {
          * @param {number} section 段落编号
          * @param {string} content 内容
          * @param {string} title 页面标题
-         * @param {object} config 设置 
          * @param {object} callback 回调函数 
+         * @param {object} config 设置 
          */
-        editSection(section, content, title = this.pageName, config = {}, callback = {
-            success: new Function(),
-            fail: new Function()
-        }) {
-            this.edit(content, title, $.extend({
+        editSection(section, content, title = this.pageName, config = {}, callback = {}) {
+            callback.success = callback.success || new Function();
+            callback.fail = callback.fail || new Function();
+            this.edit(content, title, callback, $.extend({
                 'section': section
-            }, config), callback);
+            }, config));
         }
         /**
          * 重定向页面至
@@ -504,13 +507,12 @@ $(function () {
          * @param {string} title 页面名 默认为当前页面
          * @param {object} callback 回调函数
          */
-        redirectTo(target, title = this.pageName, callback = {
-            success: new Function(),
-            fail: new Function()
-        }) {
-            this.edit(`#REDIRECT [[${target}]]`, title, {
+        redirectTo(target, title = this.pageName, callback = {}) {
+            callback.success = callback.success || new Function();
+            callback.fail = callback.fail || new Function();
+            this.edit(`#REDIRECT [[${target}]]`, title, callback, {
                 'summary': i18n('redirect_to_summary').replace(/\$1/ig, target)
-            }, callback);
+            });
         }
         /**
          * 重定向自
@@ -518,13 +520,42 @@ $(function () {
          * @param {string} title 重定向目标页标题 默认为当前页
          * @param {object} callback
          */
-        redirectFrom(origin, title = this.pageName, callback = {
-            success: new Function(),
-            fail: new Function()
-        }) {
-            this.edit(`#REDIRECT [[${title}]]`, origin, {
+        redirectFrom(origin, title = this.pageName, callback = {}) {
+            callback.success = callback.success || new Function();
+            callback.fail = callback.fail || new Function();
+            this.edit(`#REDIRECT [[${title}]]`, origin, callback, {
                 summary: i18n('redirect_from_summary').replace(/\$1/ig, origin).replace(/\$2/ig, title)
-            }, callback);
+            });
+        }
+        /**
+         * 获得页面维基文本
+         * @param {string} title 页面标题 默认为当前页面
+         * @param {object} callback 回调函数
+         * @param {object} config 设置
+         */
+        getWikiText(title = this.pageName, callback = {}, config = {}) {
+            callback.success = callback.success || new Function();
+            callback.fail = callback.fail || new Function();
+            var self = this;
+            $.ajax({
+                url: location.protocol + '//' + location.host + mw.config.values.wgScriptPath + '/index.php',
+                type: "GET",
+                dataType: "text",
+                cache: false,
+                data: $.extend({
+                    'title': title,
+                    'action': 'raw'
+                }, config),
+                beforeSend: function () {
+                    console.time('获得页面文本耗时');
+                },
+                success: function (data) {
+                    callback.success(data);
+                },
+                error: function (e) {
+                    callback.fail(self.throwError('fail_to_get_wikitext'));
+                }
+            })
         }
     }
     $(document).ready(function () {
@@ -532,7 +563,7 @@ $(function () {
             constructor() {
                 var self = this;
                 this.version = '2.0';
-                this.releaseNote = '重构';
+                this.releaseNote = '修正了版本号过低的问题';
                 console.log('正在加载Wikiplus');
                 self.kotori = new Wikipage();
             }

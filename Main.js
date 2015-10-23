@@ -1,3 +1,4 @@
+/* global mw */
 /// <reference path="../typings/jquery/jquery.d.ts"/>
 /**
 * Wikiplus
@@ -77,7 +78,8 @@ $(function () {
         network_edit_error: '由于网络原因编辑失败',
         redirect_to_summary: '重定向页面至 [[$1]] // Wikiplus',
         redirect_from_summary: '将[[$1]]重定向至[[$2]] // Wikiplus',
-        need_init: '页面类未加载完成'
+        need_init: '页面类未加载完成',
+        fail_to_get_wikitext: '无法获得页面文本'
 
     };
     /**
@@ -285,6 +287,9 @@ $(function () {
             },
             need_init: {
                 number: 1062
+            },
+            fail_to_get_wikitext: {
+                number: 1063
             }
         };
         if (errorList[name]) {
@@ -560,6 +565,44 @@ $(function () {
                 this.edit('#REDIRECT [[' + title + ']]', origin, {
                     summary: i18n('redirect_from_summary').replace(/\$1/ig, origin).replace(/\$2/ig, title)
                 }, callback);
+            }
+
+            /**
+             * 获得页面维基文本
+             * @param {string} title 页面标题 默认为当前页面
+             * @param {object} callback 回调函数
+             * @param {object} config 
+             */
+        }, {
+            key: 'getWikiText',
+            value: function getWikiText() {
+                var title = arguments.length <= 0 || arguments[0] === undefined ? this.pageName : arguments[0];
+                var callback = arguments.length <= 1 || arguments[1] === undefined ? {
+                    success: new Function(),
+                    fail: new Function()
+                } : arguments[1];
+                var config = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+                var self = this;
+                $.ajax({
+                    url: location.protocol + '//' + location.host + mw.config.values.wgScriptPath + '/index.php',
+                    type: "GET",
+                    dataType: "text",
+                    cache: false,
+                    data: $.extend({
+                        'title': title,
+                        'action': 'raw'
+                    }, config),
+                    beforeSend: function beforeSend() {
+                        console.time('获得页面文本耗时');
+                    },
+                    success: function success(data) {
+                        callback.success(data);
+                    },
+                    error: function error(e) {
+                        callback.fail(self.throwError('fail_to_get_wikitext'));
+                    }
+                });
             }
         }]);
 
