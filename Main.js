@@ -616,25 +616,28 @@ $(function () {
                     callback.success = callback.success || new Function();
                     callback.fail = callback.fail || new Function();
                     //顶部编辑入口
-                    var topBtn = $('<li>').attr('id', 'Wikiplus-Edit-TopBtn').html($('<span>').html($('<a>').attr('href', 'javascript:void(0)').text(i18n('quickedit_topbtn'))));
-                    //段落编辑入口
-                    var sectionBtn = $('<a>').attr('href', 'javascript:void(0)').addClass('Wikiplus-Edit-SectionBtn').text(i18n('quickedit_sectionbtn'));
+                    var topBtn = $.parseHTML('\n                    <li id="Wikiplus-Edit-TopBtn">\n                        <span>\n                            <a href="javascript:void(0)">' + i18n('quickedit_topbtn') + '</a>\n                        </span>\n                    </li>\n                ');
                     if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length == 0) {
-                        $('ca-edit').before(topBtn);
+                        $('#ca-edit').before(topBtn.clone());
                     }
                     if ($('.mw-editsection').length > 0) {
                         self.sectionMap = {};
+                        //段落快速编辑按钮
+                        var sectionBtn = $('<span>').append($('<span>').attr('id', 'mw-editsection-bracket').text('[')).append($('<span>').attr('id', 'Wikiplus-Edit-SectionBtn').text(i18n('quickedit_sectionbtn'))).append($('<span>').attr('id', 'mw-editsection-bracket').text(']'));
                         $('.mw-editsection').each(function (i) {
                             try {
-                                var editURL = $(this).find(".mw-editsection-bracket:first").next().attr('href');
+                                var editURL = $(this).find("a").attr('href');
                                 var sectionNumber = editURL.match(/&section\=(.+)/)[1];
                                 var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
                                 var sectionName = $(this).prev().text();
-                                self.sectionMap[sectionNumber] = sectionName;
-                                $(this).append(sectionBtn.data({
-                                    'target': sectionTargetName,
-                                    'number': sectionNumber,
-                                    'name': sectionName
+                                self.sectionMap[sectionNumber] = {
+                                    name: sectionName,
+                                    target: sectionTargetName
+                                };
+                                $(this).append(sectionBtn.clone().data({
+                                    number: sectionNumber,
+                                    name: sectionName,
+                                    target: sectionTargetName
                                 }));
                             } catch (e) {
                                 throwError('fail_to_init_quickedit');
@@ -653,7 +656,7 @@ $(function () {
                         this.preloadData = {};
                     }
                     if (this.preloadData[title + '.' + section]) {
-                        console.log(title + '页面' + section + '段落已经预读取 跳过本次预读取');
+                        console.log(title + '.' + section + '段落已经预读取 跳过本次预读取');
                         return false;
                     }
                     this.kotori.getWikiText({
