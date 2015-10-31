@@ -91,10 +91,11 @@ function MoeNotification(undefined) {
 
 $(function () {
     var i18nData = {};
-    var scriptPath = location.protocol == 'http:' ? "http://miku.host.smartgslb.com/wikiplus" : "https://blog.kotori.moe/wikiplus";
+    var scriptPath = `${location.protocol}//wikiplus-app.smartgslb.com`;
     i18nData['zh-cn'] = {
         __language: 'zh-cn',
         __author: ['Eridanus Sora'],
+        __version: '2.0.0.0',
         unknown_error_name: '未知的错误名',
         api_unaccessiable: '无可用的API',
         api_unwriteable: '无可用的写入API',
@@ -189,13 +190,41 @@ $(function () {
         wikiplus_settings_desc: '请在下方按规范修改Wikiplus设置',
         wikiplus_settings_placeholder: '当前设置为空 请在此处按规范修改Wikiplus设置',
         wikiplus_settings_grammar_error: '设置存在语法错误 请检查后重试',
-        wikiplus_settings_saved: '设置已保存'
+        wikiplus_settings_saved: '设置已保存',
+        redirect_from: '将页面重定向至此',
+        redirect_desc: '请输入要重定向至此的页面名',
+        empty_input: '输入不能为空',
+        redirect_saved: '重定向完成',
+        uninited: 'Wikiplus未加载完毕 请刷新重试',
+        cant_parse_i18ncache: '无法解析多语言定义文件缓存',
+        cant_load_language: '无法获取多语言定义文件'
     };
-    i18nData['en-us'] = {
-        __language: 'en-us',
-        __author: ['Eridanus Sora'],
-        accept: 'Accept',
-        decline: 'Decline'
+    // i18nData['en-us'] = {
+    //     __language: 'en-us',
+    //     __author: ['Eridanus Sora'],
+    //     accept: 'Accept',
+    //     decline: 'Decline'
+    // }
+    /**
+     * 加载其他语言文件
+     * @param {string} language 语言名
+     */
+    function loadLanguage(language) {
+        $.ajax({
+            url: `${scriptPath}/languages/get.php?lang=${language}`,
+            dataType: 'json',
+            success: function (data) {
+                if (data.__language) {                 // Example:
+                    i18nData[data.__language] = data;  // { 
+                    localStorage.Wikiplus_i18nCache = JSON.stringify(i18nData);//更新缓存
+                }                                      //   '__language' : 'zh-cn'
+                else {                                  //   'key' : 'value'
+                }                                      // }
+            },
+            error: function (e) {
+                console.log(`无法加载语言${language}`);
+            }
+        })
     }
     /**
      * 多语言转换
@@ -419,6 +448,15 @@ $(function () {
             },
             empty_page_confirm: {
                 number: 1067
+            },
+            uninited: {
+                number: 1068
+            },
+            cant_parse_i18ncache: {
+                number: 1069
+            },
+            cant_load_language: {
+                number: 1070
             }
         };
         if (errorList[name]) {
@@ -447,20 +485,6 @@ $(function () {
                 message: errorList.unknown_error_name.message
             }
         }
-    }
-
-    function loadLanguage(language) {
-        $.ajax({
-            url: 'path',
-            dataType: 'json',
-            success: function (data) {
-                if (data.__language) {                 // Example:
-                    i18nData[data.__language] = data;  // { 
-                }                                      //   '__language' : 'zh-cn'
-                else {                                  //   'key' : 'value'
-                }                                      // }
-            }
-        })
     }
     /**
      * 判断值是否存在于数组
@@ -615,7 +639,7 @@ $(function () {
                         'format': 'json',
                         'text': content,
                         'title': title,
-                        'token': self.editToken[title],
+                        'token': self.editToken[title] || self.editToken[self.pageName],
                         'basetimestamp': self.timeStamp[title]
                     }, config),
                     success: function (data) {
@@ -649,7 +673,7 @@ $(function () {
                 })
             }
             else {
-                callback.fail(throwError(1017, '页面类未加载完成'));
+                callback.fail(throwError('uninited'));
             }
         }
         /**
@@ -715,6 +739,7 @@ $(function () {
                     console.time('获得页面文本耗时');
                 },
                 success: function (data) {
+                    console.timeEnd('获得页面文本耗时');
                     callback.success(data);
                 },
                 error: function (e) {
@@ -823,7 +848,6 @@ $(function () {
                 var sectionName = obj.data('name');
                 var sectionTargetName = obj.data('target');
                 if (this.kotori.inited) {
-                    console.log(`${sectionTargetName}.${sectionNumber}`);
                     if (this.preloadData[`${sectionTargetName}.${sectionNumber}`] === undefined) {
                         this.notice.create.success(i18n('loading'))
                         this.preload(sectionNumber, sectionTargetName, {
@@ -838,7 +862,6 @@ $(function () {
                         })
                     }
                     else {
-                        console.log(`${sectionTargetName}.${sectionNumber}已预读取`);
                         obj.data('content', self.preloadData[`${sectionTargetName}.${sectionNumber}`]);
                         self.displayQuickEditInterface(obj);
                     }
@@ -853,6 +876,19 @@ $(function () {
                 var sectionName = obj.data('name');
                 var sectionTargetName = obj.data('target');
                 var sectionContent = obj.data('content');
+                var summary = self.getSetting('defaultSummary', {
+                    'sectionName': sectionName,
+                    'sectionNumber': sectionNumber,
+                    'sectionTargetName': sectionTargetName
+                });
+                if (summary === undefined) {
+                    if (sectionName === undefined) {
+                        summary = '// Edit via Wikiplus';
+                    }
+                    else {
+                        summary = `/* ${sectionName} */ // Edit via Wikiplus`;
+                    }
+                }
                 //DOM定义
                 var heightBefore = $(document).scrollTop();//记住当前高度
                 var backBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text(`${i18n('back') }`);//返回按钮
@@ -875,6 +911,7 @@ $(function () {
                 var editBody = $('<div>').append(backBtn, jumpBtn, previewBox, inputBox, summaryBox, $('<br>'), isMinorEdit, editSubmitBtn, previewSubmitBtn);
                 this.createDialogBox('快速编辑', editBody, 1000, function () {
                     $('#Wikiplus-Quickedit').text(sectionContent);
+                    $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     //事件绑定
                     //返回
                     $("#Wikiplus-Quickedit-Back").click(function () {
@@ -1001,6 +1038,9 @@ $(function () {
                     });
                 })
             }
+            /**
+             * 编辑设置
+             */
             editSettings() {
                 var self = this;
                 self.addFunctionButton(i18n('wikiplus_settings'), 'Wikiplus-Settings-Intro', function () {
@@ -1041,7 +1081,75 @@ $(function () {
                     });
                 });
             }
-            
+            simpleRedirector() {
+                var self = this;
+                self.addFunctionButton(i18n('redirect_from'), 'Wikiplus-SR-Intro', function () {
+                    var input = $('<input>').addClass('Wikiplus-InterBox-Input');
+                    var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Apply').text(i18n('submit'));
+                    var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Cancel').text(i18n('cancel'));
+                    var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
+                    self.createDialogBox(i18n('redirect_desc'), content, 600, function () {
+                        $('#Wikiplus-SR-Apply').click(function () {
+                            if ($('.Wikiplus-InterBox-Input').val() != '') {
+                                var title = $('.Wikiplus-InterBox-Input').val()
+                                $('.Wikiplus-InterBox-Content').html('<div class="Wikiplus-Banner">提交中</div>');
+                                self.kotori.redirectFrom(title, self.kotori.pageName, {
+                                    success: function () {
+                                        $('.Wikiplus-Banner').text(i18n('redirect_saved'));
+                                        $('.Wikiplus-InterBox').fadeOut(300);
+                                        location.href = mw.config.values.wgArticlePath.replace(/\$1/ig, title);
+                                    },
+                                    fail: function (e) {
+                                        $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
+                                        $('.Wikiplus-Banner').text(e.message);
+                                    }
+                                });
+                            }
+                            else {
+                                self.showNotice.create.warning(i18n('empty_input'));
+                            }
+                        });
+                        $('#Wikiplus-SR-Cancel').click(function () {
+                            $('.Wikiplus-InterBox').fadeOut(300, function () {
+                                $(this).remove();
+                            });
+                        })
+                    });
+                })
+            }
+            /**
+             * 预读取相关事件绑定
+             */
+            preloadEventBinding() {
+                var self = this;
+                $("#toc").children("ul").find("a").each(function (i) {
+                    $(this).mouseover(function () {
+                        $(this).unbind('mouseover');
+                        self.preload(i + 1);
+                    });
+                });
+            }
+            checki18nCache() {
+                if (localStorage.Wikiplus_i18nCache) {
+                    try {
+                        var _i18nData = JSON.parse(localStorage.Wikiplus_i18nCache);
+                        for (var languages in _i18nData) {
+                            if (_i18nData[languages]['__version'] === this.version) {
+                                i18nData[_i18nData[languages]['__language']] = _i18nData[languages];
+                            }
+                            else {
+                                console.log(`多语言文件[${languages}]已经过期`);
+                            }
+                        }
+                    }
+                    catch (e) {
+                        throwError('cant_parse_i18ncache');
+                    }
+                }
+                else {
+                    localStorage.Wikiplus_i18nCache = JSON.stringify(i18nData);
+                }
+            }
             /**
              * ===========================
              * 以上是功能函数 以下是通用函数
@@ -1118,18 +1226,18 @@ $(function () {
                 callback.fail = callback.fail || new Function();
                 var self = this;
                 if (this.preloadData[`${title}.${section}`]) {
-                    console.log(`${title}.${section}段落已经预读取 跳过本次预读取`);
+                    console.log(`[${title}.${section}]已经预读取 跳过本次预读取`);
                     callback.success();
                     return;
                 }
                 this.kotori.getWikiText({
                     success: function (data) {
                         self.preloadData[`${title}.${section}`] = data;
-                        console.log(`预读取${title}.${section}`);
+                        console.log(`预读取[${title}.${section}]成功`);
                         callback.success(data);
                     },
                     fail: function (e) {
-                        console.log(`预读取${title}.${section}失败:${e.message}`);
+                        console.log(`预读取[${title}.${section}]失败:${e.message}`);
                         callback.fail(e);
                     }
                 }, title, {
@@ -1239,6 +1347,8 @@ $(function () {
             initBasicFunctions() {
                 this.initQuickEdit();//加载快速编辑
                 this.editSettings();//编辑设置
+                this.simpleRedirector();//快速重定向
+                this.preloadEventBinding();//预读取
             }
             initRecentChangesPageFunctions() {
 
@@ -1267,6 +1377,10 @@ $(function () {
                 //一些初始化工作
                 this.preloadData = {};
                 this.checkInstall();
+                var language = window.navigator.language.toLowerCase();
+                if (i18nData[language] === undefined){
+                    loadLanguage(language);
+                }
                 //真正的初始化
                 if (!inArray(mw.config.values.wgNameSpaceNumber, this.inValidNameSpaces)) {
                     this.kotori = new Wikipage();
