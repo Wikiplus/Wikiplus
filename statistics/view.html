@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Wikiplus数据统计</title>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="./material.min.css">
+	<script src="./material.min.js"></script>
+	<script src="jquery.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" type="text/css" href="statistics.css">
+	<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+	<script src="statistics.js"></script>
+</head>
+<body>
+	<div class="mdl-grid">
+		<div class="mdl-cell mdl-cell--1-col"></div>
+		<div class="mdl-cell mdl-cell--10-col">
+			<div class="Headline">
+				<h2>数据统计</h2>
+			</div>
+			<div class="mdl-progress mdl-js-progress mdl-progress__indeterminate progress-demo process-bar" id="process-bar-main"></div>
+			<div id="first-statistics">
+				<h3>最近30日平均提交时间统计</h3>
+				<div id="RecentUseTime"></div>
+			</div>
+			<div class="mdl-grid" id="second-statistics">
+				<div class="mdl-cell mdl-cell--6-col">
+					<h3>最近贡献排行</h3>
+					<div class="mdl-progress mdl-js-progress mdl-progress__indeterminate progress-demo process-bar" id="process-bar-contribution-ranking"></div>
+					<div id="contribution-raking"></div>
+				</div>
+				<div class="mdl-cell mdl-cell--6-col">
+					<h3>热点页面</h3>
+					<div class="mdl-progress mdl-js-progress mdl-progress__indeterminate progress-demo process-bar" id="process-bar-hotpage-ranking"></div>
+					<div id="hotpage-ranking"></div>
+				</div>
+			</div>
+		</div>
+		<div class="mdl-cell mdl-cell--1-col"></div>
+	</div>
+</body>
+</html>
