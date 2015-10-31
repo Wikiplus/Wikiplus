@@ -209,7 +209,7 @@ $(function () {
      */
     function loadLanguage(language) {
         $.ajax({
-            url: scriptPath + '/languages/' + language + '.json',
+            url: scriptPath + '/languages/get.php?lang=' + language,
             dataType: 'json',
             success: function success(data) {
                 if (data.__language) {
@@ -235,11 +235,8 @@ $(function () {
         if (i18nData[language] && i18nData[language][key]) {
             return i18nData[language][key];
         } else if (i18nData['zh-cn'][key]) {
-            loadLanguage(language);
             return i18nData['zh-cn'][key];
         } else {
-            loadLanguage('zh-cn');
-            loadLanguage(language);
             return 'undefined';
         }
     }
@@ -1432,6 +1429,10 @@ $(function () {
                 //一些初始化工作
                 this.preloadData = {};
                 this.checkInstall();
+                var language = window.navigator.language.toLowerCase();
+                if (i18nData[language] === undefined) {
+                    loadLanguage(language);
+                }
                 //真正的初始化
                 if (!inArray(mw.config.values.wgNameSpaceNumber, this.inValidNameSpaces)) {
                     this.kotori = new Wikipage();
