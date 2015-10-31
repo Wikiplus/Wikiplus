@@ -167,6 +167,7 @@ $(function () {
         summary_placehold: '请输入编辑摘要',
         submit: '提交',
         preview: '预览',
+        cancel: '取消',
         mark_minoredit: '标记为小编辑',
         onclose_confirm: '[Wikiplus] 您确认要关闭/刷新页面吗 这会导致您的编辑数据丢失',
         fail_to_get_wikitext_when_edit: '无法获得页面文本以编辑',
@@ -182,7 +183,13 @@ $(function () {
         accept: '接受',
         decline: '拒绝',
         install_finish: 'Wikiplus安装完毕',
-        loading: '正在载入'
+        loading: '正在载入',
+        cant_add_funcbtn: '无法增加功能按钮',
+        wikiplus_settings: 'Wikiplus设置',
+        wikiplus_settings_desc: '请在下方按规范修改Wikiplus设置',
+        wikiplus_settings_placeholder: '当前设置为空 请在此处按规范修改Wikiplus设置',
+        wikiplus_settings_grammar_error: '设置存在语法错误 请检查后重试',
+        wikiplus_settings_saved: '设置已保存'
     };
     i18nData['en-us'] = {
         __language: 'en-us',
@@ -994,6 +1001,53 @@ $(function () {
                     });
                 })
             }
+            editSettings() {
+                var self = this;
+                self.addFunctionButton(i18n('wikiplus_settings'), 'Wikiplus-Settings-Intro', function () {
+                    var input = $('<textarea>').attr('id', 'Wikiplus-Setting-Input').attr('rows', '10');
+                    var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Apply').text(i18n('submit'));
+                    var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Cancel').text(i18n('cancel'));
+                    var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
+                    self.createDialogBox(i18n('wikiplus_settings_desc'), content, 600, function () {
+                        if (localStorage.Wikiplus_Settings) {
+                            $('#Wikiplus-Setting-Input').val(localStorage.Wikiplus_Settings);
+                        }
+                        else {
+                            $('#Wikiplus-Setting-Input').attr('placeholder', i18n('wikiplus_settings_placeholder'));
+                        }
+                        $('#Wikiplus-Setting-Apply').click(function () {
+                            var settings = $('#Wikiplus-Setting-Input').val();
+                            try {
+                                settings = JSON.parse(settings);
+                            }
+                            catch (e) {
+                                self.notice.create.error(i18n('wikiplus_settings_grammar_error'));
+                                return;
+                            }
+                            localStorage.Wikiplus_Settings = JSON.stringify(settings);
+                            $('.Wikiplus-InterBox-Content').html('').append(
+                                $('<div>').addClass('Wikiplus-Banner').text(i18n('wikiplus_settings_saved'))
+                                );
+
+                            $('.Wikiplus-InterBox').fadeOut(300, function () {
+                                $(this).remove();
+                            });
+                        })
+                        $('#Wikiplus-Setting-Cancel').click(function () {
+                            $('.Wikiplus-InterBox').fadeOut(300, function () {
+                                $(this).remove();
+                            });
+                        })
+                    });
+                });
+            }
+            
+            /**
+             * ===========================
+             * 以上是功能函数 以下是通用函数
+             * ===========================
+             */
+            
             /**
              * 创建对话框
              * @param {string} title 对话框标题
@@ -1036,6 +1090,22 @@ $(function () {
                 });
                 $('.Wikiplus-InterBox').fadeIn(500);
                 callback();
+            }
+            /**
+             * 增加功能按钮
+             * @param {string} text 按钮名
+             * @param {string} id 按钮id
+             * @param {function} clickEvent 点击事件 
+             */
+            addFunctionButton(text, id, clickEvent) {
+                var button = $('<li></li>').attr('id', id).append($('<a></a>').attr('href', 'javascript:void(0);').text(text));
+                if ($('#p-cactions .menu').length > 0) {
+                    $('#p-cactions .menu ul').append(button);
+                    $('#p-cactions .menu ul').find('li').last().click(clickEvent);
+                }
+                else {
+                    throwError('cant_add_funcbtn');
+                }
             }
             /**
              * 预读取内容
@@ -1125,8 +1195,50 @@ $(function () {
                     })
                 }
             }
+            /**
+             * 获取设置值
+             * @param {string} key 键名
+             * @param {object} object 传入可用参数
+             */
+            getSetting(key, object) {
+                var w = object;
+                try {
+                    var settings = $.parseJSON(localStorage.Wikiplus_Settings);
+                }
+                catch (e) {
+                    return localStorage.Wikiplus_Settings || '';
+                }
+                try {
+                    var _setting = new Function('return ' + settings[key]);
+                    if (typeof _setting == 'function') {
+                        try {
+                            if (_setting()(w) === true) {
+                                return undefined
+                            }
+                            else {
+                                return _setting()(w) || settings[key];
+                            }
+                        }
+                        catch (e) {
+                            return settings[key];
+                        }
+                    }
+                    else {
+                        return settings[key];
+                    }
+                }
+                catch (e) {
+                    try {
+                        return settings[key];
+                    }
+                    catch (e) {
+                        return undefined;
+                    }
+                }
+            }
             initBasicFunctions() {
                 this.initQuickEdit();//加载快速编辑
+                this.editSettings();//编辑设置
             }
             initRecentChangesPageFunctions() {
 
@@ -1139,6 +1251,10 @@ $(function () {
                 this.releaseNote = '修正了版本号过低的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
+                this.defaultSettings = {
+                    '设置名': '设置值',
+                    '设置参考': 'http://zh.moegirl.org/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
+                };
                 console.log(`正在加载Wikiplus ${this.version}`);
                 $("head").append("<link>");
                 //载入CSS
