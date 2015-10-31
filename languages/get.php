@@ -1,5 +1,5 @@
 <?php
-header('Access-Control-Allow-Origin:*');
+header('Access-Control-Allow-Origin: *');
 if (isset($_GET['lang'])){
 	$language = $_GET['lang'];
 	if (preg_match("/^[0-9a-z\-]+$/i",$language)){
