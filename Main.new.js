@@ -510,7 +510,6 @@ $(function () {
     }
     class Wikipage {
         constructor(pageName = window.mw.config.values.wgPageName) {
-            var self = this;
             console.log('页面类构建中');
             //可用性和权限检测
             if (!window.mw) {
@@ -1081,6 +1080,9 @@ $(function () {
                     });
                 });
             }
+            /**
+             * 快速重定向页面至此页面
+             */
             simpleRedirector() {
                 var self = this;
                 self.addFunctionButton(i18n('redirect_from'), 'Wikiplus-SR-Intro', function () {
@@ -1129,6 +1131,9 @@ $(function () {
                     });
                 });
             }
+            /**
+             * 检查多语言定义缓存是否过期
+             */
             checki18nCache() {
                 if (localStorage.Wikiplus_i18nCache) {
                     try {
@@ -1384,6 +1389,7 @@ $(function () {
                 //真正的初始化
                 if (!inArray(mw.config.values.wgNameSpaceNumber, this.inValidNameSpaces)) {
                     this.kotori = new Wikipage();
+                    this.checki18nCache();
                     this.initBasicFunctions();
                 }
             }

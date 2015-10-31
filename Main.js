@@ -511,7 +511,6 @@ $(function () {
 
             _classCallCheck(this, Wikipage);
 
-            var self = this;
             console.log('页面类构建中');
             //可用性和权限检测
             if (!window.mw) {
@@ -1114,6 +1113,10 @@ $(function () {
                         });
                     });
                 }
+
+                /**
+                 * 快速重定向页面至此页面
+                 */
             }, {
                 key: 'simpleRedirector',
                 value: function simpleRedirector() {
@@ -1166,6 +1169,10 @@ $(function () {
                         });
                     });
                 }
+
+                /**
+                 * 检查多语言定义缓存是否过期
+                 */
             }, {
                 key: 'checki18nCache',
                 value: function checki18nCache() {
@@ -1436,6 +1443,7 @@ $(function () {
                 //真正的初始化
                 if (!inArray(mw.config.values.wgNameSpaceNumber, this.inValidNameSpaces)) {
                     this.kotori = new Wikipage();
+                    this.checki18nCache();
                     this.initBasicFunctions();
                 }
             }
