@@ -908,7 +908,7 @@ $(function () {
                     .css({ 'margin': '5px 5px 5px -3px', 'display': 'inline' });
                 //DOM定义结束
                 var editBody = $('<div>').append(backBtn, jumpBtn, previewBox, inputBox, summaryBox, $('<br>'), isMinorEdit, editSubmitBtn, previewSubmitBtn);
-                this.createDialogBox('快速编辑', editBody, 1000, function () {
+                this.createDialogBox(i18n('quickedit_topbtn'), editBody, 1000, function () {
                     $('#Wikiplus-Quickedit').text(sectionContent);
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     //事件绑定
@@ -1094,7 +1094,7 @@ $(function () {
                         $('#Wikiplus-SR-Apply').click(function () {
                             if ($('.Wikiplus-InterBox-Input').val() != '') {
                                 var title = $('.Wikiplus-InterBox-Input').val()
-                                $('.Wikiplus-InterBox-Content').html('<div class="Wikiplus-Banner">提交中</div>');
+                                $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit')}</div>`);
                                 self.kotori.redirectFrom(title, self.kotori.pageName, {
                                     success: function () {
                                         $('.Wikiplus-Banner').text(i18n('redirect_saved'));
