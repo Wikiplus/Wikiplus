@@ -26,14 +26,12 @@
 .Wikiplus-InterBox{
 	z-index: 200;
 	position: absolute;
-	text-align: center;
 	top:20%;
 	min-height: 100px;
 	width: 600px;
 	padding: 20px 10px 20px 10px;
 	border: 1px rgba(161, 154, 220, 0.41) solid;
 	background-color: #EDF9F7;
-	display: none;
 }
 .Wikiplus-InterBox-Header{
 	position: relative;
