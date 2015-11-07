@@ -554,6 +554,7 @@ $(function () {
          */
         init(title = this.pageName, callback = {}, config) {
             var self = this;
+            console.log(this.API);
             callback.success = callback.success || new Function();
             callback.fail = callback.success || new Function();
             $.ajax({
@@ -786,6 +787,10 @@ $(function () {
                 var self = this;
                 callback.success = callback.success || new Function();
                 callback.fail = callback.fail || new Function();
+                if (!(mw.config.values.wgIsArticle && mw.config.values.wgAction === "view" && mw.config.values.wgIsProbablyEditable)) {
+                    console.log('该页面无法编辑 快速编辑界面加载终止');
+                    return;
+                }
                 //顶部编辑入口
                 var topBtn = $('<li>').attr('id', 'Wikiplus-Edit-TopBtn').append(
                     $('<span>').append(
@@ -811,7 +816,7 @@ $(function () {
                     $('.mw-editsection').each(function (i) {
                         try {
                             var editURL = $(this).find("a").attr('href');
-                            var sectionNumber = editURL.match(/&section\=(.+)/)[1];
+                            var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1];
                             var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
                             var sectionName = $(this).prev().text();
                             self.sectionMap[sectionNumber] = {
@@ -1094,7 +1099,7 @@ $(function () {
                         $('#Wikiplus-SR-Apply').click(function () {
                             if ($('.Wikiplus-InterBox-Input').val() != '') {
                                 var title = $('.Wikiplus-InterBox-Input').val()
-                                $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit')}</div>`);
+                                $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit') }</div>`);
                                 self.kotori.redirectFrom(title, self.kotori.pageName, {
                                     success: function () {
                                         $('.Wikiplus-Banner').text(i18n('redirect_saved'));
@@ -1382,12 +1387,12 @@ $(function () {
                 //一些初始化工作
                 this.preloadData = {};
                 this.checkInstall();
-                var language = window.navigator.language.toLowerCase();
-                if (i18nData[language] === undefined){
+                var language = this.getSetting('language') && this.getSetting('language').toLowerCase() || window.navigator.language.toLowerCase();
+                if (i18nData[language] === undefined) {
                     loadLanguage(language);
                 }
                 //真正的初始化
-                if (!inArray(mw.config.values.wgNameSpaceNumber, this.inValidNameSpaces)) {
+                if (!inArray(mw.config.values.wgNameSpaceNumber, this.inValidNameSpaces) && mw.config.values.wgIsArticle && mw.config.values.wgAction === "view") {
                     this.kotori = new Wikipage();
                     this.checki18nCache();
                     this.initBasicFunctions();
