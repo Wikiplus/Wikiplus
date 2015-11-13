@@ -5,9 +5,6 @@
 
 header('content-type;text/html;charset=utf-8');
 
-require_once('config.php'); // 这里是数据库设置
-
-
 //验证提交数据有效性
 function isValid($array){
 	foreach ($array as $value) {

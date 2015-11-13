@@ -1366,7 +1366,7 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.0.0.1';
+                this.version = '2.0.0.0';
                 this.releaseNote = '修正了版本号过低的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
