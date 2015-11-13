@@ -567,10 +567,6 @@ $(function () {
                 if (callback === undefined) callback = {};
 
                 var self = this;
-<<<<<<< HEAD
-                console.log(this.API);
-=======
->>>>>>> 290db74276f62e6df8a2b2296e4d368e32ec546d
                 callback.success = callback.success || new Function();
                 callback.fail = callback.success || new Function();
                 $.ajax({
@@ -840,13 +836,10 @@ $(function () {
                     var self = this;
                     callback.success = callback.success || new Function();
                     callback.fail = callback.fail || new Function();
-<<<<<<< HEAD
                     if (!(mw.config.values.wgIsArticle && mw.config.values.wgAction === "view" && mw.config.values.wgIsProbablyEditable)) {
                         console.log('该页面无法编辑 快速编辑界面加载终止');
                         return;
                     }
-=======
->>>>>>> 290db74276f62e6df8a2b2296e4d368e32ec546d
                     //顶部编辑入口
                     var topBtn = $('<li>').attr('id', 'Wikiplus-Edit-TopBtn').append($('<span>').append($('<a>').attr('href', 'javascript:void(0)').text('' + i18n('quickedit_topbtn')))).data({
                         number: -1,
@@ -862,11 +855,7 @@ $(function () {
                         $('.mw-editsection').each(function (i) {
                             try {
                                 var editURL = $(this).find("a").attr('href');
-<<<<<<< HEAD
                                 var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1];
-=======
-                                var sectionNumber = editURL.match(/&section\=(.+)/)[1];
->>>>>>> 290db74276f62e6df8a2b2296e4d368e32ec546d
                                 var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
                                 var sectionName = $(this).prev().text();
                                 self.sectionMap[sectionNumber] = {
@@ -1451,20 +1440,12 @@ $(function () {
                 //一些初始化工作
                 this.preloadData = {};
                 this.checkInstall();
-<<<<<<< HEAD
                 var language = this.getSetting('language') && this.getSetting('language').toLowerCase() || window.navigator.language.toLowerCase();
-=======
-                var language = window.navigator.language.toLowerCase();
->>>>>>> 290db74276f62e6df8a2b2296e4d368e32ec546d
                 if (i18nData[language] === undefined) {
                     loadLanguage(language);
                 }
                 //真正的初始化
-<<<<<<< HEAD
                 if (!inArray(mw.config.values.wgNameSpaceNumber, this.inValidNameSpaces) && mw.config.values.wgIsArticle && mw.config.values.wgAction === "view") {
-=======
-                if (!inArray(mw.config.values.wgNameSpaceNumber, this.inValidNameSpaces)) {
->>>>>>> 290db74276f62e6df8a2b2296e4d368e32ec546d
                     this.kotori = new Wikipage();
                     this.checki18nCache();
                     this.initBasicFunctions();
