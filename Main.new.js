@@ -554,7 +554,6 @@ $(function () {
          */
         init(title = this.pageName, callback = {}, config) {
             var self = this;
-            console.log(this.API);
             callback.success = callback.success || new Function();
             callback.fail = callback.success || new Function();
             $.ajax({
@@ -1099,7 +1098,7 @@ $(function () {
                         $('#Wikiplus-SR-Apply').click(function () {
                             if ($('.Wikiplus-InterBox-Input').val() != '') {
                                 var title = $('.Wikiplus-InterBox-Input').val()
-                                $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit') }</div>`);
+                                $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit')}</div>`);
                                 self.kotori.redirectFrom(title, self.kotori.pageName, {
                                     success: function () {
                                         $('.Wikiplus-Banner').text(i18n('redirect_saved'));
