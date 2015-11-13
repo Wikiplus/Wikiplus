@@ -5,21 +5,8 @@
 
 header('content-type;text/html;charset=utf-8');
 
-//数据库信息定义
+require_once('config.php'); // 这里是数据库设置
 
-$DB_Host     = 'localhost';
-$DB_Name     = 'wikiplus';
-$DB_UserName = 'root';
-$DB_UserPass = '';
-
-/*
-
-$DB_Host     = 'localhost';
-$DB_Name     = MYSQL_DATABASE;
-$DB_UserName = MYSQL_USERNAME;
-$DB_UserPass = MYSQL_PASSWORD;
-
-*/
 
 //验证提交数据有效性
 function isValid($array){

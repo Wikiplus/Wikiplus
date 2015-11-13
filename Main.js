@@ -1420,7 +1420,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.0.0.0';
+                this.version = '2.0.0.1';
                 this.releaseNote = '修正了版本号过低的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
@@ -1440,6 +1440,12 @@ $(function () {
                 //一些初始化工作
                 this.preloadData = {};
                 this.checkInstall();
+                //版本检查
+                if (!(this.version === localStorage.Wikiplus_Version)) {
+                    localStorage.Wikiplus_Version = this.version;
+                    this.notice.create.success('Wikiplus ' + this.version);
+                    this.notice.create.success(this.releaseNote);
+                }
                 var language = this.getSetting('language') && this.getSetting('language').toLowerCase() || window.navigator.language.toLowerCase();
                 if (i18nData[language] === undefined) {
                     loadLanguage(language);

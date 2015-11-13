@@ -1366,7 +1366,7 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.0.0.0';
+                this.version = '2.0.0.1';
                 this.releaseNote = '修正了版本号过低的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
@@ -1387,7 +1387,7 @@ $(function () {
                 this.preloadData = {};
                 this.checkInstall();
                 //版本检查
-                if (!this.version === localStorage.Wikiplus_Version){
+                if (!(this.version === localStorage.Wikiplus_Version)){
                     localStorage.Wikiplus_Version = this.version;
                     this.notice.create.success(`Wikiplus ${this.version}`);
                     this.notice.create.success(this.releaseNote);
