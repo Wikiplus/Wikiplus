@@ -854,7 +854,7 @@ $(function () {
                         var sectionBtn = $('<span>').append($('<span>').attr('id', 'mw-editsection-bracket').text('[')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn'))).append($('<span>').attr('id', 'mw-editsection-bracket').text(']'));
                         $('.mw-editsection').each(function (i) {
                             try {
-                                var editURL = $(this).find("a").attr('href');
+                                var editURL = $(this).find("a").last().attr('href');
                                 var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1];
                                 var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
                                 var sectionName = $(this).prev().text();
@@ -1310,7 +1310,7 @@ $(function () {
                     if (localStorage.Wikiplus_SendStatistics == 'True') {
                         $.ajax({
                             url: scriptPath + '/statistic.php',
-                            type: 'POST',
+                            type: 'GET',
                             dataType: 'json',
                             data: {
                                 'wikiname': mw.config.values.wgSiteName,
