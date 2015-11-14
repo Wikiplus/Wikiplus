@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Wikiplus数据统计</title>
+	<title><?php echo getConfig('sitename');?></title>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" href="./material.min.css">
-	<script src="./material.min.js"></script>
-	<script src="jquery.js"></script>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	<link rel="stylesheet" type="text/css" href="statistics.css">
-	<script src="statistics_rank.js"></script>
+	<link rel="stylesheet" href="<?php echo SR('css/material.min.css');?>">
+	<link rel="stylesheet" type="text/css" href="<?php echo SR('css/statistics.css');?>">
+	<script src="<?php echo SR('js/jquery.js');?>"></script>
+	<script src="<?php echo SR('js/material.min.js');?>"></script>
+	<script src="<?php echo SR('js/statistics_rank.js');?>"></script>
 	<style type="text/css">
 		table{
 			width: 100%;

@@ -36,7 +36,7 @@ $(document).ready(function(){
 	}
 
 		$.ajax({
-			url : "data.php?action=rank",
+			url : "api/timerank",
 			dataType : "json",
 			data : {'sitename' : siteName},
 			success : function(data){

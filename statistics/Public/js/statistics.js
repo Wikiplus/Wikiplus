@@ -122,10 +122,10 @@ $(document).ready(function () {
 		$('.Headline h2').text('数据统计 于 ' + siteName);
 
 		$.ajax({
-			url : 'data.php',
+			url : 'api/meta',
 			type : 'GET',
 			dataType : 'json',
-			data : {'action' : 'meta', 'sitename' : siteName},
+			data : {'sitename' : siteName},
 			success : function(data){
 				if (data && data.editcount){
 					$('.Headline h2').after(
@@ -140,10 +140,10 @@ $(document).ready(function () {
 					//查询最近平均更改时间
 
 					$.ajax({
-						url : 'data.php',
+						url : 'api/recentavgtime',
 						type : 'GET',
 						dataType : "json",
-						data : {'action' : 'recentusetime', 'sitename' : siteName},
+						data : {'sitename' : siteName},
 						success : function(data){
 							if (data.usetime){
 								showRecentUseTime(data.usetime);
@@ -158,10 +158,10 @@ $(document).ready(function () {
 					});
 
 					$.ajax({
-						url : 'data.php',
+						url : 'api/ranking',
 						type : "GET",
 						dataType : "json",
-						data : {'action' : 'ranking', 'sitename' : siteName},
+						data : {'sitename' : siteName},
 						success : function(data){
 							if (data.contributionRanking){
 								var container = $('#contribution-raking');
@@ -247,10 +247,9 @@ $(document).ready(function () {
 	}
 	else{
 		$.ajax({
-			url : 'data.php',
+			url : 'api/meta',
 			type : "GET",
 			dataType : "json",
-			data : {'action':'meta'},
 			success : function(data){
 				if (data.editcount){
 					$('.Headline h2').after(
