@@ -1,8 +1,25 @@
 {
   "name": "Wikiplus",
-  "version": "0.1.0",
+  "version": "2.0.0.0",
+  "homepage": "https://wikiplus-app.smartgslb.com/",
   "description": "A front-end jQuery-based Mediawiki plugin.",
-  "license": "Apache",
+  "keywords": [
+    "Wikiplus",
+    "Mediawiki"
+  ],
+  "author": {
+    "name": "Eridanus Sora",
+    "email": "h@moe.re",
+    "url": "http://sora.sound.moe"
+  },
+  "contributors": [
+    {
+      "name": "Ted Zyzsdy",
+      "email": "zyzsdy@gmail.com",
+      "url": "https://zyzsdy.com"
+    }
+  ],
+  "license": "Apache-2.0",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-babel": "^5.0.3",
