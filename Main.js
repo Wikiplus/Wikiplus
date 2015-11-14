@@ -1309,8 +1309,8 @@ $(function () {
 
                     if (localStorage.Wikiplus_SendStatistics == 'True') {
                         $.ajax({
-                            url: scriptPath + '/statistic.php',
-                            type: 'GET',
+                            url: scriptPath + '/statistic/api/submit',
+                            type: 'POST',
                             dataType: 'json',
                             data: {
                                 'wikiname': mw.config.values.wgSiteName,
