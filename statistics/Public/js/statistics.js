@@ -164,33 +164,13 @@ $(document).ready(function () {
 						data : {'sitename' : siteName},
 						success : function(data){
 							if (data.contributionRanking){
-								var container = $('#contribution-raking');
-								container.append(
-									$('<table>').addClass('mdl-data-table').addClass('mdl-js-data-table').addClass('mdl-shadow--2dp')
-												.append(
-													$('<thead>').append(
-																	$('<tr>').append(
-																			     $('<th>').addClass('mdl-data-table__cell--non-numeric').text('用户名')
-																			 )
-																			 .append(
-																			 	 $('<th>').text('编辑次数')
-																			 )
-																)
-												)
-												.append(
-													$('<tbody>')
-												)
-								);
+								var container = initTable($('#contribution-raking'), ['用户名','编辑次数']);
+								
 								for (var key in data.contributionRanking){
-									var table = $('#contribution-raking tbody');
-									table.append(
-										$('<tr>').append(
-													 $('<td>').addClass('mdl-data-table__cell--non-numeric').text(key)
-												 )
-												 .append(
-												 	 $('<td>').text(data.contributionRanking[key])
-												 )
-									)
+									addTableElement(container,[
+										key,
+										data.contributionRanking[key]
+									]);
 								}
 
 								$('#process-bar-contribution-ranking').fadeOut('slow',function(){
@@ -198,35 +178,13 @@ $(document).ready(function () {
 								})
 							}
 							if (data.hotpageRanking){
-								var container = $('#hotpage-ranking');
-								container.append(
-									$('<table>').addClass('mdl-data-table').addClass('mdl-js-data-table').addClass('mdl-shadow--2dp')
-												.append(
-													$('<thead>').append(
-																	$('<tr>').append(
-																			     $('<th>').addClass('mdl-data-table__cell--non-numeric').text('页面名')
-																			 )
-																			 .append(
-																			 	 $('<th>').text('编辑次数')
-																			 )
-																)
-												)
-												.append(
-													$('<tbody>')
-												)
-								);
+								container = initTable($('#hotpage-ranking'),['页面名','编辑次数']);
 								for (key in data.hotpageRanking){
-									var table = $('#hotpage-ranking tbody');
-									table.append(
-										$('<tr>').append(
-													 $('<td>').addClass('mdl-data-table__cell--non-numeric').text(key)
-												 )
-												 .append(
-												 	 $('<td>').text(data.hotpageRanking[key])
-												 )
-									)
+									addTableElement(container, [
+										key,
+										data.hotpageRanking[key]
+									]);
 								}
-
 								$('#process-bar-hotpage-ranking').fadeOut('slow',function(){
 									$(this).remove();
 								})
