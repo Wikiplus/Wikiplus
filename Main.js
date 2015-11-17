@@ -1309,7 +1309,7 @@ $(function () {
 
                     if (localStorage.Wikiplus_SendStatistics == 'True') {
                         $.ajax({
-                            url: scriptPath + '/statistic/api/submit',
+                            url: scriptPath + '/statistics/api/submit',
                             type: 'POST',
                             dataType: 'json',
                             data: {
