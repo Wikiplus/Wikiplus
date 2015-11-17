@@ -1309,7 +1309,7 @@ $(function () {
 
                     if (localStorage.Wikiplus_SendStatistics == 'True') {
                         $.ajax({
-                            url: scriptPath + '/statistic/api/submit',
+                            url: scriptPath + '/statistics/api/submit',
                             type: 'POST',
                             dataType: 'json',
                             data: {
@@ -1420,8 +1420,8 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.0.1.0';
-                this.releaseNote = '修改提交统计数据的方式';
+                this.version = '2.0.1.1';
+                this.releaseNote = '修复统计数据提交问题。';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
