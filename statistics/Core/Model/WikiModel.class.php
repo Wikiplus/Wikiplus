@@ -6,7 +6,7 @@ class WikiModel extends Model{
 	
 	//基础数据
 	public function meta(){
-		return $this->sql("SELECT `wikiname`, count(*) count FROM `wikiplus_statistics` GROUP BY `wikiname`")->select();
+		return $this->sql("SELECT `wikiname`, count(*) count FROM `wikiplus_statistics` GROUP BY `wikiname` ORDER BY count(*) DESC")->select();
 	}
 	//按wiki区分的计数
 	public function countBySite($sitename){

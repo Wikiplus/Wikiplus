@@ -35,9 +35,9 @@ body{
 #contribution-raking,#hotspot-ranking{
 	height: 500px;
 }
-#first-statistics,#second-statistics{
+#first-statistics,#second-statistics,#meta-statistics{
 	display: none;
 }
-#first-statistics table,#second-statistics table{
+#first-statistics table,#second-statistics table,#meta-statistics table{
 	width: 100%;
 }

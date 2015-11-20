@@ -22,6 +22,13 @@
 				<h3>最近30日平均提交时间统计</h3>
 				<div id="RecentUseTime"></div>
 			</div>
+			<div class="mdl-grid" id="meta-statistics">
+				<div class="mdl-cell mdl-cell--12-col">
+					<h3>概览</h3>
+					<div class="mdl-progress mdl-js-progress mdl-progress__indeterminate progress-demo process-bar" id="process-bar-site-ranking"></div>
+					<div id="site-ranking"></div>
+				</div>
+			</div>
 			<div class="mdl-grid" id="second-statistics">
 				<div class="mdl-cell mdl-cell--6-col">
 					<h3>最近贡献排行</h3>
