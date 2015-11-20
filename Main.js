@@ -874,6 +874,19 @@ $(function () {
                             }
                         });
                     }
+                    //针对所有编辑链接给出快速编辑按钮
+                    var regExp = new RegExp(/[?&]([^=#]+)=([^&#]*)/g);
+                    $('#mw-content-text').find('a.external').each(function (i) {
+                        var href = $(this).attr('href');
+                        var urlParams = {},
+                            i;
+                        if (regExp.test(href)) {
+                            while (i = regExp.exec(href)) {
+                                urlParams[i[1]] = i[2];
+                            }
+                            console.log(urlParams);
+                        }
+                    });
                     $('.Wikiplus-Edit-SectionBtn').click(function () {
                         self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
                     });
