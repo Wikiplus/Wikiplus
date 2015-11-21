@@ -1497,8 +1497,8 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.0.2';
-                this.releaseNote = '修正无法编辑历史版本的问题';
+                this.version = '2.0.3';
+                this.releaseNote = '对话框支持拖曳';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
