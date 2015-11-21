@@ -1,4 +1,6 @@
 Wikiplus
+
+<a href="http://issuestats.com/github/Last-Order/Wikiplus"><img src="http://issuestats.com/github/Last-Order/Wikiplus/badge/issue?style=flat-square" alt="Issue?style=flat square"></a>
 ========
 
 A Mediawiki front-end add-on based on jQuery.
