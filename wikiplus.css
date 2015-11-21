@@ -41,6 +41,7 @@
 	text-align:left;
 	font-size: 15px;
 	border-bottom: 1px #66ccff solid;
+	cursor: move;
 }
 .Wikiplus-InterBox-Input{
 	margin: 20px;
