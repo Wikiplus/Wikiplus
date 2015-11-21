@@ -91,111 +91,112 @@ $(function () {
     var i18nData = {};
     var scriptPath = location.protocol + '//wikiplus-app.smartgslb.com';
     i18nData['zh-cn'] = {
-        __language: 'zh-cn',
-        __author: ['Eridanus Sora'],
-        __version: '2.0.0.0',
-        unknown_error_name: '未知的错误名',
-        api_unaccessiable: '无可用的API',
-        api_unwriteable: '无可用的写入API',
-        fail_to_get_timestamp: '无法获得页面编辑起始时间戳',
-        fail_to_get_edittoken: '无法获得页面编辑权标',
-        fail_to_get_pageinfo: '无法获得页面信息',
-        not_autoconfirmed_user: '非自动确认用户',
-        hit_abusefilter: '被防滥用过滤器拦截',
-        unknown_edit_error: '未知编辑错误',
-        unknown_edit_error_message: '未知编辑错误($1)',
-        notitle: '无法编辑空标题页面',
-        notext: '缺少页面内容',
-        notoken: '空编辑权标',
-        invalidsection: '段落编号非法',
-        protectedtitle: '该标题被保护，无法创建',
-        cantcreate: '无新建页面权限',
-        cantcreate_anon: '匿名用户无新建页面权限',
-        articleexists: '无法创建已经存在的页面',
-        noimageredirect_anon: '匿名用户无新建文件重定向权限',
-        noimageredirect: '无新建文件重定向权限',
-        spamdetected: '文本含有敏感内容，被SPAM过滤器拦截',
-        filtered: '编辑被过滤器拦截',
-        contenttoobig: '文本超过最大长度限制',
-        noedit_anon: '匿名用户无编辑页面权限',
-        noedit: '无编辑页面权限',
-        pagedeleted: '编辑时，此页面被删除',
-        emptypage: '无法新建空内容页面',
-        emptynewsection: '无法新建空内容段落',
-        editconflict: '编辑冲突，请手工检查页面当前内容与提交内容差异并修正后，刷新页面提交',
-        revwrongpage: '编辑的修订版本与编辑的页面不匹配',
-        undofailure: '由于存在冲突的中间版本，无法撤销编辑',
-        missingtitle: '无法创建或编辑空标题页面',
-        mustbeposted: '必须使用POST方式提交编辑',
-        readapidenied: '无读取API使用权限',
-        writeapidenied: '无通过API编辑页面权限',
-        noapiwrite: '本Wiki未开启可用的写入API',
-        badtoken: '非法的编辑权标',
-        missingparam: '缺少必要参数，页面名和页面ID不能均为空',
-        invalidparammix: '参数重复，页面名和页面ID不能同时给定',
-        invalidtitle: '非法的标题',
-        nosuchpageid: '不存在的页面ID',
-        pagecannotexist: '该名称空间不允许新建一般页面',
-        nosuchrevid: '不存在的修订版本',
-        badmd5: '非法的MD5值',
-        hookaborted: '编辑被扩展Hook拦截',
-        parseerror: '无法解析页面文本',
-        summaryrequired: '编辑摘要不能为空',
-        blocked: '已被封禁',
-        ratelimited: '达到操作速率上限，请稍后重试',
-        unknownerror: '未知错误',
-        nosuchsection: '无法编辑不存在的段落',
-        sectionsnotsupported: '该页面不支持段落编辑',
-        editnotsupported: '该页面不支持通过API编辑',
-        appendnotsupported: '该页面无法在前后插入文本',
-        redirect_appendonly: '在遵循重定向的情况下，只能进行前后插入或创建新段落',
-        badformat: '文本格式错误',
-        customcssprotected: '无法编辑用户CSS页',
-        customjsprotected: '无法编辑用户JS页',
-        cascadeprotected: '该页面被级联保护',
-        network_edit_error: '由于网络原因编辑失败',
-        redirect_to_summary: '重定向页面至 [[$1]] // Wikiplus',
-        redirect_from_summary: '将[[$1]]重定向至[[$2]] // Wikiplus',
-        need_init: '页面类未加载完成',
-        fail_to_get_wikitext: '无法获得页面文本',
-        quickedit_topbtn: '快速编辑',
-        quickedit_sectionbtn: '快速编辑',
-        fail_to_init_quickedit: '无法加载快速编辑',
-        back: '返回',
-        goto_editbox: '到编辑框',
-        summary_placehold: '请输入编辑摘要',
-        submit: '提交',
-        preview: '预览',
-        cancel: '取消',
-        mark_minoredit: '标记为小编辑',
-        onclose_confirm: '[Wikiplus] 您确认要关闭/刷新页面吗 这会导致您的编辑数据丢失',
-        fail_to_get_wikitext_when_edit: '无法获得页面文本以编辑',
-        cant_parse_wikitext: '无法解析维基文本',
-        loading_preview: '正在读取预览',
-        submitting_edit: '正在提交编辑',
-        edit_success: '编辑成功 用时$1ms',
-        empty_page_confirm: '您向编辑函数传入了空内容参数 这将清空页面\r\n由于该行为危险 请将config参数的empty键值设定为true来确认',
-        cross_page_edit: '编辑目标位于其他页面 正在获取基础信息',
-        cross_page_edit_submit: '基础信息获取成功 正在提交编辑',
-        cross_page_edit_error: '无法获得基础信息>.<',
-        install_tip: '您是否允许Wikiplus采集非敏感数据用于改进Wikiplus及为当前Wiki: $1 提供改进建议?',
-        accept: '接受',
-        decline: '拒绝',
-        install_finish: 'Wikiplus安装完毕',
-        loading: '正在载入',
-        cant_add_funcbtn: '无法增加功能按钮',
-        wikiplus_settings: 'Wikiplus设置',
-        wikiplus_settings_desc: '请在下方按规范修改Wikiplus设置',
-        wikiplus_settings_placeholder: '当前设置为空 请在此处按规范修改Wikiplus设置',
-        wikiplus_settings_grammar_error: '设置存在语法错误 请检查后重试',
-        wikiplus_settings_saved: '设置已保存',
-        redirect_from: '将页面重定向至此',
-        redirect_desc: '请输入要重定向至此的页面名',
-        empty_input: '输入不能为空',
-        redirect_saved: '重定向完成',
-        uninited: 'Wikiplus未加载完毕 请刷新重试',
-        cant_parse_i18ncache: '无法解析多语言定义文件缓存',
-        cant_load_language: '无法获取多语言定义文件'
+        "__language": "zh-cn",
+        "__author": ["Eridanus Sora"],
+        "__version": "2.0.0.0",
+        "unknown_error_name": "未知的错误名",
+        "api_unaccessiable": "无可用的API",
+        "api_unwriteable": "无可用的写入API",
+        "fail_to_get_timestamp": "无法获得页面编辑起始时间戳",
+        "fail_to_get_edittoken": "无法获得页面编辑权标",
+        "fail_to_get_pageinfo": "无法获得页面信息",
+        "not_autoconfirmed_user": "非自动确认用户",
+        "hit_abusefilter": "被防滥用过滤器拦截",
+        "unknown_edit_error": "未知编辑错误",
+        "unknown_edit_error_message": "未知编辑错误($1)",
+        "notitle": "无法编辑空标题页面",
+        "notext": "缺少页面内容",
+        "notoken": "空编辑权标",
+        "invalidsection": "段落编号非法",
+        "protectedtitle": "该标题被保护，无法创建",
+        "cantcreate": "无新建页面权限",
+        "cantcreate_anon": "匿名用户无新建页面权限",
+        "articleexists": "无法创建已经存在的页面",
+        "noimageredirect_anon": "匿名用户无新建文件重定向权限",
+        "noimageredirect": "无新建文件重定向权限",
+        "spamdetected": "文本含有敏感内容，被SPAM过滤器拦截",
+        "filtered": "编辑被过滤器拦截",
+        "contenttoobig": "文本超过最大长度限制",
+        "noedit_anon": "匿名用户无编辑页面权限",
+        "noedit": "无编辑页面权限",
+        "pagedeleted": "编辑时，此页面被删除",
+        "emptypage": "无法新建空内容页面",
+        "emptynewsection": "无法新建空内容段落",
+        "editconflict": "编辑冲突，请手工检查页面当前内容与提交内容差异并修正后，刷新页面提交",
+        "revwrongpage": "编辑的修订版本与编辑的页面不匹配",
+        "undofailure": "由于存在冲突的中间版本，无法撤销编辑",
+        "missingtitle": "无法创建或编辑空标题页面",
+        "mustbeposted": "必须使用POST方式提交编辑",
+        "readapidenied": "无读取API使用权限",
+        "writeapidenied": "无通过API编辑页面权限",
+        "noapiwrite": "本Wiki未开启可用的写入API",
+        "badtoken": "非法的编辑权标",
+        "missingparam": "缺少必要参数，页面名和页面ID不能均为空",
+        "invalidparammix": "参数重复，页面名和页面ID不能同时给定",
+        "invalidtitle": "非法的标题",
+        "nosuchpageid": "不存在的页面ID",
+        "pagecannotexist": "该名称空间不允许新建一般页面",
+        "nosuchrevid": "不存在的修订版本",
+        "badmd5": "非法的MD5值",
+        "hookaborted": "编辑被扩展Hook拦截",
+        "parseerror": "无法解析页面文本",
+        "summaryrequired": "编辑摘要不能为空",
+        "blocked": "已被封禁",
+        "ratelimited": "达到操作速率上限，请稍后重试",
+        "unknownerror": "未知错误",
+        "nosuchsection": "无法编辑不存在的段落",
+        "sectionsnotsupported": "该页面不支持段落编辑",
+        "editnotsupported": "该页面不支持通过API编辑",
+        "appendnotsupported": "该页面无法在前后插入文本",
+        "redirect_appendonly": "在遵循重定向的情况下，只能进行前后插入或创建新段落",
+        "badformat": "文本格式错误",
+        "customcssprotected": "无法编辑用户CSS页",
+        "customjsprotected": "无法编辑用户JS页",
+        "cascadeprotected": "该页面被级联保护",
+        "network_edit_error": "由于网络原因编辑失败",
+        "redirect_to_summary": "重定向页面至 [[$1]] // Wikiplus",
+        "redirect_from_summary": "将[[$1]]重定向至[[$2]] // Wikiplus",
+        "need_init": "页面类未加载完成",
+        "fail_to_get_wikitext": "无法获得页面文本",
+        "quickedit_topbtn": "快速编辑",
+        "quickedit_sectionbtn": "快速编辑",
+        "fail_to_init_quickedit": "无法加载快速编辑",
+        "back": "返回",
+        "goto_editbox": "到编辑框",
+        "summary_placehold": "请输入编辑摘要",
+        "submit": "提交",
+        "preview": "预览",
+        "cancel": "取消",
+        "mark_minoredit": "标记为小编辑",
+        "onclose_confirm": "[Wikiplus] 您确认要关闭/刷新页面吗 这会导致您的编辑数据丢失",
+        "fail_to_get_wikitext_when_edit": "无法获得页面文本以编辑",
+        "cant_parse_wikitext": "无法解析维基文本",
+        "loading_preview": "正在读取预览",
+        "submitting_edit": "正在提交编辑",
+        "edit_success": "编辑成功 用时$1ms",
+        "empty_page_confirm": "您向编辑函数传入了空内容参数 这将清空页面\r\n由于该行为危险 请将config参数的empty键值设定为true来确认",
+        "cross_page_edit": "编辑目标位于其他页面 正在获取基础信息",
+        "cross_page_edit_submit": "基础信息获取成功 正在提交编辑",
+        "cross_page_edit_error": "无法获得基础信息>.<",
+        "install_tip": "您是否允许Wikiplus采集非敏感数据用于改进Wikiplus及为当前Wiki: $1 提供改进建议?",
+        "accept": "接受",
+        "decline": "拒绝",
+        "install_finish": "Wikiplus安装完毕",
+        "loading": "正在载入",
+        "cant_add_funcbtn": "无法增加功能按钮",
+        "wikiplus_settings": "Wikiplus设置",
+        "wikiplus_settings_desc": "请在下方按规范修改Wikiplus设置",
+        "wikiplus_settings_placeholder": "当前设置为空 请在此处按规范修改Wikiplus设置",
+        "wikiplus_settings_grammar_error": "设置存在语法错误 请检查后重试",
+        "wikiplus_settings_saved": "设置已保存",
+        "redirect_from": "将页面重定向至此",
+        "redirect_desc": "请输入要重定向至此的页面名",
+        "empty_input": "输入不能为空",
+        "redirect_saved": "重定向完成",
+        "uninited": "Wikiplus未加载完毕 请刷新重试",
+        "cant_parse_i18ncache": "无法解析多语言定义文件缓存",
+        "cant_load_language": "无法获取多语言定义文件",
+        "history_edit_warning": " // 正试图编辑历史版本 这将会应用到本页面的最新版本 请慎重提交"
     };
     // i18nData['en-us'] = {
     //     __language: 'en-us',
@@ -664,7 +665,7 @@ $(function () {
                                 } else {
                                     if (data.edit.code) {
                                         //防滥用过滤器
-                                        callback.fail(throwError('hit_abusefilter', '触发防滥用过滤器:' + data.edit.info.replace('/Hit AbuseFilter: /ig', '') + '<br><small>' + data.edit.warning + '</small>'));
+                                        callback.fail(throwError('hit_abusefilter', '{i18n(\'hit_abusefilter\')}:' + data.edit.info.replace('/Hit AbuseFilter: /ig', '') + '<br><small>' + data.edit.warning + '</small>'));
                                     } else {
                                         callback.fail(throwError('unknown_edit_error'));
                                     }
@@ -874,19 +875,18 @@ $(function () {
                             }
                         });
                     }
-                    //针对所有编辑链接给出快速编辑按钮
-                    var regExp = new RegExp(/[?&]([^=#]+)=([^&#]*)/g);
-                    $('#mw-content-text').find('a.external').each(function (i) {
-                        var href = $(this).attr('href');
-                        var urlParams = {},
-                            i;
-                        if (regExp.test(href)) {
-                            while (i = regExp.exec(href)) {
-                                urlParams[i[1]] = i[2];
-                            }
-                            console.log(urlParams);
-                        }
-                    });
+                    // //针对所有编辑链接给出快速编辑按钮
+                    // var regExp = new RegExp(/[?&]([^=#]+)=([^&#]*)/g);
+                    // $('#mw-content-text').find('a.external').each(function(i){
+                    //     var href = $(this).attr('href');
+                    //     var urlParams = {}, i;
+                    //     if (regExp.test(href)){
+                    //         while (i = regExp.exec(href)){
+                    //             urlParams[i[1]] = i[2];
+                    //         }
+                    //         console.log(urlParams);
+                    //     }
+                    // })
                     $('.Wikiplus-Edit-SectionBtn').click(function () {
                         self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
                     });
@@ -906,21 +906,38 @@ $(function () {
                     var sectionName = obj.data('name');
                     var sectionTargetName = obj.data('target');
                     if (this.kotori.inited) {
-                        if (this.preloadData[sectionTargetName + '.' + sectionNumber] === undefined) {
+                        if (mw.config.values.wgCurRevisionId === mw.config.values.wgRevisionId) {
+                            if (this.preloadData[sectionTargetName + '.' + sectionNumber] === undefined) {
+                                this.notice.create.success(i18n('loading'));
+                                this.preload(sectionNumber, sectionTargetName, {
+                                    success: function success(data) {
+                                        obj.data('content', data);
+                                        self.notice.empty();
+                                        self.displayQuickEditInterface(obj);
+                                    },
+                                    fail: function fail(e) {
+                                        throwError('fail_to_get_wikitext_when_edit');
+                                    }
+                                });
+                            } else {
+                                obj.data('content', self.preloadData[sectionTargetName + '.' + sectionNumber]);
+                                self.displayQuickEditInterface(obj);
+                            }
+                        } else {
+                            this.notice.create.warning(i18n('history_edit_warning'));
                             this.notice.create.success(i18n('loading'));
                             this.preload(sectionNumber, sectionTargetName, {
                                 success: function success(data) {
                                     obj.data('content', data);
                                     self.notice.empty();
-                                    self.displayQuickEditInterface(obj);
+                                    self.displayQuickEditInterface(obj, '' + i18n('history_edit_warning'));
                                 },
-                                fail: function fail(e) {
+                                fail: function fail(data) {
                                     throwError('fail_to_get_wikitext_when_edit');
                                 }
+                            }, {
+                                'revision': mw.config.values.wgRevisionId
                             });
-                        } else {
-                            obj.data('content', self.preloadData[sectionTargetName + '.' + sectionNumber]);
-                            self.displayQuickEditInterface(obj);
                         }
                     }
                 }
@@ -931,6 +948,8 @@ $(function () {
             }, {
                 key: 'displayQuickEditInterface',
                 value: function displayQuickEditInterface(obj) {
+                    var message = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+
                     var self = this;
                     var sectionNumber = obj.data('number');
                     var sectionName = obj.data('name');
@@ -960,7 +979,7 @@ $(function () {
                     var isMinorEdit = $('<div>').append($('<input>').attr({ 'type': 'checkbox', 'id': 'Wikiplus-Quickedit-MinorEdit' })).append($('<label>').attr('for', 'Wikiplus-Quickedit-MinorEdit').text(i18n('mark_minoredit') + '(Ctrl+Shift+S)')).css({ 'margin': '5px 5px 5px -3px', 'display': 'inline' });
                     //DOM定义结束
                     var editBody = $('<div>').append(backBtn, jumpBtn, previewBox, inputBox, summaryBox, $('<br>'), isMinorEdit, editSubmitBtn, previewSubmitBtn);
-                    this.createDialogBox(i18n('quickedit_topbtn'), editBody, 1000, function () {
+                    this.createDialogBox('' + i18n('quickedit_topbtn') + message, editBody, 1000, function () {
                         $('#Wikiplus-Quickedit').text(sectionContent);
                         $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                         //事件绑定
@@ -1227,7 +1246,7 @@ $(function () {
             }, {
                 key: 'createDialogBox',
                 value: function createDialogBox() {
-                    var title = arguments.length <= 0 || arguments[0] === undefined ? '对话框' : arguments[0];
+                    var title = arguments.length <= 0 || arguments[0] === undefined ? 'Dialog Box' : arguments[0];
                     var content = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
                     var width = arguments.length <= 2 || arguments[2] === undefined ? 600 : arguments[2];
                     var callback = arguments.length <= 3 || arguments[3] === undefined ? new Function() : arguments[3];
@@ -1243,7 +1262,7 @@ $(function () {
                         'margin-left': clientWidth / 2 - width / 2,
                         'top': $(document).scrollTop() + clientHeight * 0.2,
                         'display': 'none'
-                    }).append($('<div>').addClass('Wikiplus-InterBox-Header').text(title)).append($('<div>').addClass('Wikiplus-InterBox-Content').append(content)).append($('<span>').text('×').addClass('Wikiplus-InterBox-Close'));
+                    }).append($('<div>').addClass('Wikiplus-InterBox-Header').html(title)).append($('<div>').addClass('Wikiplus-InterBox-Content').append(content)).append($('<span>').text('×').addClass('Wikiplus-InterBox-Close'));
                     $('body').append(diglogBox);
                     $('.Wikiplus-InterBox').width(width);
                     $('.Wikiplus-InterBox-Close').click(function () {
@@ -1286,6 +1305,7 @@ $(function () {
                     var section = arguments.length <= 0 || arguments[0] === undefined ? -1 : arguments[0];
                     var title = arguments.length <= 1 || arguments[1] === undefined ? this.kotori.pageName : arguments[1];
                     var callback = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+                    var config = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
 
                     callback.success = callback.success || new Function();
                     callback.fail = callback.fail || new Function();
@@ -1305,9 +1325,9 @@ $(function () {
                             console.log('预读取[' + title + '.' + section + ']失败:' + e.message);
                             callback.fail(e);
                         }
-                    }, title, {
+                    }, title, $.extend({
                         section: section === -1 ? '' : section
-                    });
+                    }, config));
                 }
 
                 /**
@@ -1433,8 +1453,8 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.0.1.1';
-                this.releaseNote = '修复统计数据提交问题。';
+                this.version = '2.0.2';
+                this.releaseNote = '修正无法编辑历史版本的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
@@ -1468,6 +1488,8 @@ $(function () {
                     this.kotori = new Wikipage();
                     this.checki18nCache();
                     this.initBasicFunctions();
+                } else {
+                    console.log('不符合加载条件 Wikiplus终止');
                 }
             }
 

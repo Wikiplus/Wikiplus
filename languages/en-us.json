@@ -1,7 +1,7 @@
 {
         "__language": "en-us",
         "__author": ["Eridanus Sora","AnnAngela","YinYan"],
-        "__version": "2.0.0.0",
+        "__version": "2.0.2",
         "unknown_error_name": "Unknown error name",
         "api_unaccessiable": "API is not available",
         "api_unwriteable": "API is not writeable",
@@ -103,5 +103,6 @@
         "redirect_saved": "Redirection is finished",
         "uninited": "Wikiplus is not completely initialized, please refeash this page",
         "cant_parse_i18ncache": "Failed to parse the cache of i18n file",
-        "cant_load_language": "Failed to load i18n file"
+        "cant_load_language": "Failed to load i18n file",
+        "history_edit_warning" : " // You are trying to edit a history revision of this page. This will apply to the lastest revision. Please be careful."
 }
