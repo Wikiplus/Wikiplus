@@ -1271,6 +1271,32 @@ $(function () {
                             $(this).remove();
                         });
                     });
+                    //拖曳
+                    var bindDragging = function bindDragging(element) {
+                        element.mousedown(function (e) {
+                            var baseX = e.clientX;
+                            var baseY = e.clientY;
+                            var baseOffsetX = element.parent().offset().left;
+                            var baseOffsetY = element.parent().offset().top;
+                            element.parent().css({
+                                'margin-left': '0px'
+
+                            });
+                            $(document).mousemove(function (e) {
+                                element.parent().css({
+                                    'left': baseOffsetX + e.clientX - baseX,
+                                    'top': baseOffsetY + e.clientY - baseY
+                                });
+                            });
+                            $(document).mouseup(function () {
+                                element.unbind('mousedown');
+                                $(document).unbind('mousemove');
+                                $(document).unbind('mouseup');
+                                bindDragging(element);
+                            });
+                        });
+                    };
+                    bindDragging($('.Wikiplus-InterBox-Header'));
                     $('.Wikiplus-InterBox').fadeIn(500);
                     callback();
                 }
