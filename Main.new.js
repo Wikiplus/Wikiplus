@@ -896,7 +896,7 @@ $(function () {
                                 throwError('fail_to_get_wikitext_when_edit');
                             }
                         }, {
-                                'revision': mw.config.values.wgRevisionId
+                                'oldid': mw.config.values.wgRevisionId
                             })
                     }
                 }
@@ -1243,12 +1243,12 @@ $(function () {
                         var baseY = e.clientY;
                         var baseOffsetX = element.parent().offset().left;
                         var baseOffsetY = element.parent().offset().top;
-                        element.parent().css({
-                            'margin-left': '0px'
-                        });
+                        // element.parent().css({
+                        //     'margin-left': '0px'
+                        // });
                         $(document).mousemove(function (e) {
                             element.parent().css({
-                                'left': baseOffsetX + e.clientX - baseX,
+                                'margin-left': baseOffsetX + e.clientX - baseX,
                                 'top': baseOffsetY + e.clientY - baseY
                             })
                         });
@@ -1290,19 +1290,41 @@ $(function () {
                 callback.success = callback.success || new Function();
                 callback.fail = callback.fail || new Function();
                 var self = this;
-                if (this.preloadData[`${title}.${section}`]) {
-                    console.log(`[${title}.${section}]已经预读取 跳过本次预读取`);
-                    callback.success();
-                    return;
+                if (config.oldid !== undefined) {
+                    // oldid 优先于 页面名
+                    console.log(typeof config.oldid);
+                    if (this.preloadData[`${config.oldid}.${section}`]) {
+                        console.log(`[修订版本${config.oldid}.${section}]已经预读取 跳过本次预读取`);
+                        callback.success(this.preloadData[`${config.oldid}.${section}`]);
+                        return;
+                    }
+                }
+                else {
+                    if (this.preloadData[`${title}.${section}`]) {
+                        console.log(`[${title}.${section}]已经预读取 跳过本次预读取`);
+                        callback.success(this.preloadData[`${title}.${section}`]);
+                        return;
+                    }
                 }
                 this.kotori.getWikiText({
                     success: function (data) {
-                        self.preloadData[`${title}.${section}`] = data;
-                        console.log(`预读取[${title}.${section}]成功`);
+                        if (config.oldid !== undefined){
+                            self.preloadData[`${config.oldid}.${section}`] = data;
+                            console.log(`预读取[修订版本${config.oldid}.${section}]成功`);
+                        }
+                        else{
+                            self.preloadData[`${title}.${section}`] = data;
+                            console.log(`预读取[${title}.${section}]成功`);
+                        }
                         callback.success(data);
                     },
                     fail: function (e) {
-                        console.log(`预读取[${title}.${section}]失败:${e.message}`);
+                        if (config.oldid !== undefined){
+                            console.log(`预读取[修订版本${config.oldid}.${section}]失败`);
+                        }
+                        else{
+                            console.log(`预读取[${title}.${section}]失败:${e.message}`);
+                        }
                         callback.fail(e);
                     }
                 }, title, $.extend({
@@ -1422,8 +1444,8 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.0.2';
-                this.releaseNote = '修正无法编辑历史版本的问题';
+                this.version = '2.0.3';
+                this.releaseNote = '对话框支持拖曳';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
