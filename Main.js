@@ -858,7 +858,7 @@ $(function () {
                                 var editURL = $(this).find("a").last().attr('href');
                                 var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1];
                                 var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
-                                var sectionName = $(this).prev().text();
+                                var sectionName = decodeURI($(this).prev().attr('id').replace(/\./ig, '%'));
                                 self.sectionMap[sectionNumber] = {
                                     name: sectionName,
                                     target: sectionTargetName
@@ -1497,8 +1497,8 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.0.3';
-                this.releaseNote = '对话框支持拖曳';
+                this.version = '2.0.4';
+                this.releaseNote = '修正错误识别段落自动编号的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
