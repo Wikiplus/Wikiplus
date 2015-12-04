@@ -1174,11 +1174,12 @@ $(function () {
                     try {
                         var _i18nData = JSON.parse(localStorage.Wikiplus_i18nCache);
                         for (var languages in _i18nData) {
-                            if (_i18nData[languages]['__version'] === this.version) {
+                            if (_i18nData[languages]['__version'] === this.langVersion) {
                                 i18nData[_i18nData[languages]['__language']] = _i18nData[languages];
                             }
                             else {
                                 console.log(`多语言文件[${languages}]已经过期`);
+                                loadLanguage(_i18nData[languages]['__language']);//尝试重新取
                             }
                         }
                     }
@@ -1445,6 +1446,7 @@ $(function () {
             }
             constructor() {
                 this.version = '2.0.4';
+                this.langVersion = '204';
                 this.releaseNote = '修正错误识别段落自动编号的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
