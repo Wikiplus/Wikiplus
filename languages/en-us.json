@@ -1,7 +1,7 @@
 {
         "__language": "en-us",
         "__author": ["Eridanus Sora","AnnAngela","YinYan"],
-        "__version": "2.0.4",
+        "__version": "205",
         "unknown_error_name": "Unknown error name",
         "api_unaccessiable": "API is not available",
         "api_unwriteable": "API is not writeable",
