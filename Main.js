@@ -198,12 +198,6 @@ $(function () {
         "cant_load_language": "无法获取多语言定义文件",
         "history_edit_warning": " // 正试图编辑历史版本 这将会应用到本页面的最新版本 请慎重提交"
     };
-    // i18nData['en-us'] = {
-    //     __language: 'en-us',
-    //     __author: ['Eridanus Sora'],
-    //     accept: 'Accept',
-    //     decline: 'Decline'
-    // }
     /**
      * 加载其他语言文件
      * @param {string} language 语言名
@@ -214,12 +208,9 @@ $(function () {
             dataType: 'json',
             success: function success(data) {
                 if (data.__language) {
-                    // Example:
-                    i18nData[data.__language] = data; // {
+                    i18nData[data.__language] = data;
                     localStorage.Wikiplus_i18nCache = JSON.stringify(i18nData); //更新缓存
-                } //   '__language' : 'zh-cn'
-                else {} //   'key' : 'value'
-                    // }
+                }
             },
             error: function error(e) {
                 console.log('无法加载语言' + language);
@@ -471,7 +462,7 @@ $(function () {
             } else {
                 return {
                     number: errorList[name].number,
-                    message: '未知错误'
+                    message: i18n('unknownerror')
                 };
             }
         } else {
@@ -503,6 +494,7 @@ $(function () {
         e.number = errInfo.number;
         e.message = message || errInfo.message;
         console.log('%c致命错误[' + e.number + ']:' + e.message, 'color:red');
+        console.log(e);
         return e;
     }
 
@@ -875,18 +867,6 @@ $(function () {
                             }
                         });
                     }
-                    // //针对所有编辑链接给出快速编辑按钮
-                    // var regExp = new RegExp(/[?&]([^=#]+)=([^&#]*)/g);
-                    // $('#mw-content-text').find('a.external').each(function(i){
-                    //     var href = $(this).attr('href');
-                    //     var urlParams = {}, i;
-                    //     if (regExp.test(href)){
-                    //         while (i = regExp.exec(href)){
-                    //             urlParams[i[1]] = i[2];
-                    //         }
-                    //         console.log(urlParams);
-                    //     }
-                    // })
                     $('.Wikiplus-Edit-SectionBtn').click(function () {
                         self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
                     });
@@ -903,7 +883,6 @@ $(function () {
                 value: function initQuickEditInterface(obj) {
                     var self = this;
                     var sectionNumber = obj.data('number');
-                    var sectionName = obj.data('name');
                     var sectionTargetName = obj.data('target');
                     if (this.kotori.inited) {
                         if (mw.config.values.wgCurRevisionId === mw.config.values.wgRevisionId) {
@@ -1279,9 +1258,6 @@ $(function () {
                             var baseY = e.clientY;
                             var baseOffsetX = element.parent().offset().left;
                             var baseOffsetY = element.parent().offset().top;
-                            // element.parent().css({
-                            //     'margin-left': '0px'
-                            // });
                             $(document).mousemove(function (e) {
                                 element.parent().css({
                                     'margin-left': baseOffsetX + e.clientX - baseX,
@@ -1508,24 +1484,24 @@ $(function () {
                     '设置参考': 'http://zh.moegirl.org/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
                 };
                 console.log('正在加载Wikiplus ' + this.version);
-                $("head").append("<link>");
                 //载入CSS
-                var cssNode = $("head").children(":last");
-                cssNode.attr({
+                $("head").append("<link>");
+                $("head").children(":last").attr({
                     rel: "stylesheet",
                     type: "text/css",
                     href: scriptPath + '/wikiplus.css'
                 });
                 //一些初始化工作
                 this.preloadData = {};
-                this.checkInstall();
+                this.checkInstall(); //安装检查
+                //语言检测
+                var language = this.getSetting('language') && this.getSetting('language').toLowerCase() || window.navigator.language.toLowerCase();
                 //版本检查
                 if (!(this.version === localStorage.Wikiplus_Version)) {
                     localStorage.Wikiplus_Version = this.version;
                     this.notice.create.success('Wikiplus ' + this.version);
-                    this.notice.create.success(this.releaseNote);
+                    this.notice.create.success(language === 'zh-cn' ? this.releaseNote : 'Minor bug fixes.'); // 避免给其他语言用户不必要的理解困难
                 }
-                var language = this.getSetting('language') && this.getSetting('language').toLowerCase() || window.navigator.language.toLowerCase();
                 if (i18nData[language] === undefined) {
                     loadLanguage(language);
                 }
