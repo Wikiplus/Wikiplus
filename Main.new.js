@@ -1422,9 +1422,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.0.4';
+                this.version = '2.0.6';
                 this.langVersion = '204';
-                this.releaseNote = '修正错误识别段落自动编号的问题';
+                this.releaseNote = '修正在其他语言显示更新日志的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
