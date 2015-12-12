@@ -848,7 +848,7 @@ $(function () {
                         $('.mw-editsection').each(function (i) {
                             try {
                                 var editURL = $(this).find("a").last().attr('href');
-                                var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1];
+                                var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1].replace(/T-/ig, '');
                                 var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
                                 var sectionName = decodeURI($(this).prev().attr('id').replace(/\./ig, '%'));
                                 self.sectionMap[sectionNumber] = {
