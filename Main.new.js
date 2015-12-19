@@ -577,18 +577,35 @@ $(function () {
                                     callback.fail(throwError('fail_to_get_timestamp'));
                                 }
                                 if (info[key].edittoken) {
-                                    if (info[key].edittoken != '+\\') {
-                                        self.editToken[title] = info[key].edittoken;
+                                    if (mw.user.tokens.get('editToken') && mw.user.tokens.get('editToken') !== '+\\'){
+                                        self.editToken[title] = mw.user.tokens.get('editToken');
+                                        console.log('成功获得编辑令牌 来自前端API')
                                     }
-                                    else {
-                                        console.log('无法通过API获得编辑令牌，可能是空页面，尝试通过前端API获取通用编辑令牌');
-                                        self.editToken[title] = window.mw.user.tokens.get('editToken');
-                                        if (self.editToken[title] && self.editToken[title] != '+\\') {
-                                            console.log('成功获得通用编辑令牌 来自前端API');
-                                        }
-                                        else {
-                                            callback.fail(throwError('fail_to_get_edittoken'));
-                                        }
+                                    else{
+                                        //前端拿不到Token 尝试通过API
+                                        $.ajax({
+                                            url : self.API,
+                                            type : "GET",
+                                            dataType : "json",
+                                            data : {
+                                                'action' : 'query',
+                                                'meta' : 'tokens',
+                                                'format' : 'json'
+                                            },
+                                            success : function(data){
+                                                if (data.query && data.query.tokens && data.query.tokens.csrftoken && data.query.tokens.csrftoken !== '+\\'){
+                                                    self.editToken[title] = data.query.tokens.csrftoken;
+                                                    console.log('成功获得编辑令牌 通过后端API');
+                                                }
+                                                else{
+                                                    callback.fail(throwError('fail_to_get_edittoken'));
+                                                }
+                                            },
+                                            error : function(e){
+                                                callback.fail(throwError('fail_to_get_edittoken'));
+                                            }
+                                        })
+                                        callback.fail(throwError('fail_to_get_edittoken'));
                                     }
                                 }
                             }
@@ -1422,9 +1439,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.0.7';
+                this.version = '2.0.8';
                 this.langVersion = '204';
-                this.releaseNote = '修正嵌入页面编辑错误的问题';
+                this.releaseNote = '更改获取EditToken的方式';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
