@@ -93,7 +93,7 @@ $(function () {
     i18nData['zh-cn'] = {
         "__language": "zh-cn",
         "__author": ["Eridanus Sora"],
-        "__version": "2.0.0.0",
+        "__version": "205",
         "unknown_error_name": "未知的错误名",
         "api_unaccessiable": "无可用的API",
         "api_unwriteable": "无可用的写入API",
@@ -196,7 +196,8 @@ $(function () {
         "uninited": "Wikiplus未加载完毕 请刷新重试",
         "cant_parse_i18ncache": "无法解析多语言定义文件缓存",
         "cant_load_language": "无法获取多语言定义文件",
-        "history_edit_warning": " // 正试图编辑历史版本 这将会应用到本页面的最新版本 请慎重提交"
+        "history_edit_warning": " // 正试图编辑历史版本 这将会应用到本页面的最新版本 请慎重提交",
+        "create_page_tip": "<!-- 正在创建新页面 请删去此行注释后继续 -->"
     };
     /**
      * 加载其他语言文件
@@ -207,8 +208,16 @@ $(function () {
             url: scriptPath + '/languages/get.php?lang=' + language,
             dataType: 'json',
             success: function success(data) {
-                if (data.__language) {
-                    i18nData[data.__language] = data;
+                if (data.__language && data.__version) {
+                    if (i18nData[data.__language]) {
+                        if (data.__version >= i18nData[data.__language].__version) {
+                            i18nData[data.__language] = data;
+                        } else {
+                            // 服务端未跟进语言版本 不更新本地缓存
+                        }
+                    } else {
+                            i18nData[data.__language] = data;
+                        }
                     localStorage.Wikiplus_i18nCache = JSON.stringify(i18nData); //更新缓存
                 }
             },
@@ -571,7 +580,6 @@ $(function () {
                         'prop': 'revisions|info',
                         'titles': title,
                         'rvprop': 'timestamp',
-                        'intoken': 'edit',
                         'format': 'json'
                     },
                     beforeSend: function beforeSend() {
@@ -587,47 +595,57 @@ $(function () {
                                     } else {
                                         callback.fail(throwError('fail_to_get_timestamp'));
                                     }
-                                    if (info[key].edittoken) {
+                                    if (mw.user.tokens.get('editToken') && mw.user.tokens.get('editToken') !== '+\\') {
+                                        self.editToken[title] = mw.user.tokens.get('editToken');
+                                        console.log('成功获得编辑令牌 来自前端API');
+                                    } else {
+                                        //前端拿不到Token 尝试通过API
+                                        $.ajax({
+                                            url: self.API,
+                                            type: "GET",
+                                            dataType: "json",
+                                            data: {
+                                                'action': 'query',
+                                                'meta': 'tokens',
+                                                'format': 'json'
+                                            },
+                                            success: function success(data) {
+                                                if (data.query && data.query.tokens && data.query.tokens.csrftoken && data.query.tokens.csrftoken !== '+\\') {
+                                                    self.editToken[title] = data.query.tokens.csrftoken;
+                                                    console.log('成功获得编辑令牌 通过后端API');
+                                                } else {
+                                                    callback.fail(throwError('fail_to_get_edittoken'));
+                                                }
+                                            },
+                                            error: function error(e) {
+                                                callback.fail(throwError('fail_to_get_edittoken'));
+                                            }
+                                        });
+                                        callback.fail(throwError('fail_to_get_edittoken'));
+                                    }
+                                } else {
+                                    if (mw.config.values.wgArticleId === 0) {
+                                        // 如果是空页面就只拿一个edittoken
                                         if (mw.user.tokens.get('editToken') && mw.user.tokens.get('editToken') !== '+\\') {
                                             self.editToken[title] = mw.user.tokens.get('editToken');
                                             console.log('成功获得编辑令牌 来自前端API');
+                                            self.inited = true;
                                         } else {
-                                            //前端拿不到Token 尝试通过API
-                                            $.ajax({
-                                                url: self.API,
-                                                type: "GET",
-                                                dataType: "json",
-                                                data: {
-                                                    'action': 'query',
-                                                    'meta': 'tokens',
-                                                    'format': 'json'
-                                                },
-                                                success: function success(data) {
-                                                    if (data.query && data.query.tokens && data.query.tokens.csrftoken && data.query.tokens.csrftoken !== '+\\') {
-                                                        self.editToken[title] = data.query.tokens.csrftoken;
-                                                        console.log('成功获得编辑令牌 通过后端API');
-                                                    } else {
-                                                        callback.fail(throwError('fail_to_get_edittoken'));
-                                                    }
-                                                },
-                                                error: function error(e) {
-                                                    callback.fail(throwError('fail_to_get_edittoken'));
-                                                }
-                                            });
+                                            self.inited = false;
                                             callback.fail(throwError('fail_to_get_edittoken'));
                                         }
+                                    } else {
+                                        // 如果不是 那就是失败了 抛出错误
+                                        self.inited = false;
+                                        callback.fail(throwError('fail_to_get_pageinfo'));
                                     }
-                                } else {
-                                    //原来版本这里依然会试着用前端API来获取Token，但是这样就没有了起始时间戳，有产生编辑覆盖的可能性
-                                    callback.fail(throwError('fail_to_get_pageinfo'));
-                                    self.inited = false;
                                 }
                             }
                         }
                     }
                 }).done(function () {
                     console.timeEnd('获得页面基础信息时间耗时');
-                    self.inited = true;
+                    self.inited = self.inited === false ? false : true;
                     callback.success();
                 });
             }
@@ -902,6 +920,10 @@ $(function () {
                     var sectionNumber = obj.data('number');
                     var sectionTargetName = obj.data('target');
                     if (this.kotori.inited) {
+                        if ($('.noarticletext').length > 0) {
+                            //这是一个空页面
+                            this.preloadData[sectionTargetName + '.-1'] = i18n('create_page_tip');
+                        }
                         if (mw.config.values.wgCurRevisionId === mw.config.values.wgRevisionId) {
                             if (this.preloadData[sectionTargetName + '.' + sectionNumber] === undefined) {
                                 this.notice.create.success(i18n('loading'));
@@ -1491,9 +1513,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.0.8';
-                this.langVersion = '204';
-                this.releaseNote = '更改获取EditToken的方式';
+                this.version = '2.0.9';
+                this.langVersion = '205';
+                this.releaseNote = '支持创建新页面';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
