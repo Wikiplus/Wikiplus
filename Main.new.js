@@ -850,7 +850,7 @@ $(function () {
                             var editURL = $(this).find("a").last().attr('href');
                             var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1].replace(/T-/ig, '');
                             var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
-                            var sectionName = decodeURI($(this).prev().attr('id').replace(/\./ig, '%'));
+                            var sectionName = decodeURIComponent($(this).prev().attr('id').replace(/\./ig, '%'));
                             self.sectionMap[sectionNumber] = {
                                 name: sectionName,
                                 target: sectionTargetName
@@ -1474,9 +1474,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.1.0';
+                this.version = '2.1.1';
                 this.langVersion = '205';
-                this.releaseNote = '支持esc退出快速编辑(optional)';
+                this.releaseNote = '修正有时段落名错误';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
