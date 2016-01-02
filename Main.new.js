@@ -1224,6 +1224,33 @@ $(function () {
                 }
             }
             /**
+             * 为所有可能的编辑链接加上快速编辑按钮
+             */
+            editEveryWhere() {
+                var self = this;
+                $('#mw-content-text a').each(function (i) {
+                    var url = $(this).attr('href');
+                    var matchResult = url.match('^.+?title=(.+?)(?:&section=(.+?))?&action=edit'); //这奇妙的正则
+                    if (matchResult !== null) {
+                        $(this).after($('<a>')
+                            .attr({
+                                'href': "javascript:void(0)",
+                                'class': "Wikiplus-Edit-EveryWhereBtn"
+                            })
+                            .text(`(${i18n('quickedit_sectionbtn')})`)
+                            .data({
+                                'target': decodeURIComponent(matchResult[1]),
+                                'number': matchResult[2] || -1
+                            })
+                            );
+                    }
+                });
+                $('.Wikiplus-Edit-EveryWhereBtn').click(function () {
+                    console.log($(this).data());
+                    self.initQuickEditInterface($(this));
+                })
+            }
+            /**
              * ===========================
              * 以上是功能函数 以下是通用函数
              * ===========================
@@ -1466,6 +1493,7 @@ $(function () {
                 this.editSettings();//编辑设置
                 this.simpleRedirector();//快速重定向
                 this.preloadEventBinding();//预读取
+                this.editEveryWhere();//任意编辑
             }
             initRecentChangesPageFunctions() {
 
@@ -1474,9 +1502,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.1.1';
+                this.version = '2.1.2';
                 this.langVersion = '205';
-                this.releaseNote = '修正有时段落名错误';
+                this.releaseNote = '支持任意链接快速编辑';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
