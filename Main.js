@@ -885,7 +885,7 @@ $(function () {
                                 var editURL = $(this).find("a").last().attr('href');
                                 var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1].replace(/T-/ig, '');
                                 var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
-                                var sectionName = decodeURI($(this).prev().attr('id').replace(/\./ig, '%'));
+                                var sectionName = decodeURIComponent($(this).prev().attr('id').replace(/\./ig, '%'));
                                 self.sectionMap[sectionNumber] = {
                                     name: sectionName,
                                     target: sectionTargetName
@@ -1123,6 +1123,15 @@ $(function () {
                                 return '' + i18n('onclose_confirm');
                             };
                         });
+
+                        //Esc退出
+                        if (self.getSetting('esc_to_exit_quickedit') === 'true') {
+                            $(document).keydown(function (e) {
+                                if (e.which === 27) {
+                                    $("#Wikiplus-Quickedit-Back").click();
+                                }
+                            });
+                        }
                     });
                 }
 
@@ -1513,9 +1522,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.0.9';
+                this.version = '2.1.1';
                 this.langVersion = '205';
-                this.releaseNote = '支持创建新页面';
+                this.releaseNote = '修正有时段落名错误';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
