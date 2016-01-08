@@ -1228,7 +1228,7 @@ $(function () {
              */
             editEveryWhere() {
                 var self = this;
-                $('#mw-content-text a').each(function (i) {
+                $('#mw-content-text a.external').each(function (i) {
                     var url = $(this).attr('href');
                     var matchResult = url.match('^.+?title=(.+?)(?:&section=(.+?))?&action=edit'); //这奇妙的正则
                     if (matchResult !== null) {
@@ -1502,9 +1502,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.1.2';
+                this.version = '2.1.3';
                 this.langVersion = '205';
-                this.releaseNote = '支持任意链接快速编辑';
+                this.releaseNote = '修正任意链接快速编辑的Bug一只';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
