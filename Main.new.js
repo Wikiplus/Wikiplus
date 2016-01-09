@@ -1095,9 +1095,9 @@ $(function () {
                     });
                     
                     //Esc退出
-                    if (self.getSetting('esc_to_exit_quickedit') === 'true'){
-                        $(document).keydown(function(e){
-                            if (e.which === 27){
+                    if (self.getSetting('esc_to_exit_quickedit') === 'true') {
+                        $(document).keydown(function (e) {
+                            if (e.which === 27) {
                                 $("#Wikiplus-Quickedit-Back").click();
                             }
                         })
@@ -1230,17 +1230,21 @@ $(function () {
                 var self = this;
                 $('#mw-content-text a.external').each(function (i) {
                     var url = $(this).attr('href');
-                    var matchResult = url.match('^.+?title=(.+?)(?:&section=(.+?))?&action=edit'); //这奇妙的正则
-                    if (matchResult !== null) {
+                    var reg = /(([^?&=]+)(?:=([^?&=]*))*)/g;
+                    var params = {}, match;
+                    while (match = reg.exec(url)){
+                        params[match[2]] = decodeURIComponent(match[3]);
+                    }
+                    if (params.action === 'edit' && params.title !== undefined && params.section !== 'new') {
                         $(this).after($('<a>')
                             .attr({
                                 'href': "javascript:void(0)",
                                 'class': "Wikiplus-Edit-EveryWhereBtn"
                             })
-                            .text(`(${i18n('quickedit_sectionbtn')})`)
+                            .text(`(${i18n('quickedit_sectionbtn') })`)
                             .data({
-                                'target': decodeURIComponent(matchResult[1]),
-                                'number': matchResult[2] || -1
+                                'target': decodeURIComponent(params.title),
+                                'number': params.section || -1
                             })
                             );
                     }
@@ -1502,9 +1506,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.1.3';
+                this.version = '2.1.4';
                 this.langVersion = '205';
-                this.releaseNote = '修正任意链接快速编辑的Bug一只';
+                this.releaseNote = '修正section=new时不能识别链接的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {

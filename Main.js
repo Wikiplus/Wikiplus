@@ -1267,14 +1267,19 @@ $(function () {
                     var self = this;
                     $('#mw-content-text a.external').each(function (i) {
                         var url = $(this).attr('href');
-                        var matchResult = url.match('^.+?title=(.+?)(?:&section=(.+?))?&action=edit'); //这奇妙的正则
-                        if (matchResult !== null) {
+                        var reg = /(([^?&=]+)(?:=([^?&=]*))*)/g;
+                        var params = {},
+                            match;
+                        while (match = reg.exec(url)) {
+                            params[match[2]] = decodeURIComponent(match[3]);
+                        }
+                        if (params.action === 'edit' && params.title !== undefined && params.section !== 'new') {
                             $(this).after($('<a>').attr({
                                 'href': "javascript:void(0)",
                                 'class': "Wikiplus-Edit-EveryWhereBtn"
                             }).text('(' + i18n('quickedit_sectionbtn') + ')').data({
-                                'target': decodeURIComponent(matchResult[1]),
-                                'number': matchResult[2] || -1
+                                'target': decodeURIComponent(params.title),
+                                'number': params.section || -1
                             }));
                         }
                     });

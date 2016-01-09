@@ -100,6 +100,9 @@
 	min-height: 50px;
 	margin:0px;
 }
+.Wikiplus-Edit-EveryWhereBtn{
+    position: absolute;
+}
 .MoeNotification-notice{
 	position: relative;
 	width: auto;
