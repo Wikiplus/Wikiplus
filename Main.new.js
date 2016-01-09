@@ -1095,9 +1095,9 @@ $(function () {
                     });
                     
                     //Esc退出
-                    if (self.getSetting('esc_to_exit_quickedit') === 'true'){
-                        $(document).keydown(function(e){
-                            if (e.which === 27){
+                    if (self.getSetting('esc_to_exit_quickedit') === 'true') {
+                        $(document).keydown(function (e) {
+                            if (e.which === 27) {
                                 $("#Wikiplus-Quickedit-Back").click();
                             }
                         })
@@ -1222,6 +1222,37 @@ $(function () {
                 else {
                     localStorage.Wikiplus_i18nCache = JSON.stringify(i18nData);
                 }
+            }
+            /**
+             * 为所有可能的编辑链接加上快速编辑按钮
+             */
+            editEveryWhere() {
+                var self = this;
+                $('#mw-content-text a.external').each(function (i) {
+                    var url = $(this).attr('href');
+                    var reg = /(([^?&=]+)(?:=([^?&=]*))*)/g;
+                    var params = {}, match;
+                    while (match = reg.exec(url)){
+                        params[match[2]] = decodeURIComponent(match[3]);
+                    }
+                    if (params.action === 'edit' && params.title !== undefined && params.section !== 'new') {
+                        $(this).after($('<a>')
+                            .attr({
+                                'href': "javascript:void(0)",
+                                'class': "Wikiplus-Edit-EveryWhereBtn"
+                            })
+                            .text(`(${i18n('quickedit_sectionbtn') })`)
+                            .data({
+                                'target': decodeURIComponent(params.title),
+                                'number': params.section || -1
+                            })
+                            );
+                    }
+                });
+                $('.Wikiplus-Edit-EveryWhereBtn').click(function () {
+                    console.log($(this).data());
+                    self.initQuickEditInterface($(this));
+                })
             }
             /**
              * ===========================
@@ -1466,6 +1497,7 @@ $(function () {
                 this.editSettings();//编辑设置
                 this.simpleRedirector();//快速重定向
                 this.preloadEventBinding();//预读取
+                this.editEveryWhere();//任意编辑
             }
             initRecentChangesPageFunctions() {
 
@@ -1474,9 +1506,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.1.1';
+                this.version = '2.1.4';
                 this.langVersion = '205';
-                this.releaseNote = '修正有时段落名错误';
+                this.releaseNote = '修正section=new时不能识别链接的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
