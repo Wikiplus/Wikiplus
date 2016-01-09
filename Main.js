@@ -1554,9 +1554,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.1.3';
+                this.version = '2.1.4';
                 this.langVersion = '205';
-                this.releaseNote = '修正任意链接快速编辑的Bug一只';
+                this.releaseNote = '修正section=new时不能识别链接的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
