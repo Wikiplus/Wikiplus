@@ -1,6 +1,7 @@
 {
         "__language": "en-us",
-        "__author": ["Eridanus Sora","AnnAngela","YinYan"],
+        "__author": ["Eridanus Sora","AnnAngela"],
+        "__translator": ["Eridanus Sora","YinYan"],
         "__version": "205",
         "unknown_error_name": "Unknown error name",
         "api_unaccessiable": "API is not available",
