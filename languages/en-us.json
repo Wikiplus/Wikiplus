@@ -1,6 +1,7 @@
 {
         "__language": "en-us",
-        "__author": ["Eridanus Sora","AnnAngela","YinYan"],
+        "__author": ["Eridanus Sora","AnnAngela"],
+        "__translator": ["Eridanus Sora","YinYan"],
         "__version": "205",
         "unknown_error_name": "Unknown error name",
         "api_unaccessiable": "API is not available",
@@ -30,7 +31,7 @@
         "pagedeleted": "The page was deleted while you have been editing",
         "emptypage": "Creating new, empty pages is not allowed",
         "emptynewsection": "Creating empty new sections is not possible.",
-        "editconflict": "Edit Conflict! Please check the difference between your version and the existing version, and refeash the page to make another submit",
+        "editconflict": "Edit Conflict! Please check the difference between your revision and the existing revision, and refeash the page to make another submit",
         "revwrongpage": "The reversion you are editing now is not one of the reversions of the page",
         "undofailure": "Undo failed due to conflicting intermediate edits",
         "missingtitle": "No title in your edit/creation",
