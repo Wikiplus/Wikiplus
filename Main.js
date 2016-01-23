@@ -1541,7 +1541,9 @@ $(function () {
                     this.editSettings(); //编辑设置
                     this.simpleRedirector(); //快速重定向
                     this.preloadEventBinding(); //预读取
-                    this.editEveryWhere(); //任意编辑
+                    if (!this.getSetting('disableEditEveryWhere')) {
+                        this.editEveryWhere(); //任意编辑
+                    }
                 }
             }, {
                 key: 'initRecentChangesPageFunctions',
@@ -1554,9 +1556,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.1.4';
+                this.version = '2.1.5';
                 this.langVersion = '205';
-                this.releaseNote = '修正section=new时不能识别链接的问题';
+                this.releaseNote = '使任意外部链接快速编辑功能可选';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
