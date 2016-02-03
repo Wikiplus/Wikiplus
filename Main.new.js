@@ -1179,7 +1179,7 @@ $(function () {
                                         $('.Wikiplus-Banner').text(e.message);
                                         if (e.number === 1018) {
                                             // 目标页面已经存在 确认哟
-                                            $('.Wikiplus-InterBox-Content').append(continueBtn).append(cancelBtn);
+                                            $('.Wikiplus-InterBox-Content').append($('<hr>')).append(continueBtn).append(cancelBtn);
                                             continueBtn.click(function () {
                                                 $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit') }</div>`);
                                                 self.kotori.redirectFrom(title, self.kotori.pageName, {
