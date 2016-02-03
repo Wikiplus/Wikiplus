@@ -42,6 +42,8 @@
 	font-size: 15px;
 	border-bottom: 1px #66ccff solid;
 	cursor: move;
+    line-height: 30px;
+    top: -8px;
 }
 .Wikiplus-InterBox-Input{
 	margin: 20px;
