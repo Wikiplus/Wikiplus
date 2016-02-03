@@ -197,7 +197,8 @@ $(function () {
         "cant_parse_i18ncache": "无法解析多语言定义文件缓存",
         "cant_load_language": "无法获取多语言定义文件",
         "history_edit_warning": " // 正试图编辑历史版本 这将会应用到本页面的最新版本 请慎重提交",
-        "create_page_tip": "<!-- 正在创建新页面 请删去此行注释后继续 -->"
+        "create_page_tip": "<!-- 正在创建新页面 请删去此行注释后继续 -->",
+        "continue": "仍然继续"
     };
     /**
      * 加载其他语言文件
@@ -766,12 +767,17 @@ $(function () {
             value: function redirectFrom(origin) {
                 var title = arguments.length <= 1 || arguments[1] === undefined ? this.pageName : arguments[1];
                 var callback = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+                var force = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
 
                 callback.success = callback.success || new Function();
                 callback.fail = callback.fail || new Function();
-                this.edit('#REDIRECT [[' + title + ']]', origin, callback, {
+                var data = {
                     summary: i18n('redirect_from_summary').replace(/\$1/ig, origin).replace(/\$2/ig, title)
-                });
+                };
+                if (!force) {
+                    data.createonly = 'true';
+                }
+                this.edit('#REDIRECT [[' + title + ']]', origin, callback, data);
             }
 
             /**
@@ -1083,7 +1089,7 @@ $(function () {
                                             success: function success() {
                                                 var useTime = new Date().valueOf() - timer;
                                                 $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
-                                                $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text(('' + i18n('edit_success')).replace(/\$1/ig, useTime));
+                                                $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text(('' + i18n('edit_success')).replace(/\$1/ig, '' + useTime));
                                                 self.sendStatistic(sectionTargetName, useTime);
                                                 window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                                                 setTimeout(function () {
@@ -1188,9 +1194,10 @@ $(function () {
                         var input = $('<input>').addClass('Wikiplus-InterBox-Input');
                         var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Apply').text(i18n('submit'));
                         var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Cancel').text(i18n('cancel'));
+                        var continueBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Continue').text(i18n('continue'));
                         var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn); //拼接
                         self.createDialogBox(i18n('redirect_desc'), content, 600, function () {
-                            $('#Wikiplus-SR-Apply').click(function () {
+                            applyBtn.click(function () {
                                 if ($('.Wikiplus-InterBox-Input').val() != '') {
                                     var title = $('.Wikiplus-InterBox-Input').val();
                                     $('.Wikiplus-InterBox-Content').html('<div class="Wikiplus-Banner">' + i18n('submitting_edit') + '</div>');
@@ -1203,6 +1210,27 @@ $(function () {
                                         fail: function fail(e) {
                                             $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
                                             $('.Wikiplus-Banner').text(e.message);
+                                            if (e.number === 1018) {
+                                                // 目标页面已经存在 确认哟
+                                                $('.Wikiplus-InterBox-Content').append(continueBtn).append(cancelBtn);
+                                                continueBtn.click(function () {
+                                                    $('.Wikiplus-InterBox-Content').html('<div class="Wikiplus-Banner">' + i18n('submitting_edit') + '</div>');
+                                                    self.kotori.redirectFrom(title, self.kotori.pageName, {
+                                                        success: function success() {
+                                                            $('.Wikiplus-Banner').text(i18n('redirect_saved'));
+                                                            $('.Wikiplus-InterBox').fadeOut(300);
+                                                            location.href = mw.config.values.wgArticlePath.replace(/\$1/ig, title);
+                                                        },
+                                                        fail: function fail(e) {
+                                                            $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
+                                                            $('.Wikiplus-Banner').text(e.message);
+                                                        }
+                                                    }, true);
+                                                });
+                                                cancelBtn.click(function () {
+                                                    $('.Wikiplus-InterBox-Close').click();
+                                                });
+                                            }
                                         }
                                     });
                                 } else {
@@ -1306,7 +1334,7 @@ $(function () {
                 key: 'createDialogBox',
                 value: function createDialogBox() {
                     var title = arguments.length <= 0 || arguments[0] === undefined ? 'Dialog Box' : arguments[0];
-                    var content = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+                    var content = arguments.length <= 1 || arguments[1] === undefined ? $('<div>') : arguments[1];
                     var width = arguments.length <= 2 || arguments[2] === undefined ? 600 : arguments[2];
                     var callback = arguments.length <= 3 || arguments[3] === undefined ? new Function() : arguments[3];
 
@@ -1556,9 +1584,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.1.5';
-                this.langVersion = '205';
-                this.releaseNote = '使任意外部链接快速编辑功能可选';
+                this.version = '2.1.6';
+                this.langVersion = '206';
+                this.releaseNote = '当目标页存在时重定向需要确认';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
