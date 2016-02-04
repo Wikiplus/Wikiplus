@@ -88,7 +88,7 @@
     "cant_parse_wikitext": "Failed to parse the wikitext",
     "loading_preview": "Loading the preview",
     "submitting_edit": "Submitting your edit",
-    "edit_success": "Your edit is succeeded within $1ms",
+    "edit_success": "Your edit is submitted within $1ms",
     "empty_page_confirm": "The wikitext in your edit is empty, which will make this page an empty page.\r\nPlease set the value of \"empty\" true to allow this kind of edits",
     "cross_page_edit": "The content you are editing belongs to another page, which WikPlus is loading...",
     "cross_page_edit_submit": "Successfully loaded infomation and submitted your edit",
