@@ -106,5 +106,6 @@
         "cant_parse_i18ncache": "剖析多語系檔的快取失敗",
         "cant_load_language": "載入多語系檔失敗",
         "history_edit_warning" : " // 您正在嘗試編輯此頁面的歷史修訂，這將套用至最新修訂，請小心操作",
-        "create_page_tip" : "<!-- 正在建立新頁面 請移除此句附註後繼續 -->"
+        "create_page_tip" : "<!-- 正在建立新頁面 請移除此句附註後繼續 -->",
+        "continue" : "仍然繼續"
 }

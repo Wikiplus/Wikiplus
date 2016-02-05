@@ -855,7 +855,13 @@ $(function () {
                             var editURL = $(this).find("a").last().attr('href');
                             var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1].replace(/T-/ig, '');
                             var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
-                            var sectionName = decodeURIComponent($(this).prev().attr('id').replace(/\./ig, '%'));
+                            try{
+                                var sectionName = decodeURIComponent($(this).prev().attr('id').replace(/\.([0-9A-Z]{2})/g, '%$1'));
+                            }
+                            catch (e){
+                                var sectionName = $(this).prev().text(); // 临时魔法 过了十二点就失效了哦
+                                console.log(`段落${sectionNumber}的标题不乖`);
+                            }
                             self.sectionMap[sectionNumber] = {
                                 name: sectionName,
                                 target: sectionTargetName
@@ -1535,9 +1541,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.1.6';
+                this.version = '2.1.7';
                 this.langVersion = '206';
-                this.releaseNote = '当目标页存在时重定向需要确认';
+                this.releaseNote = '临时修正有时无法加载段落快速编辑的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
