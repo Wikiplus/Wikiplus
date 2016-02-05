@@ -727,7 +727,7 @@ $(function () {
                                 } else {
                                     if (data.edit.code) {
                                         //防滥用过滤器
-                                        callback.fail(throwError('hit_abusefilter', '{i18n(\'hit_abusefilter\')}:' + data.edit.info.replace('/Hit AbuseFilter: /ig', '') + '<br><small>' + data.edit.warning + '</small>'));
+                                        callback.fail(throwError('hit_abusefilter', i18n('hit_abusefilter') + ':' + data.edit.info.replace('/Hit AbuseFilter: /ig', '') + '<br><small>' + data.edit.warning + '</small>'));
                                     } else {
                                         callback.fail(throwError('unknown_edit_error'));
                                     }
