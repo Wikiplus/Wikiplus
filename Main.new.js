@@ -1073,7 +1073,7 @@ $(function () {
                                     console.log(e);
                                     $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').removeAttr('disabled');
                                     $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
-                                    console.log($('.Wikiplus-Banner').text(e.message));
+                                    $('.Wikiplus-Banner').html(e.message);
                                 }
                             }, addtionalConfig);
                         }
@@ -1567,9 +1567,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.1.8';
+                this.version = '2.1.9';
                 this.langVersion = '206';
-                this.releaseNote = '修正有时无法加载段落快速编辑的问题';
+                this.releaseNote = '修正触发防滥用过滤器太丑的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
