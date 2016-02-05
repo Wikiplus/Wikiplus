@@ -507,6 +507,40 @@ $(function () {
         console.log(e);
         return e;
     }
+    /**
+     * 将mw的段落的id转换为可显示的文本
+     * @param {string} URL
+     * @return string
+     */
+    function convertURL() {
+        var URL = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+
+        function getUTF8Length(first3) {
+            var code = parseInt(first3.substr(1), 16);
+            if ((code >> 7 & 1) == 0) return 1;
+            if ((code >> 6 & 1) == 0) return 0;
+            if ((code >> 5 & 1) == 0) return 2;
+            if ((code >> 4 & 1) == 0) return 3;
+            if ((code >> 3 & 1) == 0) return 4;
+            return 0;
+        }
+        return URL.replace(/(\.[A-F0-9]{2})+/g, function ($0) {
+            var res = "";
+            for (var i = 0; i < $0.length;) {
+                var thisstr = $0.substr(i, 3);
+                var ul = getUTF8Length(thisstr);
+                if (ul == 0) {
+                    res += thisstr;
+                    i += 3;
+                    continue;
+                } else {
+                    res += decodeURIComponent($0.substr(i, 3 * ul).replace(/\./g, '%'));
+                    i += 3 * ul;
+                }
+            }
+            return res;
+        });
+    }
 
     var Wikipage = (function () {
         function Wikipage() {
@@ -891,12 +925,7 @@ $(function () {
                                 var editURL = $(this).find("a").last().attr('href');
                                 var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1].replace(/T-/ig, '');
                                 var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
-                                try {
-                                    var sectionName = decodeURIComponent($(this).prev().attr('id').replace(/\.([0-9A-Z]{2})/g, '%$1'));
-                                } catch (e) {
-                                    var sectionName = $(this).prev().text(); // 临时魔法 过了十二点就失效了哦
-                                    console.log('段落' + sectionNumber + '的标题不乖');
-                                }
+                                var sectionName = convertURL($(this).prev().attr('id'));
                                 self.sectionMap[sectionNumber] = {
                                     name: sectionName,
                                     target: sectionTargetName
@@ -1304,14 +1333,14 @@ $(function () {
                         var params = {},
                             match;
                         while (match = reg.exec(url)) {
-                            params[match[2]] = decodeURIComponent(match[3]);
+                            params[match[2]] = convertURL(match[3]);
                         }
                         if (params.action === 'edit' && params.title !== undefined && params.section !== 'new') {
                             $(this).after($('<a>').attr({
                                 'href': "javascript:void(0)",
                                 'class': "Wikiplus-Edit-EveryWhereBtn"
                             }).text('(' + i18n('quickedit_sectionbtn') + ')').data({
-                                'target': decodeURIComponent(params.title),
+                                'target': convertURL(params.title),
                                 'number': params.section || -1
                             }));
                         }
@@ -1589,9 +1618,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.1.7';
+                this.version = '2.1.8';
                 this.langVersion = '206';
-                this.releaseNote = '临时修正有时无法加载段落快速编辑的问题';
+                this.releaseNote = '修正有时无法加载段落快速编辑的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
