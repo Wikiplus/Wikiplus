@@ -1333,14 +1333,14 @@ $(function () {
                         var params = {},
                             match;
                         while (match = reg.exec(url)) {
-                            params[match[2]] = convertURL(match[3]);
+                            params[match[2]] = decodeURIComponent(match[3]);
                         }
                         if (params.action === 'edit' && params.title !== undefined && params.section !== 'new') {
                             $(this).after($('<a>').attr({
                                 'href': "javascript:void(0)",
                                 'class': "Wikiplus-Edit-EveryWhereBtn"
                             }).text('(' + i18n('quickedit_sectionbtn') + ')').data({
-                                'target': convertURL(params.title),
+                                'target': decodeURIComponent(params.title),
                                 'number': params.section || -1
                             }));
                         }
@@ -1618,9 +1618,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.1.9';
+                this.version = '2.2.0';
                 this.langVersion = '206';
-                this.releaseNote = '修正触发防滥用过滤器太丑的问题';
+                this.releaseNote = '修正FullUrl无法编辑的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
