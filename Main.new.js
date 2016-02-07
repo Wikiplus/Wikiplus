@@ -1573,9 +1573,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.2.0';
+                this.version = '2.2.1';
                 this.langVersion = '206';
-                this.releaseNote = '修正FullUrl无法编辑的问题';
+                this.releaseNote = '新年快乐';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
