@@ -233,7 +233,7 @@ $(function () {
      * @return {string} 经过转换的内容 如未找到对应的多语言字段 则返回简体中文
      */
     function i18n(key) {
-        var language = window.navigator.language.toLowerCase();
+        var language = Wikiplus.getSetting('language') && Wikiplus.getSetting('language').toLowerCase() || window.navigator.language.toLowerCase();
         if (i18nData[language] && i18nData[language][key]) {
             return i18nData[language][key];
         } else if (i18nData['zh-cn'][key]) {
