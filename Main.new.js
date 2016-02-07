@@ -237,7 +237,13 @@ $(function () {
      * @return {string} 经过转换的内容 如未找到对应的多语言字段 则返回简体中文
      */
     function i18n(key) {
-        var language = Wikiplus.getSetting('language') && Wikiplus.getSetting('language').toLowerCase() || window.navigator.language.toLowerCase();
+        var language;
+        try{
+            language = $.parseJSON(localStorage.Wikiplus_Settings)['language'] || window.navigator.language.toLowerCase();
+        }
+        catch(e){
+            language = window.navigator.language.toLowerCase();
+        }
         if (i18nData[language] && i18nData[language][key]) {
             return i18nData[language][key];
         }
