@@ -517,35 +517,6 @@ $(function () {
      * @param {string} URL
      * @return string
      */
-    function convertURL() {
-        var URL = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
-
-        function getUTF8Length(first3) {
-            var code = parseInt(first3.substr(1), 16);
-            if ((code >> 7 & 1) == 0) return 1;
-            if ((code >> 6 & 1) == 0) return 0;
-            if ((code >> 5 & 1) == 0) return 2;
-            if ((code >> 4 & 1) == 0) return 3;
-            if ((code >> 3 & 1) == 0) return 4;
-            return 0;
-        }
-        return URL.replace(/(\.[A-F0-9]{2})+/g, function ($0) {
-            var res = "";
-            for (var i = 0; i < $0.length;) {
-                var thisstr = $0.substr(i, 3);
-                var ul = getUTF8Length(thisstr);
-                if (ul == 0) {
-                    res += thisstr;
-                    i += 3;
-                    continue;
-                } else {
-                    res += decodeURIComponent($0.substr(i, 3 * ul).replace(/\./g, '%'));
-                    i += 3 * ul;
-                }
-            }
-            return res;
-        });
-    }
 
     var Wikipage = (function () {
         function Wikipage() {
@@ -930,7 +901,9 @@ $(function () {
                                 var editURL = $(this).find("a").last().attr('href');
                                 var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1].replace(/T-/ig, '');
                                 var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
-                                var sectionName = convertURL($(this).prev().attr('id'));
+                                var cloneNode = $(this).prev().clone();
+                                cloneNode.find('*').remove();
+                                var sectionName = $.trim(cloneNode.text());
                                 self.sectionMap[sectionNumber] = {
                                     name: sectionName,
                                     target: sectionTargetName
@@ -1623,9 +1596,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.1';
+                this.version = '2.2.2';
                 this.langVersion = '206';
-                this.releaseNote = '新年快乐';
+                this.releaseNote = '修正段落名有时获取错误的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
