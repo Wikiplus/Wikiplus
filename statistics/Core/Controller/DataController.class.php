@@ -7,7 +7,7 @@ class DataController extends Controller {
 		if(isset($_GET['sitename']) && $_GET['sitename'] != ""){
 			//返回特定sitename的数目
 			$res = $wikiModel->countBySite($_GET['sitename']);
-			
+
 			if($res){
 				return $this->ajaxReturn(array(
 					"editcount" => $res[0]['count'],
@@ -32,7 +32,38 @@ class DataController extends Controller {
 			));
 		}
 	}
-	
+
+    /**
+     * 趋势
+     */
+    public function trend(){
+		$wikiModel = new WikiModel();
+        if(isset($_GET['sitename']) && $_GET['sitename'] != ""){
+            $data = $wikiModel->getRecentEditCounts($_GET["sitename"], strtotime('-365 days', strtotime('today')));
+            $result = [];
+            $baseCount = $wikiModel->historyCount($_GET["sitename"], strtotime('-365 days', strtotime('today')))[0]['count'];
+            foreach($data as $day){
+                array_push($result, [
+                    $day['date'] => $day['count'] + $baseCount
+                ]);
+                $baseCount += $day['count'];
+            }
+            $this->ajaxReturn($result);
+        }
+        else{
+            $data = $wikiModel->getRecentEditCounts(null, strtotime('-365 days', strtotime('today')));
+            $result = [];
+            $baseCount = $wikiModel->historyCount(null, strtotime('-365 days', strtotime('today')))[0]['count'];
+            foreach($data as $day){
+                array_push($result, [
+                    $day['date'] => $day['count'] + $baseCount
+                ]);
+                $baseCount += $day['count'];
+            }
+            $this->ajaxReturn($result);
+        }
+	}
+
 	//最近平均编辑时间
 	public function recentAvgTime(){
 		if(isset($_GET['sitename']) && $_GET['sitename'] != ""){

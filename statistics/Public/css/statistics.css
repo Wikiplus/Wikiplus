@@ -29,6 +29,10 @@ body{
 	width: 100%;
 	height: 400px;
 }
+#trend{
+    width: 100%;
+    height: 400px;
+}
 .process-bar{
 	width: 100%;
 }

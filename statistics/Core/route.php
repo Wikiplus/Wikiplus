@@ -12,6 +12,7 @@ return array(
 	'^api/weekly' => 'Data/weekly',
 	'^api/timerank' => 'Data/timeRank',
 	'^api/submit' => 'Submit/submit',
+	'^api/trend' => 'Data/trend'
 	
 	//固定路由 放在这条线上面
 	//=====================================

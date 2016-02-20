@@ -31,6 +31,17 @@ class WikiModel extends Model{
 		$fromDate = date('Y-m-d', $from);
 		return $this->sql("SELECT `pagename`, count(`id`) count FROM `wikiplus_statistics` WHERE `wikiname`=? AND `timestamp`>=? GROUP BY `pagename` ORDER BY `count` DESC", $sitename, $fromDate)->select();
 	}
+	//某日之前的编辑次数统计
+	public function historyCount($siteName, $before){
+		$fromDate = date('Y-m-d', $before);
+		if (is_null($siteName)){
+			return $this->sql("SELECT count(*) count FROM `wikiplus_statistics` WHERE `timestamp`<?", $fromDate)->select();
+		}
+		else{
+			$siteName = $this->F($siteName);
+			return $this->sql("SELECT count(*) count FROM `wikiplus_statistics` WHERE `wikiname`=? AND `timestamp`<?", $siteName, $fromDate)->select();
+		}
+	}
 	//最近一段时间内基本信息
 	public function metaInfo($sitename, $from){
 		$fromDate = date('Y-m-d', $from);
@@ -52,13 +63,24 @@ class WikiModel extends Model{
 		}
 	}
 	//最短的编辑时间
-	public function shortestEdit($sitename, $limit){
+	public function shortestEdit($siteName, $limit){
 		$limit = (int) $limit;
-		if(is_null($sitename)){
+		if(is_null($siteName)){
 			return $this->sql("SELECT * FROM `wikiplus_statistics` ORDER BY `usetime` ASC LIMIT $limit")->select();
 		} else {
-			$sitename = $this->F($sitename);
-			return $this->sql("SELECT * FROM `wikiplus_statistics` WHERE `wikiname`=? ORDER BY `usetime` ASC LIMIT $limit", $sitename)->select();
+			$siteName = $this->F($siteName);
+			return $this->sql("SELECT * FROM `wikiplus_statistics` WHERE `wikiname`=? ORDER BY `usetime` ASC LIMIT $limit", $siteName)->select();
+		}
+	}
+	// 获得最近编辑
+	public function getRecentEditCounts($siteName, $from){
+		$fromDate = date('Y-m-d', $from);
+		if (is_null($siteName)){
+			return $this->sql("SELECT DATE(`timestamp`) date, count(`id`) count FROM `wikiplus_statistics` WHERE `timestamp`>=? GROUP BY DATE(`timestamp`)", $fromDate)->select();
+		}
+		else{
+			$siteName = $this->F($siteName);
+			return $this->sql("SELECT DATE(`timestamp`) date, count(`id`) count FROM `wikiplus_statistics` WHERE `wikiname`=? AND `timestamp`>=? GROUP BY DATE(`timestamp`)", $siteName, $fromDate)->select();
 		}
 	}
 	//提交数据

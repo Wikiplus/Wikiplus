@@ -82,7 +82,7 @@ $(document).ready(function () {
 
 	//主体开始
 	var siteName = location.hash.slice(1);
-
+	// 监听URL Hash 变化
 	window.onhashchange = function () {
 		location.reload();
 	}
@@ -218,7 +218,6 @@ $(document).ready(function () {
 					$('#meta-statistics').fadeIn('slow', function () {
 						var tbody = initTable($('#site-ranking'), ['站点名','编辑次数']);
 						for (var key in data.info) {
-							console.log(key);
 							addTableElement(tbody, [
 								key,
 								data.info[key]
@@ -230,12 +229,109 @@ $(document).ready(function () {
 					})
 				}
 			}
-		})
+		});
+
 		$('#process-bar-main').fadeOut('slow', function () {
 			$(this).remove();
 		})
 	}
+    $.ajax({
+        url : 'api/trend',
+        type : "GET",
+        dataType : "json",
+        data : {
+          'sitename' : siteName ? siteName : ''
+        },
+        success : function(data){
+            if (data){
+                var days = [];
+                var counts = [];
+                for (var day in data){
+                    // 哪个傻逼写的接口 丑飞了
+                    for (var key in data[day]){
+                        days.push(key);
+                        counts.push("" + data[day][key]);
+                    }
+                }
+                $('#meta-statistics-trend').fadeIn('slow',function(){
+                    require.config({
+                        paths: {
+                            echarts: 'http://echarts.baidu.com/build/dist'
+                        }
+                    });
 
+                    require([
+                        'echarts',
+                        'echarts/chart/line'
+                    ], function (ec) {
+                        var myChart = ec.init(document.getElementById('trend'));
+                        var option = {
+                            title: {
+                                text: siteName ? 'Wikiplus过去一年编辑提交次数趋势 于 ' + siteName : 'Wikiplus过去一年编辑提交次数趋势 于 总体',
+                                subtext: '不是虚构'
+                            },
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            legend: {
+                                data: ['编辑次数']
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    mark: { show: true },
+                                    dataView: { show: true, readOnly: true },
+                                    magicType: { show: false },
+                                    restore: { show: true },
+                                    saveAsImage: { show: true }
+                                }
+                            },
+                            calculable: false,
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    boundaryGap: false,
+                                    data: days
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    axisLabel: {
+                                        formatter: '{value}'
+                                    }
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '编辑次数',
+                                    type: 'line',
+                                    data: counts
+                                    //markPoint: {
+                                    //    data: [
+                                    //        { type: 'max', name: '最大值' },
+                                    //        { type: 'min', name: '最小值' }
+                                    //    ]
+                                    //},
+                                    //markLine: {
+                                    //    data: [
+                                    //        { type: 'average', name: '平均值' }
+                                    //    ]
+                                    //}
+                                }
+                            ]
+                        };
+
+                        myChart.setOption(option);
+                    })
+                });
+
+                $('#process-bar-trend').fadeOut('slow',function(){
+                    $(this).remove();
+                })
+            }
+        }
+    })
 
 
 });
