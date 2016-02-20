@@ -902,7 +902,7 @@ $(function () {
                                 var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1].replace(/T-/ig, '');
                                 var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
                                 var cloneNode = $(this).prev().clone();
-                                cloneNode.find('*').remove();
+                                cloneNode.find('.mw-headline-number').remove();
                                 var sectionName = $.trim(cloneNode.text());
                                 self.sectionMap[sectionNumber] = {
                                     name: sectionName,
@@ -1596,9 +1596,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.2';
+                this.version = '2.2.3';
                 this.langVersion = '206';
-                this.releaseNote = '修正段落名有时获取错误的问题';
+                this.releaseNote = '修正段落名内含标签时获取错误的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
