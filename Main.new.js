@@ -864,7 +864,7 @@ $(function () {
                     $('.mw-editsection').each(function (i) {
                         try {
                             var editURL = $(this).find("a").last().attr('href');
-                            var sectionNumber = editURL.match(/&[ve]*section\=(.+)/)[1].replace(/T-/ig, '');
+                            var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
                             var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
                             var cloneNode = $(this).prev().clone();
                             cloneNode.find('.mw-headline-number').remove();
@@ -1548,9 +1548,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.2.3';
+                this.version = '2.2.4';
                 this.langVersion = '206';
-                this.releaseNote = '修正段落名内含标签时获取错误的问题';
+                this.releaseNote = '修正在有intro模板时无法快速编辑的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
