@@ -1,4 +1,4 @@
-Wikiplus [![Issue?style=flat square](http://issuestats.com/github/Last-Order/Wikiplus/badge/issue?style=flat-square)](http://issuestats.com/github/Last-Order/Wikiplus)
+Wikiplus 
 ========
 
 A Mediawiki front-end add-on based on jQuery.
