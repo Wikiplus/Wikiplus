@@ -22,9 +22,11 @@ class SubmitController extends Controller{
 				"info" => "Field `usetime` is unlike a normal result. Um.... , Please do not submit directly.",
 			), 400);
 		}
+
+		$ip = $_SERVER["REMOTE_ADDR"];
 		
 		$wikiModel = new WikiModel();
-		$ret = $wikiModel->submit($_POST['wikiname'], $_POST['username'], $usetime, $_POST['pagename']);
+		$ret = $wikiModel->submit($_POST['wikiname'], $_POST['username'], $usetime, $_POST['pagename'], $ip);
 		if($ret){
 			$this->ajaxReturn(array(
 				"result" => "success",
