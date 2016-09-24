@@ -23,6 +23,13 @@ class SubmitController extends Controller{
 			), 400);
 		}
 
+		//防止刷屏临时措施
+		if($usetime == 2333){
+			return $this->ajaxReturn(array(
+				"result" => "success",
+			));
+		}
+
 		$ip = $_SERVER["REMOTE_ADDR"];
 		
 		$wikiModel = new WikiModel();
