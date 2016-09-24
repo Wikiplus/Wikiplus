@@ -24,13 +24,18 @@ class SubmitController extends Controller{
 		}
 
 		//防止刷屏临时措施
+		$ip = $_SERVER["REMOTE_ADDR"];
 		if($usetime == 2333){
 			return $this->ajaxReturn(array(
 				"result" => "success",
 			));
 		}
-
-		$ip = $_SERVER["REMOTE_ADDR"];
+		if($ip == "112.98.24.16"){
+			return $this->ajaxReturn(array(
+				"result" => "success",
+			));
+		}
+		
 		
 		$wikiModel = new WikiModel();
 		$ret = $wikiModel->submit($_POST['wikiname'], $_POST['username'], $usetime, $_POST['pagename'], $ip);
