@@ -20,7 +20,7 @@ function MoeNotification(undefined) {
                 .addClass('MoeNotification-notice-' + _type)
                 .append('<span>' + _text + '</span>')
                 .fadeIn(300)
-            );
+        );
         self.bind();
         self.clear();
         _callback($("#MoeNotification").find('.MoeNotification-notice').last());
@@ -95,7 +95,7 @@ $(function () {
     i18nData['zh-cn'] = {
         "__language": "zh-cn",
         "__author": ["Eridanus Sora"],
-        "__version": "205",
+        "__version": "207",
         "unknown_error_name": "未知的错误名",
         "api_unaccessiable": "无可用的API",
         "api_unwriteable": "无可用的写入API",
@@ -202,6 +202,124 @@ $(function () {
         "create_page_tip": "<!-- 正在创建新页面 请删去此行注释后继续 -->",
         "continue": "仍然继续"
     };
+    i18nData['en-us'] = {
+        "__language": "en-us",
+        "__author": [
+            "Eridanus Sora",
+            "AnnAngela"
+        ],
+        "__translator": [
+            "Eridanus Sora",
+            "YinYan"
+        ],
+        "__version": "207",
+        "unknown_error_name": "Unknown error",
+        "api_unaccessiable": "API of this wiki is not available",
+        "api_unwriteable": "Write API of this wiki is not available",
+        "fail_to_get_timestamp": "Failed to get the timestamp of this page.",
+        "fail_to_get_edittoken": "Failed to get the EditToken of this page.",
+        "fail_to_get_pageinfo": "Failed to load infomation of this page",
+        "not_autoconfirmed_user": "You are not an autoconfiremd user",
+        "hit_abusefilter": "Your edit hit the abusefilter(s)",
+        "unknown_edit_error": "Unknown edit error",
+        "unknown_edit_error_message": "Unknown edit error($1)",
+        "notitle": "The title parameter must be set",
+        "notext": "The text parameter must be set",
+        "notoken": "The token parameter must be set",
+        "invalidsection": "The section parameter must be set to an integer or 'new'",
+        "protectedtitle": "This title has been protected from creation",
+        "cantcreate": "You don't have permission to create new pages",
+        "cantcreate_anon": "Anonymous users can't create new pages",
+        "articleexists": "The article you tried to create has already existed",
+        "noimageredirect_anon": "Anonymous users can't create image redirects",
+        "noimageredirect": "You don't have the permission to create image redirects",
+        "spamdetected": "Your edit was rejected because it contained a spam fragment",
+        "filtered": "The filter callback function rejected your edit",
+        "contenttoobig": "The content you submitted exceeds the article size limit",
+        "noedit_anon": "Anonymous users can't edit pages",
+        "noedit": "You don't have the permission to edit pages",
+        "pagedeleted": "The page was deleted during your edit",
+        "emptypage": "Creating new, empty pages is not allowed",
+        "emptynewsection": "Creating empty new sections is not possible.",
+        "editconflict": "Edit Conflict! Don't panic. Please check the difference between your content below and the existing revision, then refresh the page to make another submit",
+        "revwrongpage": "The revision you are editing now is not one a valid reversions of this page",
+        "undofailure": "Undo failed due to conflicts.",
+        "missingtitle": "Missing title in your edit/creation",
+        "mustbeposted": "The edit must be submited by POST method",
+        "readapidenied": "Read API Denied",
+        "writeapidenied": "Write API Denied",
+        "noapiwrite": "No available write API in this wiki",
+        "badtoken": "Invalid EditToken",
+        "missingparam": "One of the parameters title, pageid is required",
+        "invalidparammix": "The parameters title, pageid can not be used together",
+        "invalidtitle": "Invalid page title",
+        "nosuchpageid": "Inexistent page ID",
+        "pagecannotexist": "No access to create a new page in this namespace",
+        "nosuchrevid": "Inexisting reversion ID",
+        "badmd5": "Invalid MD5",
+        "hookaborted": "Your edit was rejected by the hook(s)",
+        "parseerror": "Failed to parse the wikitext of this page",
+        "summaryrequired": "No summary in your edit",
+        "blocked": "You has been already BLOCKED",
+        "ratelimited": "You've exceeded your rate limit. Please have a tea and try again later",
+        "unknownerror": "Unknown error",
+        "nosuchsection": "There is no such section",
+        "sectionsnotsupported": "Can't edit in this section",
+        "editnotsupported": "Can't edit in this section by writing section",
+        "appendnotsupported": "Can't append/prepend wikitext to this page",
+        "redirect_appendonly": "Only append/prepend can be made to this page because of the rules of the redirect page",
+        "badformat": "The requested serialization format can not be applied to the page's content model",
+        "customcssprotected": "You're not allowed to edit custom CSS pages",
+        "customjsprotected": "You're not allowed to edit custom JavaScript pages",
+        "cascadeprotected": "This page is under a cascading protection",
+        "network_edit_error": "Failed to edit this page because of network errors",
+        "redirect_to_summary": "Redirect to [[$1]] \/\/ Wikiplus",
+        "redirect_from_summary": "Redirect [[$1]] to [[$2]] \/\/ Wikiplus",
+        "need_init": "WikiPlus haven't been loaded completely. It's a rare occasion so you can try to refresh and try again.",
+        "fail_to_get_wikitext": "Failed to load the wikitext of this page",
+        "quickedit_topbtn": "QuickEdit",
+        "quickedit_sectionbtn": "QuickEdit",
+        "fail_to_init_quickedit": "Failed to initialize WikiPlus",
+        "back": "Back",
+        "goto_editbox": "Jump to editbox",
+        "summary_placehold": "Edit summary",
+        "submit": "Submit",
+        "preview": "Preview",
+        "cancel": "Cancel",
+        "mark_minoredit": "Mark this edit as a minor edit",
+        "onclose_confirm": "[Wikiplus] Do you really want to close this page when you are still editing it, as you will lose all your unsaved work?",
+        "fail_to_get_wikitext_when_edit": "Failed to load wikitext for your edit",
+        "cant_parse_wikitext": "Failed to parse the wikitext",
+        "loading_preview": "Loading the preview",
+        "submitting_edit": "Submitting your edit",
+        "edit_success": "Your edit is submitted within $1ms",
+        "empty_page_confirm": "The wikitext in your edit is empty, which will empty this page.\r\nPlease set the value of key \"empty\" true to allow this kind of edits. (This is a tip for developers)",
+        "cross_page_edit": "The content you are editing belongs to another page, please wait...",
+        "cross_page_edit_submit": "Submitting your edit...",
+        "cross_page_edit_error": "Failed to load the infomation",
+        "install_tip": "Do you allow WikiPlus to collect insensitive data to help us develop WikiPlus and provide feedback to current site: $1 ?",
+        "accept": "Yes",
+        "decline": "No",
+        "install_finish": "Wikiplus is installed, enjoy it",
+        "loading": "Loading",
+        "cant_add_funcbtn": "Failed to add buttons for WikiPlus",
+        "wikiplus_settings": "Wikiplus Setting",
+        "wikiplus_settings_desc": "Please modify your setting according to the standards below",
+        "wikiplus_settings_placeholder": "Your setting is empty, please modify your setting according to the documentation.",
+        "wikiplus_settings_grammar_error": "Syntax error in your setting",
+        "wikiplus_settings_saved": "Your settings have been saved",
+        "redirect_from": "Redirect from",
+        "redirect_desc": "Which page do you want to redirect here?",
+        "empty_input": "Empty input",
+        "redirect_saved": "Redirection is finished",
+        "uninited": "Wikiplus is not completely initialized, please refeash this page",
+        "cant_parse_i18ncache": "Failed to parse the cache of i18n file",
+        "cant_load_language": "Failed to load i18n file",
+        "history_edit_warning": " // You are trying to edit a history revision of this page. This will apply to the latest revision. Please be careful.",
+        "create_page_tip": "<!-- You are now creating a new page. Please delete this line and be careful. -->",
+        "continue": "Continue anyway"
+    }
+
     /**
      * 加载其他语言文件
      * @param {string} language 语言名
@@ -215,6 +333,7 @@ $(function () {
                     if (i18nData[data.__language]) {
                         if (data.__version >= i18nData[data.__language].__version) {
                             i18nData[data.__language] = data;
+                            console.log(`更新语言版本${data.___language}至${data.___version}`);
                         }
                         else {
                             // 服务端未跟进语言版本 不更新本地缓存
@@ -238,17 +357,17 @@ $(function () {
      */
     function i18n(key) {
         var language;
-        try{
+        try {
             language = $.parseJSON(localStorage.Wikiplus_Settings)['language'] || window.navigator.language.toLowerCase();
         }
-        catch(e){
+        catch (e) {
             language = window.navigator.language.toLowerCase();
         }
         if (i18nData[language] && i18nData[language][key]) {
             return i18nData[language][key];
         }
-        else if (i18nData['zh-cn'][key]) {
-            return i18nData['zh-cn'][key];
+        else if (i18nData['en-us'][key]) {
+            return i18nData['en-us'][key];
         }
         else {
             return 'undefined';
@@ -694,7 +813,7 @@ $(function () {
                             else {
                                 if (data.edit.code) {
                                     //防滥用过滤器
-                                    callback.fail(throwError('hit_abusefilter', `${i18n('hit_abusefilter') }:${data.edit.info.replace('/Hit AbuseFilter: /ig', '') }<br><small>${data.edit.warning}</small>`));
+                                    callback.fail(throwError('hit_abusefilter', `${i18n('hit_abusefilter')}:${data.edit.info.replace('/Hit AbuseFilter: /ig', '')}<br><small>${data.edit.warning}</small>`));
                                 }
                                 else {
                                     callback.fail(throwError('unknown_edit_error'));
@@ -842,12 +961,12 @@ $(function () {
                 //顶部编辑入口
                 var topBtn = $('<li>').attr('id', 'Wikiplus-Edit-TopBtn').append(
                     $('<span>').append(
-                        $('<a>').attr('href', 'javascript:void(0)').text(`${i18n('quickedit_topbtn') }`)
-                        )
-                    ).data({
-                        number: -1,
-                        target: self.kotori.pageName
-                    });
+                        $('<a>').attr('href', 'javascript:void(0)').text(`${i18n('quickedit_topbtn')}`)
+                    )
+                ).data({
+                    number: -1,
+                    target: self.kotori.pageName
+                });
                 if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length == 0) {
                     $('#ca-edit').before(topBtn);
                 }
@@ -856,11 +975,11 @@ $(function () {
                     //段落快速编辑按钮
                     var sectionBtn = $('<span>').append(
                         $('<span>').attr('id', 'mw-editsection-bracket').text('[')
+                    ).append(
+                        $('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn'))
                         ).append(
-                            $('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn'))
-                            ).append(
-                                $('<span>').attr('id', 'mw-editsection-bracket').text(']')
-                                )
+                        $('<span>').attr('id', 'mw-editsection-bracket').text(']')
+                        )
                     $('.mw-editsection').each(function (i) {
                         try {
                             var editURL = $(this).find("a").last().attr('href');
@@ -931,7 +1050,7 @@ $(function () {
                             success: function (data) {
                                 obj.data('content', data);
                                 self.notice.empty();
-                                self.displayQuickEditInterface(obj, `${i18n('history_edit_warning') }`);
+                                self.displayQuickEditInterface(obj, `${i18n('history_edit_warning')}`);
                             },
                             fail: function (data) {
                                 throwError('fail_to_get_wikitext_when_edit');
@@ -966,25 +1085,25 @@ $(function () {
                 }
                 //DOM定义
                 var heightBefore = $(document).scrollTop();//记住当前高度
-                var backBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text(`${i18n('back') }`);//返回按钮
+                var backBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text(`${i18n('back')}`);//返回按钮
                 var jumpBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Jump').addClass('Wikiplus-Btn').append(
-                    $('<a>').attr('href', '#Wikiplus-Quickedit').text(`${i18n('goto_editbox') }`)
-                    );//到编辑框
+                    $('<a>').attr('href', '#Wikiplus-Quickedit').text(`${i18n('goto_editbox')}`)
+                );//到编辑框
                 var inputBox = $('<textarea>').attr('id', 'Wikiplus-Quickedit');//主编辑框
                 var previewBox = $('<div>').attr('id', 'Wikiplus-Quickedit-Preview-Output');//预览输出
-                var summaryBox = $('<input>').attr('id', 'Wikiplus-Quickedit-Summary-Input').attr('placeholder', `${i18n('summary_placehold') }`);//编辑摘要输入
-                var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text(`${i18n('submit') }(Ctrl+S)`);//提交按钮
-                var previewSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Preview-Submit').text(`${i18n('preview') }`);//预览按钮
+                var summaryBox = $('<input>').attr('id', 'Wikiplus-Quickedit-Summary-Input').attr('placeholder', `${i18n('summary_placehold')}`);//编辑摘要输入
+                var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text(`${i18n('submit')}(Ctrl+S)`);//提交按钮
+                var previewSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Preview-Submit').text(`${i18n('preview')}`);//预览按钮
                 var isMinorEdit = $('<div>').append(
                     $('<input>').attr({ 'type': 'checkbox', 'id': 'Wikiplus-Quickedit-MinorEdit' })
-                    )
+                )
                     .append(
-                        $('<label>').attr('for', 'Wikiplus-Quickedit-MinorEdit').text(`${i18n('mark_minoredit') }(Ctrl+Shift+S)`)
-                        )
+                    $('<label>').attr('for', 'Wikiplus-Quickedit-MinorEdit').text(`${i18n('mark_minoredit')}(Ctrl+Shift+S)`)
+                    )
                     .css({ 'margin': '5px 5px 5px -3px', 'display': 'inline' });
                 //DOM定义结束
                 var editBody = $('<div>').append(backBtn, jumpBtn, previewBox, inputBox, summaryBox, $('<br>'), isMinorEdit, editSubmitBtn, previewSubmitBtn);
-                this.createDialogBox(`${i18n('quickedit_topbtn') }${message}`, editBody, 1000, function () {
+                this.createDialogBox(`${i18n('quickedit_topbtn')}${message}`, editBody, 1000, function () {
                     $('#Wikiplus-Quickedit').text(sectionContent);
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     //事件绑定
@@ -996,7 +1115,7 @@ $(function () {
                         })
                     });
                     //预览
-                    var onPreload = $('<div>').addClass('Wikiplus-Banner').text(`${i18n('loading_preview') }`);
+                    var onPreload = $('<div>').addClass('Wikiplus-Banner').text(`${i18n('loading_preview')}`);
                     $('#Wikiplus-Quickedit-Preview-Submit').click(function () {
                         var wikiText = $('#Wikiplus-Quickedit').val();
                         $(this).attr('disabled', 'disabled');
@@ -1020,7 +1139,7 @@ $(function () {
                         var wikiText = $('#Wikiplus-Quickedit').val();
                         var summary = $('#Wikiplus-Quickedit-Summary-Input').val();
                         var timer = new Date().valueOf();
-                        var onEdit = $('<div>').addClass('Wikiplus-Banner').text(`${i18n('submitting_edit') }`);
+                        var onEdit = $('<div>').addClass('Wikiplus-Banner').text(`${i18n('submitting_edit')}`);
                         var addtionalConfig = {
                             'summary': summary
                         };
@@ -1043,7 +1162,7 @@ $(function () {
                                 success: function () {
                                     var useTime = new Date().valueOf() - timer;
                                     $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
-                                    $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text(`${i18n('edit_success') }`.replace(/\$1/ig, useTime.toString()));
+                                    $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text(`${i18n('edit_success')}`.replace(/\$1/ig, useTime.toString()));
                                     self.sendStatistic(sectionTargetName, useTime);
                                     window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                                     setTimeout(function () {
@@ -1071,7 +1190,7 @@ $(function () {
                                         success: function () {
                                             var useTime = new Date().valueOf() - timer;
                                             $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
-                                            $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text(`${i18n('edit_success') }`.replace(/\$1/ig, '' + useTime));
+                                            $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text(`${i18n('edit_success')}`.replace(/\$1/ig, '' + useTime));
                                             self.sendStatistic(sectionTargetName, useTime);
                                             window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                                             setTimeout(function () {
@@ -1108,10 +1227,10 @@ $(function () {
                     //第一 关闭页面确认
                     $('#Wikiplus-Quickedit').keydown(function () {
                         window.onclose = window.onbeforeunload = function () {
-                            return `${i18n('onclose_confirm') }`;
+                            return `${i18n('onclose_confirm')}`;
                         }
                     });
-                    
+
                     //Esc退出
                     if (self.getSetting('esc_to_exit_quickedit') === 'true') {
                         $(document).keydown(function (e) {
@@ -1151,7 +1270,7 @@ $(function () {
                             localStorage.Wikiplus_Settings = JSON.stringify(settings);
                             $('.Wikiplus-InterBox-Content').html('').append(
                                 $('<div>').addClass('Wikiplus-Banner').text(i18n('wikiplus_settings_saved'))
-                                );
+                            );
 
                             $('.Wikiplus-InterBox').fadeOut(300, function () {
                                 $(this).remove();
@@ -1180,7 +1299,7 @@ $(function () {
                         applyBtn.click(function () {
                             if ($('.Wikiplus-InterBox-Input').val() != '') {
                                 var title = $('.Wikiplus-InterBox-Input').val()
-                                $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit') }</div>`);
+                                $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit')}</div>`);
                                 self.kotori.redirectFrom(title, self.kotori.pageName, {
                                     success: function () {
                                         $('.Wikiplus-Banner').text(i18n('redirect_saved'));
@@ -1194,7 +1313,7 @@ $(function () {
                                             // 目标页面已经存在 确认哟
                                             $('.Wikiplus-InterBox-Content').append($('<hr>')).append(continueBtn).append(cancelBtn);
                                             continueBtn.click(function () {
-                                                $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit') }</div>`);
+                                                $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit')}</div>`);
                                                 self.kotori.redirectFrom(title, self.kotori.pageName, {
                                                     success: () => {
                                                         $('.Wikiplus-Banner').text(i18n('redirect_saved'));
@@ -1281,12 +1400,12 @@ $(function () {
                                 'href': "javascript:void(0)",
                                 'class': "Wikiplus-Edit-EveryWhereBtn"
                             })
-                            .text(`(${i18n('quickedit_sectionbtn') })`)
+                            .text(`(${i18n('quickedit_sectionbtn')})`)
                             .data({
                                 'target': decodeURIComponent(params.title),
                                 'number': params.section || -1
                             })
-                            );
+                        );
                     }
                 });
                 $('.Wikiplus-Edit-EveryWhereBtn').click(function () {
@@ -1299,7 +1418,7 @@ $(function () {
              * 以上是功能函数 以下是通用函数
              * ===========================
              */
-            
+
             /**
              * 创建对话框
              * @param {string} title 对话框标题
@@ -1322,16 +1441,16 @@ $(function () {
                         'display': 'none'
                     })
                     .append(
-                        $('<div>').addClass('Wikiplus-InterBox-Header')
-                            .html(title)
-                        )
+                    $('<div>').addClass('Wikiplus-InterBox-Header')
+                        .html(title)
+                    )
                     .append(
-                        $('<div>').addClass('Wikiplus-InterBox-Content')
-                            .append(content)
-                        )
+                    $('<div>').addClass('Wikiplus-InterBox-Content')
+                        .append(content)
+                    )
                     .append(
-                        $('<span>').text('×').addClass('Wikiplus-InterBox-Close')
-                        )
+                    $('<span>').text('×').addClass('Wikiplus-InterBox-Close')
+                    )
                 $('body').append(diglogBox);
                 $('.Wikiplus-InterBox').width(width);
                 $('.Wikiplus-InterBox-Close').click(function () {
@@ -1554,8 +1673,8 @@ $(function () {
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
-                    '设置名': '设置值',
-                    '设置参考': 'http://zh.moegirl.org/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
+                    'key': 'value',
+                    'documatation': 'http://zh.moegirl.org/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
                 };
                 console.log(`正在加载Wikiplus ${this.version}`);
                 //载入CSS
