@@ -22,9 +22,23 @@ class SubmitController extends Controller{
 				"info" => "Field `usetime` is unlike a normal result. Um.... , Please do not submit directly.",
 			), 400);
 		}
+
+		//防止刷屏临时措施
+		$ip = $_SERVER["REMOTE_ADDR"];
+		if($usetime == 2333){
+			return $this->ajaxReturn(array(
+				"result" => "success",
+			));
+		}
+		if($ip == "112.98.24.16"){
+			return $this->ajaxReturn(array(
+				"result" => "success",
+			));
+		}
+		
 		
 		$wikiModel = new WikiModel();
-		$ret = $wikiModel->submit($_POST['wikiname'], $_POST['username'], $usetime, $_POST['pagename']);
+		$ret = $wikiModel->submit($_POST['wikiname'], $_POST['username'], $usetime, $_POST['pagename'], $ip);
 		if($ret){
 			$this->ajaxReturn(array(
 				"result" => "success",

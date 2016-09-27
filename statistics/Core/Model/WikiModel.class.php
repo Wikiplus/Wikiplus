@@ -84,12 +84,12 @@ class WikiModel extends Model{
 		}
 	}
 	//提交数据
-	public function submit($sitename, $username, $usetime, $pagename){
+	public function submit($sitename, $username, $usetime, $pagename, $ip){
 		$sitename = $this->F($sitename);
 		$username = $this->F($username);
 		$usetime = $this->F($usetime);
 		$pagename = $this->F($pagename);
 		
-		return $this->sql("INSERT INTO `wikiplus_statistics` (`wikiname`, `username`, `usetime`, `pagename`) VALUES(?, ?, ?, ?)", $sitename, $username, $usetime, $pagename)->execute();
+		return $this->sql("INSERT INTO `wikiplus_statistics` (`wikiname`, `username`, `usetime`, `pagename`, `ip`) VALUES(?, ?, ?, ?, ?)", $sitename, $username, $usetime, $pagename, $ip)->execute();
 	}
 }
