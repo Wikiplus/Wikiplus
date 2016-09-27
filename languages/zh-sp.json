@@ -3,7 +3,7 @@
     "__author": [
         "Eridanus Sora"
     ],
-    "__version": "206",
+    "__version": "207",
     "unknown_error_name": "不知道啥子错误",
     "api_unaccessiable": "读取API都没开写个卯月",
     "api_unwriteable": "写入API都没开写个卯月",

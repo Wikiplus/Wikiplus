@@ -1,5 +1,5 @@
 /* global mw */
-/// <reference path="../typings/jquery/jquery.d.ts"/>
+/// <reference path="./typings/jquery/jquery.d.ts"/>
 /**
 * Wikiplus
 * Author:+Eridanus Sora/@妹空酱
@@ -93,7 +93,7 @@ $(function () {
     i18nData['zh-cn'] = {
         "__language": "zh-cn",
         "__author": ["Eridanus Sora"],
-        "__version": "205",
+        "__version": "207",
         "unknown_error_name": "未知的错误名",
         "api_unaccessiable": "无可用的API",
         "api_unwriteable": "无可用的写入API",
@@ -325,6 +325,7 @@ $(function () {
                     if (i18nData[data.__language]) {
                         if (data.__version >= i18nData[data.__language].__version) {
                             i18nData[data.__language] = data;
+                            console.log('更新语言版本' + data.___language + '至' + data.___version);
                         } else {
                             // 服务端未跟进语言版本 不更新本地缓存
                         }
@@ -1709,7 +1710,7 @@ $(function () {
                 _classCallCheck(this, Wikiplus);
 
                 this.version = '2.2.4';
-                this.langVersion = '206';
+                this.langVersion = '207';
                 this.releaseNote = '修正在有intro模板时无法快速编辑的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];

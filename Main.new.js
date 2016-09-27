@@ -1,5 +1,5 @@
 /* global mw */
-/// <reference path="../typings/jquery/jquery.d.ts"/>
+/// <reference path="./typings/jquery/jquery.d.ts"/>
 /**
 * Wikiplus
 * Author:+Eridanus Sora/@妹空酱
@@ -1668,7 +1668,7 @@ $(function () {
             }
             constructor() {
                 this.version = '2.2.4';
-                this.langVersion = '206';
+                this.langVersion = '207';
                 this.releaseNote = '修正在有intro模板时无法快速编辑的问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
