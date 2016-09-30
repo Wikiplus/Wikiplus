@@ -16,6 +16,8 @@ class SubmitController extends Controller{
 			return;
 		}
 		
+		$ip = $_SERVER["REMOTE_ADDR"];
+
 		$usetime = intval($_POST['usetime'], 10);
 		if($usetime <= 0 || $usetime > 3600000){
 			return $this->ajaxReturn(array(
