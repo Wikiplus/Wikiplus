@@ -1668,9 +1668,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.2.4';
+                this.version = '2.2.5';
                 this.langVersion = '207';
-                this.releaseNote = '修正在有intro模板时无法快速编辑的问题';
+                this.releaseNote = '1.28相关修正';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
