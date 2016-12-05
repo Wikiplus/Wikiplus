@@ -633,7 +633,7 @@ $(function () {
 
     var Wikipage = (function () {
         function Wikipage() {
-            var pageName = arguments.length <= 0 || arguments[0] === undefined ? window.mw.config.values.wgPageName : arguments[0];
+            var pageName = arguments.length <= 0 || arguments[0] === undefined ? window.mw.config.get('wgPageName') : arguments[0];
 
             _classCallCheck(this, Wikipage);
 
@@ -643,19 +643,19 @@ $(function () {
                 console.log('页面Javascript载入不完全或这不是一个Mediawiki站点');
                 return;
             }
-            if (!window.mw.config.values.wgEnableAPI || !window.mw.config.values.wgEnableWriteAPI) {
+            if (!window.mw.config.get('wgEnableAPI') || !window.mw.config.get('wgEnableWriteAPI')) {
                 throwError('api_unaccessiable');
                 return;
             }
-            if (!inArray('autoconfirmed', window.mw.config.values.wgUserGroups)) {
+            if (!inArray('autoconfirmed', window.mw.config.get('wgUserGroups'))) {
                 throwError('not_autoconfirmed_user');
                 return;
             }
             //从MediaWiki定义的全局变量中获得信息
             this.pageName = pageName.replace(/ /ig, '_'); // Mediawiki处理空格时可能会出错
-            this.revisionId = window.mw.config.values.wgRevisionId;
-            this.articleId = window.mw.config.values.wgArticleId;
-            this.API = location.protocol + '//' + location.host + window.mw.config.values.wgScriptPath + '/api.php';
+            this.revisionId = window.mw.config.get('wgRevisionId');
+            this.articleId = window.mw.config.get('wgArticleId');
+            this.API = location.protocol + '//' + location.host + window.mw.config.get('wgScriptPath') + '/api.php';
             //从API获得编辑令牌和起始时间戳
             this.editToken = {};
             this.timeStamp = {};
@@ -748,7 +748,7 @@ $(function () {
                                         callback.fail(throwError('fail_to_get_edittoken'));
                                     }
                                 } else {
-                                    if (mw.config.values.wgArticleId === 0) {
+                                    if (mw.config.get('wgArticleId') === 0) {
                                         // 如果是空页面就只拿一个edittoken
                                         if (mw.user.tokens.get('editToken') && mw.user.tokens.get('editToken') !== '+\\') {
                                             self.editToken[title] = mw.user.tokens.get('editToken');
@@ -919,7 +919,7 @@ $(function () {
                 callback.success = callback.success || new Function();
                 callback.fail = callback.fail || new Function();
                 $.ajax({
-                    url: location.protocol + '//' + location.host + mw.config.values.wgScriptPath + '/index.php',
+                    url: location.protocol + '//' + location.host + mw.config.get('wgScriptPath') + '/index.php',
                     type: "GET",
                     dataType: "text",
                     cache: false,
@@ -993,7 +993,7 @@ $(function () {
                     var self = this;
                     callback.success = callback.success || new Function();
                     callback.fail = callback.fail || new Function();
-                    if (!(mw.config.values.wgIsArticle && mw.config.values.wgAction === "view" && mw.config.values.wgIsProbablyEditable)) {
+                    if (!(mw.config.get('wgIsArticle') && mw.config.get('wgAction') === "view" && mw.config.get('wgIsProbablyEditable'))) {
                         console.log('该页面无法编辑 快速编辑界面加载终止');
                         return;
                     }
@@ -1055,7 +1055,7 @@ $(function () {
                             //这是一个空页面
                             this.preloadData[sectionTargetName + '.-1'] = i18n('create_page_tip');
                         }
-                        if (mw.config.values.wgCurRevisionId === mw.config.values.wgRevisionId) {
+                        if (mw.config.get('wgCurRevisionId') === mw.config.get('wgRevisionId')) {
                             if (this.preloadData[sectionTargetName + '.' + sectionNumber] === undefined) {
                                 this.notice.create.success(i18n('loading'));
                                 this.preload(sectionNumber, sectionTargetName, {
@@ -1085,7 +1085,7 @@ $(function () {
                                     throwError('fail_to_get_wikitext_when_edit');
                                 }
                             }, {
-                                'oldid': mw.config.values.wgRevisionId
+                                'oldid': mw.config.get('wgRevisionId')
                             });
                         }
                     }
@@ -1177,6 +1177,7 @@ $(function () {
                             //准备编辑 禁用各类按钮 返回顶部 显示信息
                             $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
                             $('body').animate({ scrollTop: heightBefore }, 200);
+
                             //开始提交编辑
                             if (sectionTargetName === self.kotori.pageName) {
                                 $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
@@ -1330,7 +1331,7 @@ $(function () {
                                         success: function success() {
                                             $('.Wikiplus-Banner').text(i18n('redirect_saved'));
                                             $('.Wikiplus-InterBox').fadeOut(300);
-                                            location.href = mw.config.values.wgArticlePath.replace(/\$1/ig, title);
+                                            location.href = mw.config.get('wgArticlePath').replace(/\$1/ig, title);
                                         },
                                         fail: function fail(e) {
                                             $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
@@ -1344,7 +1345,7 @@ $(function () {
                                                         success: function success() {
                                                             $('.Wikiplus-Banner').text(i18n('redirect_saved'));
                                                             $('.Wikiplus-InterBox').fadeOut(300);
-                                                            location.href = mw.config.values.wgArticlePath.replace(/\$1/ig, title);
+                                                            location.href = mw.config.get('wgArticlePath').replace(/\$1/ig, title);
                                                         },
                                                         fail: function fail(e) {
                                                             $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
@@ -1591,7 +1592,7 @@ $(function () {
             }, {
                 key: 'sendStatistic',
                 value: function sendStatistic(title, useTime) {
-                    if (title === undefined) title = mw.config.values.wgPageName;
+                    if (title === undefined) title = mw.config.get('wgPageName');
 
                     if (localStorage.Wikiplus_SendStatistics == 'True') {
                         $.ajax({
@@ -1599,9 +1600,9 @@ $(function () {
                             type: 'POST',
                             dataType: 'json',
                             data: {
-                                'wikiname': mw.config.values.wgSiteName,
+                                'wikiname': mw.config.get('wgSiteName'),
                                 'usetime': useTime,
-                                'username': mw.config.values.wgUserName,
+                                'username': mw.config.get('wgUserName'),
                                 'pagename': title
                             },
                             success: function success(data) {
@@ -1625,14 +1626,14 @@ $(function () {
                             localStorage.Wikiplus_Installed = 'True'; //标记已安装
                             localStorage.Wikiplus_Version = self.version;
                             localStorage.Wikiplus_StartUseAt = new Date().valueOf();
-                            localStorage.Wikiplus_SrartEditCount = mw.config.values.wgUserEditCount;
+                            localStorage.Wikiplus_SrartEditCount = mw.config.get('wgUserEditCount');
                             localStorage.Wikiplus_Settings = JSON.stringify(self.defaultSettings);
                             $('.Wikiplus-InterBox').fadeOut('fast', function () {
                                 self.notice.create.success(i18n('install_finish'));
                                 $(this).remove();
                             });
                         };
-                        var notice = $('<div>').text(i18n('install_tip').replace(/\$1/ig, mw.config.values.wgSiteName)).attr('id', 'Wikiplus-InterBox-Content');
+                        var notice = $('<div>').text(i18n('install_tip').replace(/\$1/ig, mw.config.get('wgSiteName'))).attr('id', 'Wikiplus-InterBox-Content');
                         var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Apply').text(i18n('accept'));
                         var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Cancel').text(i18n('decline'));
                         var content = $('<div>').append(notice).append($('<hr>')).append(applyBtn).append(cancelBtn); //拼接
@@ -1741,7 +1742,7 @@ $(function () {
                     loadLanguage(language);
                 }
                 //真正的初始化
-                if (!inArray(mw.config.values.wgNameSpaceNumber, this.inValidNameSpaces) && mw.config.values.wgIsArticle && mw.config.values.wgAction === "view") {
+                if (!inArray(mw.config.get('wgNameSpaceNumber'), this.inValidNameSpaces) && mw.config.get('wgIsArticle') && mw.config.get('wgAction') === "view") {
                     this.kotori = new Wikipage();
                     this.checki18nCache();
                     this.initBasicFunctions();
