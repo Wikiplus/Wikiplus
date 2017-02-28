@@ -1008,7 +1008,7 @@ $(function () {
                     if ($('.mw-editsection').length > 0) {
                         self.sectionMap = {};
                         //段落快速编辑按钮
-                        var sectionBtn = $('<span>').append($('<span>').attr('id', 'mw-editsection-bracket').text('[')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn'))).append($('<span>').attr('id', 'mw-editsection-bracket').text(']'));
+                        var sectionBtn = $('<span>').append($('<span>').addClass('mw-editsection-divider').text(' | ')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn')));
                         $('.mw-editsection').each(function (i) {
                             try {
                                 var editURL = $(this).find("a").last().attr('href');
@@ -1027,7 +1027,7 @@ $(function () {
                                     name: sectionName,
                                     target: sectionTargetName
                                 });
-                                $(this).append(_sectionBtn);
+                                $(this).find('.mw-editsection-bracket').last().before(_sectionBtn);
                             } catch (e) {
                                 throwError('fail_to_init_quickedit');
                             }
