@@ -17,13 +17,13 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    './Main.js': './Main.new.js'
+                    './Main.js': './src/Main.js'
                 }
             }
         },
         watch: {
             another: {
-                files: ['./Main.new.js'],
+                files: ['./src/Main.js'],
                 tasks: ['babel','uglify'],
                 options: {
                     // Start another live reload server on port 1337
