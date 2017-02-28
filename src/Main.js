@@ -1666,9 +1666,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.2.5';
+                this.version = '2.2.6';
                 this.langVersion = '207';
-                this.releaseNote = '1.28相关修正';
+                this.releaseNote = '调整段落快速编辑位置';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
