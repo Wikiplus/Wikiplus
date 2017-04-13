@@ -8,7 +8,7 @@
         "Eridanus Sora",
         "YinYan"
     ],
-    "__version": "207",
+    "__version": "208",
     "unknown_error_name": "Unknown error",
     "api_unaccessiable": "API of this wiki is not available",
     "api_unwriteable": "Write API of this wiki is not available",
@@ -80,6 +80,8 @@
     "goto_editbox": "Jump to editbox",
     "summary_placehold": "Edit summary",
     "submit": "Submit",
+    "publish_page": "Publish Page",
+    "publish_change": "Publish Changes",
     "preview": "Preview",
     "cancel": "Cancel",
     "mark_minoredit": "Mark this edit as a minor edit",

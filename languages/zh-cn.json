@@ -3,7 +3,7 @@
     "__author": [
         "Eridanus Sora"
     ],
-    "__version": "207",
+    "__version": "208",
     "unknown_error_name": "未知的错误名",
     "api_unaccessiable": "无可用的API",
     "api_unwriteable": "无可用的写入API",
@@ -75,6 +75,8 @@
     "goto_editbox": "到编辑框",
     "summary_placehold": "请输入编辑摘要",
     "submit": "提交",
+    "publish_page": "发布页面",
+    "publish_change": "发布更改",
     "preview": "预览",
     "cancel": "取消",
     "mark_minoredit": "标记为小编辑",

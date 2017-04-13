@@ -1064,6 +1064,7 @@ $(function () {
              */
             displayQuickEditInterface(obj, message = '') {
                 var self = this;
+                var isNewPage = $('.noarticletext').length > 0;
                 var sectionNumber = obj.data('number');
                 var sectionName = obj.data('name');
                 var sectionTargetName = obj.data('target');
@@ -1090,7 +1091,7 @@ $(function () {
                 var inputBox = $('<textarea>').attr('id', 'Wikiplus-Quickedit');//主编辑框
                 var previewBox = $('<div>').attr('id', 'Wikiplus-Quickedit-Preview-Output');//预览输出
                 var summaryBox = $('<input>').attr('id', 'Wikiplus-Quickedit-Summary-Input').attr('placeholder', `${i18n('summary_placehold')}`);//编辑摘要输入
-                var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text(`${i18n('submit')}(Ctrl+S)`);//提交按钮
+                var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text(`${i18n(isNewPage ? 'publish_page' : 'publish_change')}(Ctrl+S)`);//提交按钮
                 var previewSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Preview-Submit').text(`${i18n('preview')}`);//预览按钮
                 var isMinorEdit = $('<div>').append(
                     $('<input>').attr({ 'type': 'checkbox', 'id': 'Wikiplus-Quickedit-MinorEdit' })
@@ -1667,7 +1668,7 @@ $(function () {
             }
             constructor() {
                 this.version = '2.2.6';
-                this.langVersion = '207';
+                this.langVersion = '208';
                 this.releaseNote = '调整段落快速编辑位置';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
