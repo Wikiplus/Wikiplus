@@ -94,8 +94,10 @@ $(function () {
     var scriptPath = `${location.protocol}//wikiplus-app.smartgslb.com`;
     i18nData['zh-cn'] = {
         "__language": "zh-cn",
-        "__author": ["Eridanus Sora"],
-        "__version": "207",
+        "__author": [
+            "Eridanus Sora"
+        ],
+        "__version": "208",
         "unknown_error_name": "未知的错误名",
         "api_unaccessiable": "无可用的API",
         "api_unwriteable": "无可用的写入API",
@@ -156,8 +158,8 @@ $(function () {
         "customjsprotected": "无法编辑用户JS页",
         "cascadeprotected": "该页面被级联保护",
         "network_edit_error": "由于网络原因编辑失败",
-        "redirect_to_summary": "重定向页面至 [[$1]] // Wikiplus",
-        "redirect_from_summary": "将[[$1]]重定向至[[$2]] // Wikiplus",
+        "redirect_to_summary": "重定向页面至 [[$1]] \/\/ Wikiplus",
+        "redirect_from_summary": "将[[$1]]重定向至[[$2]] \/\/ Wikiplus",
         "need_init": "页面类未加载完成",
         "fail_to_get_wikitext": "无法获得页面文本",
         "quickedit_topbtn": "快速编辑",
@@ -167,6 +169,8 @@ $(function () {
         "goto_editbox": "到编辑框",
         "summary_placehold": "请输入编辑摘要",
         "submit": "提交",
+        "publish_page": "发布页面",
+        "publish_change": "发布更改",
         "preview": "预览",
         "cancel": "取消",
         "mark_minoredit": "标记为小编辑",
@@ -206,13 +210,10 @@ $(function () {
         "__language": "en-us",
         "__author": [
             "Eridanus Sora",
-            "AnnAngela"
-        ],
-        "__translator": [
-            "Eridanus Sora",
+            "AnnAngela",
             "YinYan"
         ],
-        "__version": "207",
+        "__version": "208",
         "unknown_error_name": "Unknown error",
         "api_unaccessiable": "API of this wiki is not available",
         "api_unwriteable": "Write API of this wiki is not available",
@@ -284,6 +285,8 @@ $(function () {
         "goto_editbox": "Jump to editbox",
         "summary_placehold": "Edit summary",
         "submit": "Submit",
+        "publish_page": "Publish Page",
+        "publish_change": "Publish Changes",
         "preview": "Preview",
         "cancel": "Cancel",
         "mark_minoredit": "Mark this edit as a minor edit",
