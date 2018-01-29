@@ -1670,9 +1670,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.2.6';
+                this.version = '2.2.7';
                 this.langVersion = '208';
-                this.releaseNote = '调整段落快速编辑位置';
+                this.releaseNote = '弃用旧jQuery方法';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
