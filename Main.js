@@ -351,7 +351,7 @@ $(function () {
     function i18n(key) {
         var language;
         try {
-            language = $.parseJSON(localStorage.Wikiplus_Settings)['language'] || window.navigator.language.toLowerCase();
+            language = JSON.parse(localStorage.Wikiplus_Settings)['language'] || window.navigator.language.toLowerCase();
         } catch (e) {
             language = window.navigator.language.toLowerCase();
         }
@@ -1665,7 +1665,7 @@ $(function () {
                 value: function getSetting(key, object) {
                     var w = object;
                     try {
-                        var settings = $.parseJSON(localStorage.Wikiplus_Settings);
+                        var settings = JSON.parse(localStorage.Wikiplus_Settings);
                     } catch (e) {
                         return localStorage.Wikiplus_Settings || '';
                     }
