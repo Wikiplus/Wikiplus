@@ -1,5 +1,5 @@
 /* global mw */
-/// <reference path="./typings/jquery/jquery.d.ts"/>
+/// <reference path="../typings/jquery/jquery.d.ts"/>
 /**
 * Wikiplus
 * Author:+Eridanus Sora/@妹空酱
@@ -93,7 +93,7 @@ $(function () {
     i18nData['zh-cn'] = {
         "__language": "zh-cn",
         "__author": ["Eridanus Sora"],
-        "__version": "208",
+        "__version": "209",
         "unknown_error_name": "未知的错误名",
         "api_unaccessiable": "无可用的API",
         "api_unwriteable": "无可用的写入API",
@@ -200,12 +200,13 @@ $(function () {
         "cant_load_language": "无法获取多语言定义文件",
         "history_edit_warning": " // 正试图编辑历史版本 这将会应用到本页面的最新版本 请慎重提交",
         "create_page_tip": "<!-- 正在创建新页面 请删去此行注释后继续 -->",
-        "continue": "仍然继续"
+        "continue": "仍然继续",
+        "default_summary_suffix": "// Edit via Wikiplus"
     };
     i18nData['en-us'] = {
         "__language": "en-us",
         "__author": ["Eridanus Sora", "AnnAngela", "YinYan"],
-        "__version": "208",
+        "__version": "209",
         "unknown_error_name": "Unknown error",
         "api_unaccessiable": "API of this wiki is not available",
         "api_unwriteable": "Write API of this wiki is not available",
@@ -312,7 +313,8 @@ $(function () {
         "cant_load_language": "Failed to load i18n file",
         "history_edit_warning": " // You are trying to edit a history revision of this page. This will apply to the latest revision. Please be careful.",
         "create_page_tip": "<!-- You are now creating a new page. Please delete this line and be careful. -->",
-        "continue": "Continue anyway"
+        "continue": "Continue anyway",
+        "default_summary_suffix": "// Edit via Wikiplus"
     };
 
     /**
@@ -1115,9 +1117,9 @@ $(function () {
                     });
                     if (summary === undefined) {
                         if (sectionName === undefined) {
-                            summary = '// Edit via Wikiplus';
+                            summary = i18n('default_summary_suffix');
                         } else {
-                            summary = '/* ' + sectionName + ' */ // Edit via Wikiplus';
+                            summary = '/* ' + sectionName + ' */ ' + i18n('default_summary_suffix');
                         }
                     }
                     //DOM定义
@@ -1715,7 +1717,7 @@ $(function () {
                 _classCallCheck(this, Wikiplus);
 
                 this.version = '2.2.7';
-                this.langVersion = '208';
+                this.langVersion = '209';
                 this.releaseNote = '弃用旧jQuery方法';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];

@@ -2,7 +2,7 @@
         "__language": "zh-tw",
         "__author": ["Eridanus Sora","AnnAngela"],
         "__translator": ["LNDDYL","SzMithrandir"],
-        "__version": "208",
+        "__version": "209",
         "unknown_error_name": "未知錯誤名稱",
         "api_unaccessiable": "API 不可用",
         "api_unwriteable": "API 不可被寫入",
@@ -109,5 +109,6 @@
         "cant_load_language": "載入多語系檔失敗",
         "history_edit_warning" : " // 您正在嘗試編輯此頁面的歷史修訂，這將套用至最新修訂，請小心操作",
         "create_page_tip" : "<!-- 正在建立新頁面 請移除此句附註後繼續 -->",
-        "continue" : "仍然繼續"
+        "continue" : "仍然繼續",
+        "default_summary_suffix": "// Edit via Wikiplus"
 }

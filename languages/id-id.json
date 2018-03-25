@@ -3,7 +3,7 @@
     "__author": [
         "shfrs"
     ],
-    "__version": "208",
+    "__version": "209",
     "unknown_error_name": "Galat tidak diketahui",
     "api_unaccessiable": "API tidak tersedia di wiki ini",
     "api_unwriteable": "Penulisan API tidak tersedia di wiki ini",
@@ -106,9 +106,10 @@
     "empty_input": "Input kosong",
     "redirect_saved": "Pengalihan selesai",
     "uninited": "Wikiplus tidak terinisialisasi dengan sempurna, silakan muat ulang halaman ini",
-    ""cant_parse_i18ncache": "Gagal mengurai singgahan file i18n",
-    2cant_load_language": "Gagal memuat file i18n",
+    "cant_parse_i18ncache": "Gagal mengurai singgahan file i18n",
+    "cant_load_language": "Gagal memuat file i18n",
     "history_edit_warning": " // Anda mencoba menyunting sejarah revisi halaman ini. Ini akan diterapkan pada revisi terkahir. Berhati-hatilah.",
     "create_page_tip": "<!-- Anda sedang membuat halamanbaru. Silakan hapus baris ini dan berhati-hatilah. -->",
-    "continue": "Tetap lanjutkan"
+    "continue": "Tetap lanjutkan",
+    "default_summary_suffix": "// Edit via Wikiplus"
 }

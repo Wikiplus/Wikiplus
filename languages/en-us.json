@@ -5,7 +5,7 @@
         "AnnAngela",
         "YinYan"
     ],
-    "__version": "208",
+    "__version": "209",
     "unknown_error_name": "Unknown error",
     "api_unaccessiable": "API of this wiki is not available",
     "api_unwriteable": "Write API of this wiki is not available",
@@ -112,5 +112,6 @@
     "cant_load_language": "Failed to load i18n file",
     "history_edit_warning": " // You are trying to edit a history revision of this page. This will apply to the latest revision. Please be careful.",
     "create_page_tip": "<!-- You are now creating a new page. Please delete this line and be careful. -->",
-    "continue": "Continue anyway"
+    "continue": "Continue anyway",
+    "default_summary_suffix": "// Edit via Wikiplus"
 }
