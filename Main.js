@@ -1161,7 +1161,7 @@ $(function () {
                                     $('#Wikiplus-Quickedit-Preview-Output').fadeOut('100', function () {
                                         $('#Wikiplus-Quickedit-Preview-Output').html('<hr><div class="mw-body-content">' + data + '</div><hr>');
                                         $('#Wikiplus-Quickedit-Preview-Output').fadeIn('100');
-                                        $('#Wikiplus-Quickedit-Preview-Submit').removeAttr('disabled');
+                                        $('#Wikiplus-Quickedit-Preview-Submit').prop('disabled', false);
                                     });
                                 }
                             });
@@ -1204,7 +1204,7 @@ $(function () {
                                     },
                                     fail: function fail(e) {
                                         console.log(e);
-                                        $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').removeAttr('disabled');
+                                        $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').prop('disabled', false);
                                         $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
                                         $('.Wikiplus-Banner').html(e.message);
                                     }
@@ -1230,7 +1230,7 @@ $(function () {
                                                 }, 500);
                                             },
                                             fail: function fail(e) {
-                                                $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').removeAttr('disabled');
+                                                $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').prop('disabled', false);
                                                 $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
                                                 $('.Wikiplus-Banner').text(e.message);
                                             }
@@ -1716,7 +1716,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.9';
+                this.version = '2.2.10';
                 this.langVersion = '209';
                 this.releaseNote = 'Bug 修正';
                 this.notice = new MoeNotification();
