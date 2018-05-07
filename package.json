@@ -3,14 +3,17 @@
   "version": "2.0.1",
   "homepage": "https://wikiplus-app.smartgslb.com/",
   "description": "A front-end jQuery-based Mediawiki plugin.",
+  "scripts": {
+    "watch": "webpack-cli --config ./build/webpack.config.js --watch",
+    "build": "webpack-cli --config ./build/webpack.config.js"
+  },
   "keywords": [
     "Wikiplus",
     "Mediawiki"
   ],
   "author": {
     "name": "Eridanus Sora",
-    "email": "h@moe.re",
-    "url": "http://sora.sound.moe"
+    "email": "sora@sound.moe"
   },
   "contributors": [
     {
@@ -21,10 +24,6 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-babel": "^5.0.3",
-    "grunt-contrib-uglify": "~0.2.1",
-    "grunt-contrib-watch": "^0.6.1",
-    "load-grunt-tasks": "^3.3.0"
+    "webpack": "^4.7.0"
   }
 }
