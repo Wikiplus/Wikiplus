@@ -1127,7 +1127,7 @@ $(function () {
                             $('#Wikiplus-Quickedit-Preview-Output').html('').append(onPreload);
                             $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                         });
-                        $('body').animate({ scrollTop: heightBefore }, 200);//返回顶部
+                        $('html, body').animate({ scrollTop: heightBefore }, 200);//返回顶部
                         self.kotori.parseWikiText(wikiText, {
                             success: function (data) {
                                 $('#Wikiplus-Quickedit-Preview-Output').fadeOut('100', function () {
@@ -1155,7 +1155,7 @@ $(function () {
                         }
                         //准备编辑 禁用各类按钮 返回顶部 显示信息
                         $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
-                        $('body').animate({ scrollTop: heightBefore }, 200);
+                        $('html, body').animate({ scrollTop: heightBefore }, 200);
                         
                         //开始提交编辑
                         if (sectionTargetName === self.kotori.pageName) {
@@ -1672,9 +1672,9 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.2.7';
+                this.version = '2.2.8';
                 this.langVersion = '209';
-                this.releaseNote = '弃用旧jQuery方法';
+                this.releaseNote = 'Bug 修正';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
