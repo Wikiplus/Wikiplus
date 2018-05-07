@@ -19,8 +19,8 @@ function MoeNotification(undefined) {
             $("<div>").addClass('MoeNotification-notice')
                 .addClass('MoeNotification-notice-' + _type)
                 .append('<span>' + _text + '</span>')
-                .fadeIn(300)
         );
+        $("#MoeNotification").find('.MoeNotification-notice').last().fadeIn(300);
         self.bind();
         self.clear();
         _callback($("#MoeNotification").find('.MoeNotification-notice').last());
@@ -1414,7 +1414,6 @@ $(function () {
                     }
                 });
                 $('.Wikiplus-Edit-EveryWhereBtn').click(function () {
-                    console.log($(this).data());
                     self.initQuickEditInterface($(this));
                 })
             }
@@ -1672,7 +1671,7 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.2.8';
+                this.version = '2.2.9';
                 this.langVersion = '209';
                 this.releaseNote = 'Bug 修正';
                 this.notice = new MoeNotification();
