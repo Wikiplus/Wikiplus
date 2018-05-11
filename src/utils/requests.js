@@ -12,9 +12,11 @@ class Requests {
     }
     static async post(payload) {
         const url = new URL(Requests.base);
+        Object.keys(payload).forEach(key => {
+            url.searchParams.append(key, payload[key])
+        });
         const response = (await fetch(url, {
             method: 'POST',
-            body: JSON.stringify(payload),
             credentials: 'same-origin'
         }));
         return await response.json();
