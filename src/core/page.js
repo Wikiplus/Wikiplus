@@ -1,4 +1,5 @@
 import Wiki from "../services/wiki";
+import Log from "../utils/log";
 
 class Page {
     timestamp;
@@ -16,6 +17,7 @@ class Page {
     async init(editToken = '', {
         isEmptyPage = false 
     } = {}) {
+        Log.debug(`Start initiating instance for page ${this.title}`);
         if (editToken || isEmptyPage) {
             this.timestamp = await Wiki.getTimestamp(this.title);
         } else {
@@ -51,6 +53,19 @@ class Page {
      */
     async parseWikiText(wikitext) {
         return Wiki.parseWikiText(wikitext, this.title);
+    }
+
+    /**
+     * 编辑页面
+     * @param {*} config 
+     */
+    async edit(config) {
+        return Wiki.edit({
+            ...config,
+            title: this.title,
+            editToken: this.editToken,
+            timestamp: this.timestamp
+        });
     }
 
 }

@@ -114,6 +114,31 @@ class Wiki {
             Log.error('cant_parse_wikitext');
         }
     }
+    
+    /**
+     * 编辑页面
+     */
+    static async edit({
+        title,
+        content,
+        editToken,
+        timestamp,
+        config = {}
+    } = {}) {
+        try {
+            const response = await requests.post({
+                'action': 'edit',
+                'format': 'json',
+                'text': content,
+                'title': title,
+                'token': editToken,
+                'basetimestamp': timestamp,
+                ...config
+            })
+        } catch (e) {
+            Log.error('network_edit_error');
+        }
+    }
 }
 
 export default Wiki;

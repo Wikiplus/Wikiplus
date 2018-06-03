@@ -30,10 +30,11 @@ class I18n {
             localStorage.setItem('Wikiplus_i18nCache', '{}');
         }
     }
-    translate(key) {
+    translate(key, placeholders = []) {
+        let result = "";
         if (this.language in this.i18nData) {
             if (key in this.i18nData[this.language]) {
-                return this.i18nData[this.language][key];
+                result = this.i18nData[this.language][key];
             } else {
                 // try update language verison
                 this.loadLanguage(this.language);
@@ -44,10 +45,16 @@ class I18n {
 
         if (key in this.i18nData['en-us']) {
             // Fallback to English
-            return this.i18nData['en-us'][key];
+            result = this.i18nData['en-us'][key];
         } else {
-            return key;
-        }   
+            result = key;
+        }
+        if (placeholders.length > 0) {
+            placeholders.forEach((placeholder, index) => {
+                result = result.replace(`$${index + 1}`, placeholder);
+            })
+        }
+        return result;
     }
     async loadLanguage(language) {
         if (this.sessionUpdateLog.includes(language)) {
