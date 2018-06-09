@@ -1,5 +1,7 @@
 import requests from '../utils/requests';
 import Log from '../utils/log';
+import { Z_VERSION_ERROR } from 'zlib';
+import i18n from '../utils/i18n';
 
 class Wiki {
     /**
@@ -134,7 +136,29 @@ class Wiki {
                 'token': editToken,
                 'basetimestamp': timestamp,
                 ...config
-            })
+            });
+            if (resposne.edit) {
+                if (response.edit.result === 'Success') {
+                    return true;
+                } else {
+                    if (response.edit.code) {
+                        // Abuse Filter
+                        throw new Error(`
+                            ${i18n.translate('hit_abusefilter')}:${response.data.info.replace('/Hit AbuseFilter: /ig', '')}
+                            <br>
+                            <div style="font-size: smaller;">${response.edit.warning}</div>
+                        `);
+                    } else {
+                        Log.error('unknown_edit_error');
+                    }
+                } 
+            } else if (response.error && response.error.code) {
+                Log.error('unknown_edit_error_message', [response.error.code]);
+            } else if (response.code) {
+                Log.error('unknown_edit_error_message', [response.code]);
+            } else {
+                Log.error('unknown_edit_error');
+            }
         } catch (e) {
             Log.error('network_edit_error');
         }
