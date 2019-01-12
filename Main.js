@@ -1526,9 +1526,9 @@ $(function () {
                 key: 'addFunctionButton',
                 value: function addFunctionButton(text, id, clickEvent) {
                     var button = $('<li></li>').attr('id', id).append($('<a></a>').attr('href', 'javascript:void(0);').text(text));
-                    if ($('#p-cactions .menu').length > 0) {
-                        $('#p-cactions .menu ul').append(button);
-                        $('#p-cactions .menu ul').find('li').last().click(clickEvent);
+                    if ($('#p-cactions').length > 0) {
+                        $('#p-cactions ul').append(button);
+                        $('#p-cactions ul').find('li').last().click(clickEvent);
                     } else {
                         throwError('cant_add_funcbtn');
                     }
@@ -1716,7 +1716,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.12';
+                this.version = '2.2.13';
                 this.langVersion = '210';
                 this.releaseNote = 'Bug 修正';
                 this.notice = new MoeNotification();
