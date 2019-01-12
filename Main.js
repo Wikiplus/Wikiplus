@@ -15,7 +15,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function MoeNotification(undefined) {
+function MoeNotification() {
     var self = this;
     this.display = function (text, type, callback) {
         var _callback = callback || function () {};
@@ -70,7 +70,7 @@ function MoeNotification(undefined) {
             self.slideLeft($(this));
         });
     };
-    window.slideLeft = this.slideLeft = function (object, speed) {
+    this.slideLeft = function (object, speed) {
         object.css('position', 'relative');
         object.animate({
             left: "-200%"
@@ -94,7 +94,7 @@ $(function () {
     i18nData['zh-cn'] = {
         "__language": "zh-cn",
         "__author": ["Eridanus Sora"],
-        "__version": "209",
+        "__version": "210",
         "unknown_error_name": "未知的错误名",
         "api_unaccessiable": "无可用的API",
         "api_unwriteable": "无可用的写入API",
@@ -207,7 +207,7 @@ $(function () {
     i18nData['en-us'] = {
         "__language": "en-us",
         "__author": ["Eridanus Sora", "AnnAngela", "YinYan"],
-        "__version": "209",
+        "__version": "210",
         "unknown_error_name": "Unknown error",
         "api_unaccessiable": "API of this wiki is not available",
         "api_unwriteable": "Write API of this wiki is not available",
@@ -255,7 +255,7 @@ $(function () {
         "hookaborted": "Your edit was rejected by the hook(s)",
         "parseerror": "Failed to parse the wikitext of this page",
         "summaryrequired": "No summary in your edit",
-        "blocked": "You has been already BLOCKED",
+        "blocked": "You have been already BLOCKED",
         "ratelimited": "You've exceeded your rate limit. Please have a tea and try again later",
         "unknownerror": "Unknown error",
         "nosuchsection": "There is no such section",
@@ -1180,6 +1180,8 @@ $(function () {
                             }
                             if ($('#Wikiplus-Quickedit-MinorEdit').is(':checked')) {
                                 addtionalConfig['minor'] = 'true';
+                            } else {
+                                addtionalConfig['minor'] = 'false';
                             }
                             //准备编辑 禁用各类按钮 返回顶部 显示信息
                             $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
@@ -1716,8 +1718,8 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.10';
-                this.langVersion = '209';
+                this.version = '2.2.11';
+                this.langVersion = '210';
                 this.releaseNote = 'Bug 修正';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];

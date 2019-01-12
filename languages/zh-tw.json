@@ -1,8 +1,7 @@
 {
         "__language": "zh-tw",
-        "__author": ["Eridanus Sora","AnnAngela"],
-        "__translator": ["LNDDYL","SzMithrandir"],
-        "__version": "209",
+        "__author": ["LNDDYL","SzMithrandir"],
+        "__version": "210",
         "unknown_error_name": "未知錯誤名稱",
         "api_unaccessiable": "API 不可用",
         "api_unwriteable": "API 不可被寫入",

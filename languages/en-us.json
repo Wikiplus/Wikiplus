@@ -5,7 +5,7 @@
         "AnnAngela",
         "YinYan"
     ],
-    "__version": "209",
+    "__version": "210",
     "unknown_error_name": "Unknown error",
     "api_unaccessiable": "API of this wiki is not available",
     "api_unwriteable": "Write API of this wiki is not available",
@@ -53,7 +53,7 @@
     "hookaborted": "Your edit was rejected by the hook(s)",
     "parseerror": "Failed to parse the wikitext of this page",
     "summaryrequired": "No summary in your edit",
-    "blocked": "You has been already BLOCKED",
+    "blocked": "You have been already BLOCKED",
     "ratelimited": "You've exceeded your rate limit. Please have a tea and try again later",
     "unknownerror": "Unknown error",
     "nosuchsection": "There is no such section",
