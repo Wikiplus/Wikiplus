@@ -1180,8 +1180,6 @@ $(function () {
                             }
                             if ($('#Wikiplus-Quickedit-MinorEdit').is(':checked')) {
                                 addtionalConfig['minor'] = 'true';
-                            } else {
-                                addtionalConfig['minor'] = 'false';
                             }
                             //准备编辑 禁用各类按钮 返回顶部 显示信息
                             $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
@@ -1718,7 +1716,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.11';
+                this.version = '2.2.12';
                 this.langVersion = '210';
                 this.releaseNote = 'Bug 修正';
                 this.notice = new MoeNotification();
