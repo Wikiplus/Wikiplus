@@ -102,6 +102,10 @@
 	min-height: 50px;
 	margin:0px;
 }
+.navbox .Wikiplus-Edit-EveryWhereBtn{
+	position: absolute;
+	width: 4.5rem;
+}
 /*.Wikiplus-Edit-EveryWhereBtn{
     position: absolute;
 }*/
