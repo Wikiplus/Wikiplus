@@ -7,7 +7,7 @@ if(preg_match('/gzip/',$_SERVER['HTTP_ACCEPT_ENCODING'])){
 }
 //add headers
 header('Access-Control-Allow-Origin: *');
-header('Content-Type: text/javascript');
+header('Content-Type: application/json');
 
 echo checkAndreturn();
 ob_flush();

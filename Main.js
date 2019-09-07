@@ -17,15 +17,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function MoeNotification() {
     var self = this;
-    this.display = function (text, type, callback) {
-        var _callback = callback || function () {};
-        var _text = text || '喵~';
-        var _type = type || 'success';
-        $("#MoeNotification").append($("<div>").addClass('MoeNotification-notice').addClass('MoeNotification-notice-' + _type).append('<span>' + _text + '</span>'));
+    this.display = function () {
+        var text = arguments.length <= 0 || arguments[0] === undefined ? '喵~' : arguments[0];
+        var type = arguments.length <= 1 || arguments[1] === undefined ? 'success' : arguments[1];
+        var callback = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
+
+        $("#MoeNotification").append($("<div>").addClass('MoeNotification-notice').addClass('MoeNotification-notice-' + type).append('<span>' + text + '</span>'));
         $("#MoeNotification").find('.MoeNotification-notice').last().fadeIn(300);
         self.bind();
         self.clear();
-        _callback($("#MoeNotification").find('.MoeNotification-notice').last());
+        callback($("#MoeNotification").find('.MoeNotification-notice').last());
     };
     this.create = {
         success: function success(text, callback) {
@@ -1479,13 +1480,14 @@ $(function () {
                     }
                     var clientWidth = document.body.clientWidth;
                     var clientHeight = document.body.clientHeight;
+                    var dialogWidth = Math.min(clientWidth, width);
                     var diglogBox = $('<div>').addClass('Wikiplus-InterBox').css({
-                        'margin-left': clientWidth / 2 - width / 2,
+                        'margin-left': clientWidth / 2 - dialogWidth / 2,
                         'top': $(document).scrollTop() + clientHeight * 0.2,
                         'display': 'none'
                     }).append($('<div>').addClass('Wikiplus-InterBox-Header').html(title)).append($('<div>').addClass('Wikiplus-InterBox-Content').append(content)).append($('<span>').text('×').addClass('Wikiplus-InterBox-Close'));
                     $('body').append(diglogBox);
-                    $('.Wikiplus-InterBox').width(width);
+                    $('.Wikiplus-InterBox').width(dialogWidth);
                     $('.Wikiplus-InterBox-Close').click(function () {
                         $(this).parent().fadeOut('fast', function () {
                             window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
@@ -1718,9 +1720,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.14';
+                this.version = '2.2.15';
                 this.langVersion = '210';
-                this.releaseNote = 'Bug 修正';
+                this.releaseNote = '修正移动版样式';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
@@ -1741,7 +1743,8 @@ $(function () {
                 //语言检测
                 var language = this.getSetting('language') && this.getSetting('language').toLowerCase() || window.navigator.language.toLowerCase();
                 //版本检查
-                if (!(this.version === localStorage.Wikiplus_Version)) {
+                if (this.version !== localStorage.Wikiplus_Version) {
+                    console.log(1);
                     localStorage.Wikiplus_Version = this.version;
                     this.notice.create.success('Wikiplus ' + this.version);
                     this.notice.create.success(language === 'zh-cn' ? this.releaseNote : 'Minor bug fixes.'); // 避免给其他语言用户不必要的理解困难
