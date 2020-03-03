@@ -984,7 +984,7 @@ $(function () {
                         try {
                             var editURL = $(this).find("a").last().attr('href');
                             var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
-                            var sectionTargetName = decodeURI(editURL.match(/title=(.+?)&/)[1]);
+                            var sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
                             var cloneNode = $(this).prev().clone();
                             cloneNode.find('.mw-headline-number').remove();
                             var sectionName = $.trim(cloneNode.text());
