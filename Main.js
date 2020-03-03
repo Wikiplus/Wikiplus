@@ -1720,7 +1720,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.15';
+                this.version = '2.2.16';
                 this.langVersion = '210';
                 this.releaseNote = '修正移动版样式';
                 this.notice = new MoeNotification();
