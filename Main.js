@@ -726,8 +726,8 @@ $(function () {
                                     } else {
                                         callback.fail(throwError('fail_to_get_timestamp'));
                                     }
-                                    if (mw.user.tokens.get('editToken') && mw.user.tokens.get('editToken') !== '+\\') {
-                                        self.editToken[title] = mw.user.tokens.get('editToken');
+                                    if (mw.user.tokens.get('csrfToken') && mw.user.tokens.get('csrfToken') !== '+\\') {
+                                        self.editToken[title] = mw.user.tokens.get('csrfToken');
                                         console.log('成功获得编辑令牌 来自前端API');
                                     } else {
                                         //前端拿不到Token 尝试通过API
@@ -757,8 +757,8 @@ $(function () {
                                 } else {
                                     if (mw.config.get('wgArticleId') === 0) {
                                         // 如果是空页面就只拿一个edittoken
-                                        if (mw.user.tokens.get('editToken') && mw.user.tokens.get('editToken') !== '+\\') {
-                                            self.editToken[title] = mw.user.tokens.get('editToken');
+                                        if (mw.user.tokens.get('csrfToken') && mw.user.tokens.get('csrfToken') !== '+\\') {
+                                            self.editToken[title] = mw.user.tokens.get('csrfToken');
                                             console.log('成功获得编辑令牌 来自前端API');
                                             self.inited = true;
                                         } else {
@@ -1720,7 +1720,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.16';
+                this.version = '2.2.17';
                 this.langVersion = '210';
                 this.releaseNote = '修正移动版样式';
                 this.notice = new MoeNotification();
