@@ -88,7 +88,7 @@ function MoeNotification() {
 
 $(function () {
     var i18nData = {};
-    var scriptPath = `${location.protocol}//wikiplus-app.smartgslb.com`;
+    var scriptPath = `${location.protocol}//wikiplus-app.com`;
     i18nData['zh-cn'] = {
         "__language": "zh-cn",
         "__author": [
@@ -1671,7 +1671,7 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.2.17';
+                this.version = '2.2.18';
                 this.langVersion = '210';
                 this.releaseNote = '修正移动版样式';
                 this.notice = new MoeNotification();
