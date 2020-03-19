@@ -1695,7 +1695,6 @@ $(function () {
                 var language = this.getSetting('language') && this.getSetting('language').toLowerCase() || window.navigator.language.toLowerCase();
                 //版本检查
                 if (this.version !== localStorage.Wikiplus_Version) {
-                    console.log(1);
                     localStorage.Wikiplus_Version = this.version;
                     this.notice.create.success(`Wikiplus ${this.version}`);
                     this.notice.create.success(language === 'zh-cn' ? this.releaseNote : 'Minor bug fixes.'); // 避免给其他语言用户不必要的理解困难
