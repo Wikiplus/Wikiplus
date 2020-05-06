@@ -654,10 +654,6 @@ $(function () {
                 console.log('页面Javascript载入不完全或这不是一个Mediawiki站点');
                 return;
             }
-            if (!window.mw.config.get('wgEnableAPI') || !window.mw.config.get('wgEnableWriteAPI')) {
-                throwError('api_unaccessiable');
-                return;
-            }
             if (!inArray('autoconfirmed', window.mw.config.get('wgUserGroups'))) {
                 throwError('not_autoconfirmed_user');
                 return;
@@ -1671,7 +1667,7 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.2.18';
+                this.version = '2.2.19';
                 this.langVersion = '210';
                 this.releaseNote = '修正移动版样式';
                 this.notice = new MoeNotification();

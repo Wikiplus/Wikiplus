@@ -650,10 +650,6 @@ $(function () {
                 console.log('页面Javascript载入不完全或这不是一个Mediawiki站点');
                 return;
             }
-            if (!window.mw.config.get('wgEnableAPI') || !window.mw.config.get('wgEnableWriteAPI')) {
-                throwError('api_unaccessiable');
-                return;
-            }
             if (!inArray('autoconfirmed', window.mw.config.get('wgUserGroups'))) {
                 throwError('not_autoconfirmed_user');
                 return;
@@ -1720,7 +1716,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.18';
+                this.version = '2.2.19';
                 this.langVersion = '210';
                 this.releaseNote = '修正移动版样式';
                 this.notice = new MoeNotification();
@@ -1744,7 +1740,6 @@ $(function () {
                 var language = this.getSetting('language') && this.getSetting('language').toLowerCase() || window.navigator.language.toLowerCase();
                 //版本检查
                 if (this.version !== localStorage.Wikiplus_Version) {
-                    console.log(1);
                     localStorage.Wikiplus_Version = this.version;
                     this.notice.create.success('Wikiplus ' + this.version);
                     this.notice.create.success(language === 'zh-cn' ? this.releaseNote : 'Minor bug fixes.'); // 避免给其他语言用户不必要的理解困难
