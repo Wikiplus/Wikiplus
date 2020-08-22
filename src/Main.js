@@ -94,7 +94,7 @@ $(function () {
         "__author": [
             "Eridanus Sora"
         ],
-        "__version": "210",
+        "__version": "211",
         "unknown_error_name": "未知的错误名",
         "api_unaccessiable": "无可用的API",
         "api_unwriteable": "无可用的写入API",
@@ -202,7 +202,8 @@ $(function () {
         "history_edit_warning": " // 正试图编辑历史版本 这将会应用到本页面的最新版本 请慎重提交",
         "create_page_tip": "<!-- 正在创建新页面 请删去此行注释后继续 -->",
         "continue": "仍然继续",
-        "default_summary_suffix": "// Edit via Wikiplus"
+        "default_summary_suffix": "// Edit via Wikiplus",
+        'cross_page_history_revision_edit_warning': '暂不支持历史版本跨页面编辑'
     };
     i18nData['en-us'] = {
         "__language": "en-us",
@@ -211,7 +212,7 @@ $(function () {
             "AnnAngela",
             "YinYan"
         ],
-        "__version": "210",
+        "__version": "211",
         "unknown_error_name": "Unknown error",
         "api_unaccessiable": "API of this wiki is not available",
         "api_unwriteable": "Write API of this wiki is not available",
@@ -319,7 +320,8 @@ $(function () {
         "history_edit_warning": " // You are trying to edit a history revision of this page. This will apply to the latest revision. Please be careful.",
         "create_page_tip": "<!-- You are now creating a new page. Please delete this line and be careful. -->",
         "continue": "Continue anyway",
-        "default_summary_suffix": "// Edit via Wikiplus"
+        "default_summary_suffix": "// Edit via Wikiplus",
+        "cross_page_history_revision_edit_warning": "Cross-page edit in history revision is not supported yet."
     }
 
     /**
@@ -1016,6 +1018,11 @@ $(function () {
                 var sectionNumber = obj.data('number');
                 var sectionTargetName = obj.data('target');
                 if (this.kotori.inited) {
+                    if (sectionTargetName !== self.kotori.pageName && mw.config.get('wgCurRevisionId') !== mw.config.get('wgRevisionId')) {
+                        // 在历史版本编辑其他页面有问题 暂时不支持
+                        this.notice.create.error(i18n('cross_page_history_revision_edit_warning'));
+                        return;
+                    }
                     if ($('.noarticletext').length > 0) {
                         //这是一个空页面
                         this.preloadData[`${sectionTargetName}.-1`] = i18n('create_page_tip');
@@ -1668,7 +1675,7 @@ $(function () {
             }
             constructor() {
                 this.version = '2.2.19';
-                this.langVersion = '210';
+                this.langVersion = '211';
                 this.releaseNote = '修正移动版样式';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
