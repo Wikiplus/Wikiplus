@@ -1674,7 +1674,7 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.2.19';
+                this.version = '2.2.20';
                 this.langVersion = '211';
                 this.releaseNote = '修正移动版样式';
                 this.notice = new MoeNotification();
