@@ -1066,7 +1066,11 @@ $(function () {
                             this.preloadData[sectionTargetName + '.-1'] = i18n('create_page_tip');
                         }
                         if (mw.config.get('wgCurRevisionId') === mw.config.get('wgRevisionId')) {
+                            var additionalConfig = {};
                             if (this.preloadData[sectionTargetName + '.' + sectionNumber] === undefined) {
+                                if (sectionTargetName === this.kotori.pageName) {
+                                    additionalConfig.oldid = mw.config.get('wgRevisionId');
+                                }
                                 this.notice.create.success(i18n('loading'));
                                 this.preload(sectionNumber, sectionTargetName, {
                                     success: function success(data) {
@@ -1077,7 +1081,7 @@ $(function () {
                                     fail: function fail(e) {
                                         throwError('fail_to_get_wikitext_when_edit');
                                     }
-                                });
+                                }, additionalConfig);
                             } else {
                                 obj.data('content', self.preloadData[sectionTargetName + '.' + sectionNumber]);
                                 self.displayQuickEditInterface(obj);
