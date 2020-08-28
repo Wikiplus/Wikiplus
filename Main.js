@@ -1726,9 +1726,9 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.2.20';
+                this.version = '2.3.0';
                 this.langVersion = '211';
-                this.releaseNote = '修正移动版样式';
+                this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
