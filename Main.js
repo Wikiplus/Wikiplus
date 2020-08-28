@@ -1564,7 +1564,6 @@ $(function () {
                     var self = this;
                     if (config.oldid !== undefined) {
                         // oldid 优先于 页面名
-                        console.log(typeof config.oldid);
                         if (this.preloadData[config.oldid + '.' + section]) {
                             console.log('[修订版本' + config.oldid + '.' + section + ']已经预读取 跳过本次预读取');
                             callback.success(this.preloadData[config.oldid + '.' + section]);

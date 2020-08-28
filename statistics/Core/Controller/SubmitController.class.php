@@ -2,7 +2,7 @@
 class SubmitController extends Controller{
 	function __construct(){
 		parent::__construct();
-		header('Access-Control-Allow-Origin : *'); //允许跨域调用
+		header('Access-Control-Allow-Origin: *'); //允许跨域调用
 	}
 	public function submit(){
 		$reqRet = $this->para_require(array(
