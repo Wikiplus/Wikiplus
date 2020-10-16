@@ -24,10 +24,4 @@ $(document).ready(async () => {
     }
     const page = new Page(mw.config.values.wgPageName);
     await page.init();
-    // await Wiki.edit({
-    //     title: 'User:镜音铃/沙盒',
-    //     content: '你好世界',
-    //     editToken: page.editToken,
-    //     timestamp: page.timestamp
-    // });
 })

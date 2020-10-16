@@ -1,6 +1,5 @@
 import requests from '../utils/requests';
 import Log from '../utils/log';
-import { Z_VERSION_ERROR } from 'zlib';
 import i18n from '../utils/i18n';
 
 class Wiki {
