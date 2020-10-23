@@ -1,5 +1,7 @@
+import { getScriptPath } from "./helpers";
+
 class Requests {
-    static base = `${location.protocol}//${location.host}${window.mw.config.get('wgScriptPath')}/api.php`;
+    static base = `${location.protocol}//${location.host}${getScriptPath()}/api.php`;
     static async get(query) {
         const url = new URL(Requests.base);
         Object.keys(query).forEach(key => {

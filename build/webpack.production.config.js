@@ -6,8 +6,7 @@ module.exports = {
     entry: [path.resolve(__dirname, "../src/index.js")],
     output: {
         path: path.resolve(__dirname, "../"),
-        filename: "Main.development.js",
-        sourceMapFilename: "[file].map"
+        filename: "Main.js",
     },
     module: {
         rules: [
@@ -26,9 +25,10 @@ module.exports = {
     resolve: {
         extensions: ["*", ".js"],
     },
-    mode: "development",
-    devtool: 'source-map',
+    mode: "production",
     optimization: {
         usedExports: true,
+        minimize: true,
+        minimizer: [new TerserPlugin()],
     },
 };

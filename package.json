@@ -5,7 +5,7 @@
     "description": "A front-end jQuery-based Mediawiki plugin.",
     "scripts": {
         "watch": "webpack-cli --config ./build/webpack.config.js --watch",
-        "build": "webpack-cli --config ./build/webpack.config.js"
+        "build": "webpack-cli --config ./build/webpack.production.config.js"
     },
     "keywords": [
         "Wikiplus",
