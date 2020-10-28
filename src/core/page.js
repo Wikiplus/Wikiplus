@@ -7,6 +7,8 @@ class Page {
     title;
     revisionId;
 
+    inited = false;
+
     /**
      * @param {params.title} 页面标题 Page Name (optional)
      * @param {params.revisionId} 页面修订编号 Revision Id
@@ -30,6 +32,7 @@ class Page {
             promiseArr.push(this.getEditToken());
         }
         await Promise.all(promiseArr);
+        this.init = true;
         Log.info(`Page initialization for ${this.title}#${this.revisionId} finished.`);
     }
 

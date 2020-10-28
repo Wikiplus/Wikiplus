@@ -11,5 +11,13 @@ export function getUserGroups() {
 }
 
 export function getScriptPath() {
-    return window.mw.config.get('wgScriptPath');
+    return window.mw.config.get("wgScriptPath");
+}
+
+export function isArticle() {
+    return mw.config.get("wgIsArticle");
+}
+
+export function getAction() {
+    return mw.config.get("wgAction");
 }
