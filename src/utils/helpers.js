@@ -2,8 +2,12 @@ export function getCurrentPageName() {
     return mw.config.values.wgPageName;
 }
 
-export function getCurrentRevisionId() {
-    return mw.config.values.wgRevisionId;
+export function getRevisionId() {
+    return mw.config.get("wgRevisionId");
+}
+
+export function getLatestRevisionId() {
+    return window.mw.config.get("wgCurRevisionId");
 }
 
 export function getUserGroups() {

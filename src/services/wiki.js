@@ -4,12 +4,13 @@ import i18n from "../utils/i18n";
 import { getScriptPath } from "../utils/helpers";
 
 class Wiki {
+    pageInfoCache = {};
     /**
      * 获得 Edit Token
      * Get Edit Token
      * @returns {Promise<string>}
      */
-    static async getEditToken() {
+    async getEditToken() {
         // 尝试从 API 获得 EditToken
         // Try to get EditToken from API
         const response = await requests.get({
@@ -35,7 +36,7 @@ class Wiki {
      * @param {params.revisionId} revisionId 修订版本号 / Revision ID
      * @returns {Promise<string>}
      */
-    static async getTimestamp({ title, revisionId }) {
+    async getPageInfo({ title, revisionId }) {
         try {
             const params = {
                 action: "query",
@@ -44,6 +45,13 @@ class Wiki {
                 format: "json",
             };
             if (title) {
+                if (this.pageInfoCache[title]) {
+                    // Hit cache
+                    return {
+                        timestamp: this.pageInfoCache.timestamp,
+                        revisionId: this.pageInfoCache.revid,
+                    };
+                }
                 params.titles = title;
             }
             if (revisionId) {
@@ -56,8 +64,15 @@ class Wiki {
                     // Page not found.
                     return Log.error("fail_to_get_edittoken");
                 }
-                return response.query.pages[Object.keys(response.query.pages)[0]].revisions[0]
-                    .timestamp;
+                const pageInfo =
+                    response.query.pages[Object.keys(response.query.pages)[0]].revisions[0];
+                if (title) {
+                    this.pageInfoCache[title] = pageInfo;
+                }
+                return {
+                    timestamp: pageInfo.timestamp,
+                    revisionId: pageInfo.revid,
+                };
             }
         } catch (e) {
             Log.error("fail_to_get_edittoken");
@@ -72,7 +87,7 @@ class Wiki {
      * @param {string} config.section 段落号
      * @return {Promise<string>} wikitext内容
      */
-    static async getWikiText({ section, revisionId }) {
+    async getWikiText({ section, revisionId }) {
         try {
             const response = await (
                 await fetch(`
@@ -93,7 +108,7 @@ class Wiki {
      * @param {object} config 设置
      * @return {Promise<string>} 解析结果 HTML
      */
-    static async parseWikiText(wikitext, title = "", config = {}) {
+    async parseWikiText(wikitext, title = "", config = {}) {
         try {
             const response = await requests.post({
                 format: "json",
@@ -113,7 +128,7 @@ class Wiki {
     /**
      * 编辑页面
      */
-    static async edit({ title, content, editToken, timestamp, config = {} } = {}) {
+    async edit({ title, content, editToken, timestamp, config = {} } = {}) {
         try {
             const response = await requests.post({
                 action: "edit",
@@ -153,6 +168,16 @@ class Wiki {
             Log.error("network_edit_error");
         }
     }
+
+    /**
+     * 获得指定页面最新修订编号
+     * Get latest revisionId of a page.
+     * @param {*} title 
+     */
+    async getLatestRevisionIdForPage(title) {
+        const { revisionId } = await this.getPageInfo({ title });
+        return revisionId;
+    }
 }
 
-export default Wiki;
+export default new Wiki();

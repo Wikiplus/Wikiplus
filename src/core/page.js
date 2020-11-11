@@ -15,7 +15,7 @@ class Page {
      */
     constructor({ title, revisionId }) {
         if (!title || !revisionId) {
-            return Log.error(`Fail to initialize page instance: Missing page name or revision id.`)
+            return Log.error(`Fail to initialize page instance: Missing page name or revision id.`);
         }
         this.title = title;
         this.revisionId = revisionId;
@@ -32,7 +32,7 @@ class Page {
             promiseArr.push(this.getEditToken());
         }
         await Promise.all(promiseArr);
-        this.init = true;
+        this.inited = true;
         Log.info(`Page initialization for ${this.title}#${this.revisionId} finished.`);
     }
 
@@ -57,9 +57,10 @@ class Page {
      * Get Base Timestamp
      */
     async getTimestamp() {
-        this.timestamp = await Wiki.getTimestamp({
+        const { timestamp } = await Wiki.getPageInfo({
             revisionId: this.revisionId,
         });
+        this.timestamp = timestamp;
     }
 
     /**
@@ -71,7 +72,7 @@ class Page {
     async getWikiText({ section = "" } = {}) {
         return Wiki.getWikiText({
             section,
-            revisionId: this.revisionId
+            revisionId: this.revisionId,
         });
     }
 
