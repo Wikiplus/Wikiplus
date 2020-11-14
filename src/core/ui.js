@@ -1,3 +1,5 @@
+import Constants from "../utils/constants";
+import Notification from "./notification";
 import i18n from "../utils/i18n";
 import Log from "../utils/log";
 
@@ -54,6 +56,7 @@ class UI {
             .on("click", () => {
                 clickHandler({
                     sectionNumber: -1,
+                    targetPageName: Constants.currentPageName,
                 });
             });
         if ($("#ca-edit").length > 0 && $("#Wikiplus-Edit-TopBtn").length == 0) {

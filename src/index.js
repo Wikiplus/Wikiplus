@@ -2,10 +2,12 @@
  * Wikiplus
  * Eridanus Sora <sora@sound.moe>
  */
-import Log from "./utils/log";
 import Page from "./core/page";
 import UI from "./core/ui";
+import Wiki from "./services/wiki";
+import Log from "./utils/log";
 import Constants from "./utils/constants";
+import Notification from "./core/notification";
 
 $(document).ready(async () => {
     const version = "3.0.0";
@@ -63,11 +65,10 @@ $(document).ready(async () => {
         const revisionId =
             targetPageName === currentPageName
                 ? Constants.revisionId
-                : await getLatestRevisionId(targetPageName);
+                : await Wiki.getLatestRevisionIdForPage(targetPageName);
         const page = await getPage({ revisionId, title: targetPageName });
-        console.log(page);
     };
-
+    UI.loadCSS(`https://wikiplus-app.com/wikiplus.css`);
     UI.insertTopQuickEditEntry(handleQuickEditButtonClicked);
     UI.insertSectionQuickEditEntries(handleQuickEditButtonClicked);
 });
