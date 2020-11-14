@@ -2,7 +2,6 @@
  * Wikiplus
  * Eridanus Sora <sora@sound.moe>
  */
-import i18n from "./utils/i18n";
 import Log from "./utils/log";
 import Page from "./core/page";
 import UI from "./core/ui";

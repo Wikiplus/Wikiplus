@@ -6,7 +6,7 @@ class UI {
 
     /**
      * 加载CSS
-     * @param {string} url 
+     * @param {string} url
      */
     loadCSS(url) {
         $("<link>")
