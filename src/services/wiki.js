@@ -137,7 +137,7 @@ class Wiki {
                 basetimestamp: timestamp,
                 ...config,
             });
-            if (resposne.edit) {
+            if (response.edit) {
                 if (response.edit.result === "Success") {
                     return true;
                 } else {

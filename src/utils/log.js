@@ -16,7 +16,7 @@ class Log {
             });
         }
         console.error(`[Wikiplus-ERROR] ${template}`);
-        throw new Error(`[Wikiplus-ERROR] ${template}`);
+        throw new Error(`${template}`);
     }
 }
 

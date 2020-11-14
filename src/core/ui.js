@@ -171,7 +171,9 @@ class UI {
         summary = "",
         onBack = () => {},
         onParse = () => {},
+        onEdit = () => {},
     }) {
+        const self = this;
         this.scrollTop = $(document).scrollTop();
         if (this.quickEditPanelVisible) {
             this.hideQuickEditPanel();
@@ -226,17 +228,20 @@ class UI {
             $("#Wikiplus-Quickedit").text(content);
             $("#Wikiplus-Quickedit-Summary-Input").val(summary);
         });
-        const preloadBanner = $("<div>")
-            .addClass("Wikiplus-Banner")
-            .text(`${i18n.translate("loading_preview")}`);
+        // Back
+        $("#Wikiplus-Quickedit-Back").on("click", onBack);
+        // Preview
         $("#Wikiplus-Quickedit-Preview-Submit").on("click", async function () {
+            const preloadBanner = $("<div>")
+                .addClass("Wikiplus-Banner")
+                .text(`${i18n.translate("loading_preview")}`);
             const wikiText = $("#Wikiplus-Quickedit").val();
             $(this).attr("disabled", "disabled");
             $("#Wikiplus-Quickedit-Preview-Output").fadeOut(100, function () {
                 $("#Wikiplus-Quickedit-Preview-Output").html("").append(preloadBanner);
                 $("#Wikiplus-Quickedit-Preview-Output").fadeIn(100);
             });
-            $("html, body").animate({ scrollTop: this.scrollTop }, 200); //返回顶部
+            $("html, body").animate({ scrollTop: self.scrollTop }, 200); //返回顶部
             const result = await onParse(wikiText);
             $("#Wikiplus-Quickedit-Preview-Output").fadeOut("100", function () {
                 $("#Wikiplus-Quickedit-Preview-Output").html(
@@ -246,7 +251,50 @@ class UI {
                 $("#Wikiplus-Quickedit-Preview-Submit").prop("disabled", false);
             });
         });
-        $("#Wikiplus-Quickedit-Back").on("click", onBack);
+        // Edit
+        $("#Wikiplus-Quickedit-Submit").on("click", async function () {
+            const timer = new Date().valueOf();
+            const editBanner = $("<div>")
+                .addClass("Wikiplus-Banner")
+                .text(`${i18n.translate("submitting_edit")}`);
+            const payload = {
+                summary: $("#Wikiplus-Quickedit-Summary-Input").val(),
+                content: $("#Wikiplus-Quickedit").val(),
+            };
+            // 是否为小编辑
+            payload.isMinorEdit = $("#Wikiplus-Quickedit-MinorEdit").is(":checked");
+            // 准备编辑 禁用按钮 执行动画
+            $(
+                "#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit"
+            ).attr("disabled", "disabled");
+            $("html, body").animate({ scrollTop: self.scrollTop }, 200);
+            $("#Wikiplus-Quickedit-Preview-Output").fadeOut(100, function () {
+                $("#Wikiplus-Quickedit-Preview-Output").html("").append(editBanner);
+                $("#Wikiplus-Quickedit-Preview-Output").fadeIn(100);
+            });
+            try {
+                await onEdit(payload);
+                const useTime = new Date().valueOf() - timer;
+                $("#Wikiplus-Quickedit-Preview-Output")
+                    .find(".Wikiplus-Banner")
+                    .css("background", "rgba(6, 239, 92, 0.44)");
+                $("#Wikiplus-Quickedit-Preview-Output")
+                    .find(".Wikiplus-Banner")
+                    .text(`${i18n.translate("edit_success")}`.replace(/\$1/gi, useTime.toString()));
+                window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            } catch (e) {
+                console.log(e);
+                $(".Wikiplus-Banner").css("background", "rgba(218, 142, 167, 0.65)");
+                $(".Wikiplus-Banner").html(e.message);
+            } finally {
+                $(
+                    "#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit"
+                ).prop("disabled", false);
+            }
+        });
     }
 
     hideQuickEditPanel() {

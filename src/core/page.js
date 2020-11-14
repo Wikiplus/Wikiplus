@@ -96,12 +96,12 @@ class Page {
      * 编辑页面
      * @param {*} config
      */
-    async edit(config) {
+    async edit(payload) {
         return Wiki.edit({
-            ...config,
             title: this.title,
             editToken: this.editToken,
             timestamp: this.timestamp,
+            ...payload,
         });
     }
 }

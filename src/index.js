@@ -96,6 +96,21 @@ $(document).ready(async () => {
             onParse: (wikiText) => {
                 return page.parseWikiText(wikiText);
             },
+            onEdit: async ({ content, summary, isMinorEdit }) => {
+                const editPayload = {
+                    content,
+                    config: {
+                        summary,
+                        ...(sectionNumber !== -1 ? { section: sectionNumber } : {}),
+                    },
+                };
+                if (isMinorEdit) {
+                    editPayload.config.minor = "true";
+                } else {
+                    editPayload.config.notminor = "true";
+                }
+                await page.edit(editPayload);
+            },
         });
     };
     UI.loadCSS(`https://wikiplus-app.com/wikiplus.css`);
