@@ -6,14 +6,7 @@ import i18n from "./utils/i18n";
 import Log from "./utils/log";
 import Page from "./core/page";
 import UI from "./core/ui";
-import {
-    getAction,
-    getCurrentPageName,
-    getLatestRevisionId,
-    getRevisionId,
-    getUserGroups,
-    isArticle,
-} from "./utils/helpers";
+import Constants from "./utils/constants";
 
 $(document).ready(async () => {
     const version = "3.0.0";
@@ -37,20 +30,20 @@ $(document).ready(async () => {
         console.log("页面Javascript载入不完全或这不是一个Mediawiki站点");
         return;
     }
-    if (!getUserGroups().includes("autoconfirmed")) {
+    if (!Constants.userGroups.includes("autoconfirmed")) {
         Log.error("not_autoconfirmed_user");
         return;
     }
 
-    if (!isArticle() || getAction() !== "view") {
+    if (!Constants.isArticle || Constants.action !== "view") {
         Log.error(`Not an editable page. Stop initialization.`);
         return;
     }
 
     // Initialize current page
     window.Pages = Pages;
-    const currentPageName = getCurrentPageName();
-    const revisionId = getRevisionId();
+    const currentPageName = Constants.currentPageName;
+    const revisionId = Constants.revisionId;
     const currentPage = await getPage({
         revisionId,
         title: currentPageName,
@@ -60,14 +53,17 @@ $(document).ready(async () => {
         sectionName,
         targetPageName,
     } = {}) => {
-        if (targetPageName !== getCurrentPageName() && getLatestRevisionId() !== getRevisionId()) {
+        if (
+            targetPageName !== currentPageName &&
+            Constants.latestRevisionId !== Constants.revisionId
+        ) {
             // 在历史版本编辑其他页面有问题 暂时不支持
             Log.error("cross_page_history_revision_edit_warning");
             return;
         }
         const revisionId =
-            targetPageName === getCurrentPageName()
-                ? getRevisionId()
+            targetPageName === currentPageName
+                ? Constants.revisionId
                 : await getLatestRevisionId(targetPageName);
         const page = await getPage({ revisionId, title: targetPageName });
         console.log(page);

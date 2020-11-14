@@ -1,7 +1,7 @@
 import requests from "../utils/requests";
 import Log from "../utils/log";
 import i18n from "../utils/i18n";
-import { getScriptPath } from "../utils/helpers";
+import Constants from "../utils/constants";
 
 class Wiki {
     pageInfoCache = {};
@@ -91,9 +91,7 @@ class Wiki {
         try {
             const response = await (
                 await fetch(`
-                ${location.protocol}//${
-                    location.host
-                }${getScriptPath()}/index.php?oldid=${revisionId}&section=${section}&action=raw
+                ${location.protocol}//${location.host}${Constants.scriptPath}/index.php?oldid=${revisionId}&section=${section}&action=raw
             `)
             ).text();
             return response;
@@ -172,7 +170,7 @@ class Wiki {
     /**
      * 获得指定页面最新修订编号
      * Get latest revisionId of a page.
-     * @param {*} title 
+     * @param {*} title
      */
     async getLatestRevisionIdForPage(title) {
         const { revisionId } = await this.getPageInfo({ title });

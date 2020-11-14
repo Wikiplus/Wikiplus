@@ -5,6 +5,20 @@ class UI {
     quickEditPanelVisible = false;
 
     /**
+     * 加载CSS
+     * @param {string} url 
+     */
+    loadCSS(url) {
+        $("<link>")
+            .attr({
+                rel: "stylesheet",
+                type: "text/css",
+                href: `${url}`,
+            })
+            .appendTo($("head"));
+    }
+
+    /**
      * 在搜索框左侧「更多」菜单内添加按钮
      * Add a button in "More" menu (left of the search bar)
      * @param {string} text 按钮名 Button text
@@ -90,7 +104,7 @@ class UI {
             //
         }
         this.quickEditPanelVisible = true;
-        const isNewPage = $('.noarticletext').length > 0;
+        const isNewPage = $(".noarticletext").length > 0;
         // DOM 定义开始
         const backBtn = $("<span>")
             .attr("id", "Wikiplus-Quickedit-Back")
