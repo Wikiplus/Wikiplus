@@ -35,12 +35,12 @@ $(document).ready(async () => {
         return;
     }
     if (!Constants.userGroups.includes("autoconfirmed")) {
-        Log.error("not_autoconfirmed_user");
+        Log.info("not_autoconfirmed_user");
         return;
     }
 
     if (!Constants.isArticle || Constants.action !== "view") {
-        Log.error(`Not an editable page. Stop initialization.`);
+        Log.info(`Not an editable page. Stop initialization.`);
         return;
     }
 

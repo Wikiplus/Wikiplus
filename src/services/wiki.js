@@ -41,15 +41,15 @@ class Wiki {
             const params = {
                 action: "query",
                 prop: "revisions|info",
-                rvprop: "timestamp",
+                rvprop: "timestamp|ids",
                 format: "json",
             };
             if (title) {
                 if (this.pageInfoCache[title]) {
                     // Hit cache
                     return {
-                        timestamp: this.pageInfoCache.timestamp,
-                        revisionId: this.pageInfoCache.revid,
+                        timestamp: this.pageInfoCache[title].timestamp,
+                        revisionId: this.pageInfoCache[title].revid,
                     };
                 }
                 params.titles = title;
