@@ -2,6 +2,9 @@ class Constants {
     get currentPageName() {
         return window.mw.config.get("wgPageName").replace(/ /g, "_");
     }
+    get articleId() {
+        return window.mw.config.get("wgArticleId");
+    }
     get revisionId() {
         return window.mw.config.get("wgRevisionId");
     }

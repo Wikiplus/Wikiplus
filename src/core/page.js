@@ -8,6 +8,7 @@ class Page {
     revisionId;
 
     inited = false;
+    isNewPage = false;
 
     sectionCache = {};
 
@@ -16,11 +17,9 @@ class Page {
      * @param {params.revisionId} 页面修订编号 Revision Id
      */
     constructor({ title, revisionId }) {
-        if (!title || !revisionId) {
-            return Log.error(`Fail to initialize page instance: Missing page name or revision id.`);
-        }
         this.title = title;
         this.revisionId = revisionId;
+        this.isNewPage = !revisionId;
     }
 
     /**
@@ -61,6 +60,7 @@ class Page {
     async getTimestamp() {
         const { timestamp } = await Wiki.getPageInfo({
             revisionId: this.revisionId,
+            title: this.title,
         });
         this.timestamp = timestamp;
     }
@@ -97,11 +97,23 @@ class Page {
      * @param {*} config
      */
     async edit(payload) {
+        if (!this.editToken) {
+            Log.error("fail_to_get_edittoken");
+            return;
+        }
+        if (!this.timestamp && !this.isNewPage) {
+            // 如果不是创建新页面 又没有基准时间戳 则有可能造成编辑覆盖 保险起见直接拒绝
+            Log.error("fail_to_get_timestamp");
+            return;
+        }
         return Wiki.edit({
             title: this.title,
             editToken: this.editToken,
-            timestamp: this.timestamp,
+            ...(this.timestamp ? { timestamp: this.timestamp } : {}),
             ...payload,
+            additionalConfig: {
+                ...(this.isNewPage ? { createonly: this.isNewPage } : {}),
+            },
         });
     }
 }

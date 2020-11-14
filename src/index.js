@@ -15,6 +15,7 @@ import wiki from "./services/wiki";
 $(document).ready(async () => {
     const version = "3.0.0";
     const Pages = {};
+    const isNewPage = $(".noarticletext").length > 0 && Constants.articleId === 0;
 
     const getPage = async ({ revisionId, title }) => {
         if (Pages[revisionId]) {
@@ -46,6 +47,7 @@ $(document).ready(async () => {
 
     // Initialize current page
     window.Pages = Pages;
+    window.Constants = Constants;
     const currentPageName = Constants.currentPageName;
     const revisionId = Constants.revisionId;
     const currentPage = await getPage({
@@ -86,11 +88,20 @@ $(document).ready(async () => {
         const sectionContent = await page.getWikiText({
             section: sectionNumber,
         });
+        const isEditHistoryRevision =
+            targetPageName === currentPageName &&
+            Constants.latestRevisionId !== Constants.revisionId;
         clearTimeout(timer);
         Notification.empty();
+
+        if (isEditHistoryRevision) {
+            Notification.warning(i18n.translate("history_edit_warning"));
+        }
         UI.showQuickEditPanel({
-            title: i18n.translate("quickedit_topbtn"),
-            content: sectionContent,
+            title: `${i18n.translate("quickedit_topbtn")}${
+                isEditHistoryRevision ? i18n.translate("history_edit_warning") : ""
+            }`,
+            content: isNewPage ? i18n.translate("create_page_tip") : sectionContent,
             summary,
             onBack: UI.hideQuickEditPanel,
             onParse: (wikiText) => {

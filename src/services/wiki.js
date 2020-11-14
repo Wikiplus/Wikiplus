@@ -44,7 +44,9 @@ class Wiki {
                 rvprop: "timestamp|ids",
                 format: "json",
             };
-            if (title) {
+            if (revisionId) {
+                params.revids = revisionId;
+            } else if (title) {
                 if (this.pageInfoCache[title]) {
                     // Hit cache
                     return {
@@ -54,15 +56,12 @@ class Wiki {
                 }
                 params.titles = title;
             }
-            if (revisionId) {
-                params.revids = revisionId;
-            }
             const response = await requests.get(params);
             if (response.query && response.query.pages) {
                 if (Object.keys(response.query.pages)[0] === "-1") {
                     // 不存在这一页面
                     // Page not found.
-                    return Log.error("fail_to_get_edittoken");
+                    return {};
                 }
                 const pageInfo =
                     response.query.pages[Object.keys(response.query.pages)[0]].revisions[0];
@@ -126,7 +125,7 @@ class Wiki {
     /**
      * 编辑页面
      */
-    async edit({ title, content, editToken, timestamp, config = {} } = {}) {
+    async edit({ title, content, editToken, timestamp, config = {}, additionalConfig = {} } = {}) {
         try {
             const response = await requests.post({
                 action: "edit",
@@ -134,8 +133,9 @@ class Wiki {
                 text: content,
                 title: title,
                 token: editToken,
-                basetimestamp: timestamp,
+                ...(timestamp ? { basetimestamp: timestamp } : {}),
                 ...config,
+                ...additionalConfig,
             });
             if (response.edit) {
                 if (response.edit.result === "Success") {

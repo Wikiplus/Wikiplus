@@ -179,6 +179,10 @@ class UI {
             this.hideQuickEditPanel();
         }
         this.quickEditPanelVisible = true;
+        // 防止手滑关闭页面
+        window.onclose = window.onbeforeunload = function () {
+            return `${i18n.translate("onclose_confirm")}`;
+        };
         const isNewPage = $(".noarticletext").length > 0;
         // DOM 定义开始
         const backBtn = $("<span>")
