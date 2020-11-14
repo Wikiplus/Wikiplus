@@ -14,11 +14,13 @@ class Requests {
     }
     static async post(payload) {
         const url = new URL(Requests.base);
+        const form = new FormData();
+        Object.entries(payload).forEach(([key, value]) => {
+            form.append(key, value);
+        });
         const response = await fetch(url, {
             method: "POST",
-            body: Object.keys(payload)
-                .map((key) => key + "=" + encodeURIComponent(payload[key]))
-                .join("&"),
+            body: form,
             credentials: "same-origin",
         });
         return await response.json();

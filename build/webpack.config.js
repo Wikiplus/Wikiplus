@@ -7,7 +7,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "../"),
         filename: "Main.development.js",
-        sourceMapFilename: "[file].map"
+        sourceMapFilename: "[file].map",
     },
     module: {
         rules: [
@@ -17,7 +17,15 @@ module.exports = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ["@babel/preset-env"],
+                        presets: [
+                            [
+                                "@babel/preset-env",
+                                {
+                                    useBuiltIns: "usage",
+                                    corejs: "3",
+                                },
+                            ],
+                        ],
                     },
                 },
             },
@@ -27,7 +35,7 @@ module.exports = {
         extensions: ["*", ".js"],
     },
     mode: "development",
-    devtool: 'source-map',
+    devtool: "source-map",
     optimization: {
         usedExports: true,
     },

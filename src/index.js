@@ -5,9 +5,12 @@
 import Page from "./core/page";
 import UI from "./core/ui";
 import Wiki from "./services/wiki";
+import Settings from "./utils/settings";
 import Log from "./utils/log";
 import Constants from "./utils/constants";
 import Notification from "./core/notification";
+import i18n from "./utils/i18n";
+import wiki from "./services/wiki";
 
 $(document).ready(async () => {
     const version = "3.0.0";
@@ -67,6 +70,33 @@ $(document).ready(async () => {
                 ? Constants.revisionId
                 : await Wiki.getLatestRevisionIdForPage(targetPageName);
         const page = await getPage({ revisionId, title: targetPageName });
+        const customSummary = Settings.getSetting("defaultSummary", {
+            sectionName,
+            sectionNumber,
+            sectionTargetName: targetPageName,
+        });
+        const summary =
+            customSummary ||
+            (sectionName
+                ? `/* ${sectionName} */ ${i18n.translate("default_summary_suffix")}`
+                : i18n.translate("default_summary_suffix"));
+        const timer = setTimeout(() => {
+            Notification.success(i18n.translate("loading"));
+        }, 200);
+        const sectionContent = await page.getWikiText({
+            section: sectionNumber,
+        });
+        clearTimeout(timer);
+        Notification.empty();
+        UI.showQuickEditPanel({
+            title: i18n.translate("quickedit_topbtn"),
+            content: sectionContent,
+            summary,
+            onBack: UI.hideQuickEditPanel,
+            onParse: (wikiText) => {
+                return page.parseWikiText(wikiText);
+            },
+        });
     };
     UI.loadCSS(`https://wikiplus-app.com/wikiplus.css`);
     UI.insertTopQuickEditEntry(handleQuickEditButtonClicked);

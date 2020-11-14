@@ -5,6 +5,7 @@ import Log from "../utils/log";
 
 class UI {
     quickEditPanelVisible = false;
+    scrollTop = 0;
 
     /**
      * 加载CSS
@@ -18,6 +19,68 @@ class UI {
                 href: `${url}`,
             })
             .appendTo($("head"));
+    }
+
+    /**
+     * 创建居中对话框
+     * @param {string} title 窗口标题
+     * @param {string | JQuery<HTMLElement>} content 内容
+     * @param {*} width 宽度
+     * @param {*} callback 回调函数
+     */
+    createDialogBox(title = "Wikiplus", content = "", width = 600, callback = () => {}) {
+        if ($(".Wikiplus-InterBox").length > 0) {
+            $(".Wikiplus-InterBox").each(function () {
+                $(this).remove();
+            });
+        }
+        const clientWidth = document.body.clientWidth;
+        const clientHeight = document.body.clientHeight;
+        const dialogWidth = Math.min(clientWidth, width);
+        const dialogBox = $("<div>")
+            .addClass("Wikiplus-InterBox")
+            .css({
+                "margin-left": clientWidth / 2 - dialogWidth / 2,
+                top: $(document).scrollTop() + clientHeight * 0.2,
+                display: "none",
+            })
+            .append($("<div>").addClass("Wikiplus-InterBox-Header").html(title))
+            .append($("<div>").addClass("Wikiplus-InterBox-Content").append(content))
+            .append($("<span>").text("×").addClass("Wikiplus-InterBox-Close"));
+        $("body").append(dialogBox);
+        $(".Wikiplus-InterBox").width(dialogWidth);
+        $(".Wikiplus-InterBox-Close").on("click", function () {
+            $(this)
+                .parent()
+                .fadeOut("fast", function () {
+                    window.onclose = window.onbeforeunload = undefined; // 取消页面关闭确认
+                    $(this).remove();
+                });
+        });
+        //拖曳
+        const bindDragging = function (element) {
+            element.mousedown(function (e) {
+                var baseX = e.clientX;
+                var baseY = e.clientY;
+                var baseOffsetX = element.parent().offset().left;
+                var baseOffsetY = element.parent().offset().top;
+                $(document).on("mousemove", function (e) {
+                    element.parent().css({
+                        "margin-left": baseOffsetX + e.clientX - baseX,
+                        top: baseOffsetY + e.clientY - baseY,
+                    });
+                });
+                $(document).on("mouseup", function () {
+                    element.unbind("mousedown");
+                    $(document).off("mousemove");
+                    $(document).off("mouseup");
+                    bindDragging(element);
+                });
+            });
+        };
+        bindDragging($(".Wikiplus-InterBox-Header"));
+        $(".Wikiplus-InterBox").fadeIn(500);
+        callback();
     }
 
     /**
@@ -43,7 +106,7 @@ class UI {
      * 插入顶部快速编辑按钮
      * Insert QuickEdit button besides page edit button.
      */
-    insertTopQuickEditEntry(clickHandler) {
+    insertTopQuickEditEntry(onClick) {
         const topBtn = $("<li>")
             .attr("id", "Wikiplus-Edit-TopBtn")
             .append(
@@ -54,7 +117,7 @@ class UI {
                 )
             )
             .on("click", () => {
-                clickHandler({
+                onClick({
                     sectionNumber: -1,
                     targetPageName: Constants.currentPageName,
                 });
@@ -68,7 +131,7 @@ class UI {
      * 插入段落快速编辑按钮
      * Insert QuickEdit buttons for each section.
      */
-    insertSectionQuickEditEntries(clickHandler) {
+    insertSectionQuickEditEntries(onClick) {
         const sectionBtn = $("<span>")
             .append($("<span>").addClass("mw-editsection-divider").text(" | "))
             .append(
@@ -89,7 +152,7 @@ class UI {
                 const sectionName = $.trim(cloneNode.text());
                 const _sectionBtn = sectionBtn.clone();
                 _sectionBtn.find(".Wikiplus-Edit-SectionBtn").on("click", () => {
-                    clickHandler({
+                    onClick({
                         sectionNumber,
                         sectionName,
                         targetPageName: sectionTargetName,
@@ -102,9 +165,16 @@ class UI {
         });
     }
 
-    showQuickEditPanel() {
+    showQuickEditPanel({
+        title = "",
+        content = "",
+        summary = "",
+        onBack = () => {},
+        onParse = () => {},
+    }) {
+        this.scrollTop = $(document).scrollTop();
         if (this.quickEditPanelVisible) {
-            //
+            this.hideQuickEditPanel();
         }
         this.quickEditPanelVisible = true;
         const isNewPage = $(".noarticletext").length > 0;
@@ -152,6 +222,39 @@ class UI {
             editSubmitBtn,
             previewSubmitBtn
         );
+        this.createDialogBox(title, editBody, 1000, () => {
+            $("#Wikiplus-Quickedit").text(content);
+            $("#Wikiplus-Quickedit-Summary-Input").val(summary);
+        });
+        const preloadBanner = $("<div>")
+            .addClass("Wikiplus-Banner")
+            .text(`${i18n.translate("loading_preview")}`);
+        $("#Wikiplus-Quickedit-Preview-Submit").on("click", async function () {
+            const wikiText = $("#Wikiplus-Quickedit").val();
+            $(this).attr("disabled", "disabled");
+            $("#Wikiplus-Quickedit-Preview-Output").fadeOut(100, function () {
+                $("#Wikiplus-Quickedit-Preview-Output").html("").append(preloadBanner);
+                $("#Wikiplus-Quickedit-Preview-Output").fadeIn(100);
+            });
+            $("html, body").animate({ scrollTop: this.scrollTop }, 200); //返回顶部
+            const result = await onParse(wikiText);
+            $("#Wikiplus-Quickedit-Preview-Output").fadeOut("100", function () {
+                $("#Wikiplus-Quickedit-Preview-Output").html(
+                    '<hr><div class="mw-body-content">' + result + "</div><hr>"
+                );
+                $("#Wikiplus-Quickedit-Preview-Output").fadeIn("100");
+                $("#Wikiplus-Quickedit-Preview-Submit").prop("disabled", false);
+            });
+        });
+        $("#Wikiplus-Quickedit-Back").on("click", onBack);
+    }
+
+    hideQuickEditPanel() {
+        this.quickEditPanelVisible = false;
+        $(".Wikiplus-InterBox").fadeOut("fast", function () {
+            window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
+            $(this).remove();
+        });
     }
 }
 

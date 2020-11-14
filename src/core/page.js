@@ -9,6 +9,8 @@ class Page {
 
     inited = false;
 
+    sectionCache = {};
+
     /**
      * @param {params.title} 页面标题 Page Name (optional)
      * @param {params.revisionId} 页面修订编号 Revision Id
@@ -70,10 +72,16 @@ class Page {
      * @param {string} config.revisionId
      */
     async getWikiText({ section = "" } = {}) {
-        return Wiki.getWikiText({
-            section,
+        const sec = section === -1 ? "" : section;
+        if (this.sectionCache[sec]) {
+            return this.sectionCache[sec];
+        }
+        const wikiText = await Wiki.getWikiText({
+            section: sec,
             revisionId: this.revisionId,
         });
+        this.sectionCache[sec] = wikiText;
+        return wikiText;
     }
 
     /**
