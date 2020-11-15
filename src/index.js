@@ -127,4 +127,5 @@ $(document).ready(async () => {
     UI.loadCSS(`https://wikiplus-app.com/wikiplus.css`);
     UI.insertTopQuickEditEntry(handleQuickEditButtonClicked);
     UI.insertSectionQuickEditEntries(handleQuickEditButtonClicked);
+    UI.insertLinkEditEntries(handleQuickEditButtonClicked);
 });

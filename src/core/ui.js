@@ -131,7 +131,7 @@ class UI {
      * 插入段落快速编辑按钮
      * Insert QuickEdit buttons for each section.
      */
-    insertSectionQuickEditEntries(onClick) {
+    insertSectionQuickEditEntries(onClick = () => {}) {
         const sectionBtn = $("<span>")
             .append($("<span>").addClass("mw-editsection-divider").text(" | "))
             .append(
@@ -161,6 +161,42 @@ class UI {
                 $(this).find(".mw-editsection-bracket").last().before(_sectionBtn);
             } catch (e) {
                 Log.error("fail_to_init_quickedit");
+            }
+        });
+    }
+
+    /**
+     * 插入任意链接编辑入口
+     * @param {*} onClick
+     */
+    insertLinkEditEntries(onClick = () => {}) {
+        $("#mw-content-text a.external").each(function (i) {
+            const url = $(this).attr("href");
+            const reg = /(([^?&=]+)(?:=([^?&=]*))*)/g;
+            const params = {};
+            let match;
+            while ((match = reg.exec(url))) {
+                params[match[2]] = decodeURIComponent(match[3]);
+            }
+            if (
+                params.action === "edit" &&
+                params.title !== undefined &&
+                params.section !== "new"
+            ) {
+                $(this).after(
+                    $("<a>")
+                        .attr({
+                            href: "javascript:void(0)",
+                            class: "Wikiplus-Edit-EveryWhereBtn",
+                        })
+                        .text(`(${i18n.translate("quickedit_sectionbtn")})`)
+                        .on("click", () => {
+                            onClick({
+                                targetPageName: params.title,
+                                sectionNumber: params.section ?? -1,
+                            });
+                        })
+                );
             }
         });
     }
