@@ -39,17 +39,17 @@ class I18n {
             } else {
                 // try update language verison
                 this.loadLanguage(this.language);
+                if (key in this.i18nData["en-us"]) {
+                    // Fallback to English
+                    result = this.i18nData["en-us"][key];
+                } else {
+                    result = key;
+                }
             }
         } else {
             this.loadLanguage(this.language);
         }
 
-        if (key in this.i18nData["en-us"]) {
-            // Fallback to English
-            result = this.i18nData["en-us"][key];
-        } else {
-            result = key;
-        }
         if (placeholders.length > 0) {
             placeholders.forEach((placeholder, index) => {
                 result = result.replace(`$${index + 1}`, placeholder);

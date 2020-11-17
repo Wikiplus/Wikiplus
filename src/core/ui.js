@@ -2,6 +2,7 @@ import Constants from "../utils/constants";
 import Notification from "./notification";
 import i18n from "../utils/i18n";
 import Log from "../utils/log";
+import { parseQuery } from "../utils/helpers";
 
 class UI {
     quickEditPanelVisible = false;
@@ -172,12 +173,7 @@ class UI {
     insertLinkEditEntries(onClick = () => {}) {
         $("#mw-content-text a.external").each(function (i) {
             const url = $(this).attr("href");
-            const reg = /(([^?&=]+)(?:=([^?&=]*))*)/g;
-            const params = {};
-            let match;
-            while ((match = reg.exec(url))) {
-                params[match[2]] = decodeURIComponent(match[3]);
-            }
+            const params = parseQuery(url);
             if (
                 params.action === "edit" &&
                 params.title !== undefined &&
@@ -300,9 +296,8 @@ class UI {
             const payload = {
                 summary: $("#Wikiplus-Quickedit-Summary-Input").val(),
                 content: $("#Wikiplus-Quickedit").val(),
+                isMinorEdit: $("#Wikiplus-Quickedit-MinorEdit").is(":checked"),
             };
-            // 是否为小编辑
-            payload.isMinorEdit = $("#Wikiplus-Quickedit-MinorEdit").is(":checked");
             // 准备编辑 禁用按钮 执行动画
             $(
                 "#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit"
@@ -320,7 +315,7 @@ class UI {
                     .css("background", "rgba(6, 239, 92, 0.44)");
                 $("#Wikiplus-Quickedit-Preview-Output")
                     .find(".Wikiplus-Banner")
-                    .text(`${i18n.translate("edit_success")}`.replace(/\$1/gi, useTime.toString()));
+                    .text(`${i18n.translate("edit_success", [useTime.toString()])}`);
                 window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                 setTimeout(function () {
                     location.reload();
