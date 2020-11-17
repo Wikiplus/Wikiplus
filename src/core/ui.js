@@ -82,6 +82,7 @@ class UI {
         bindDragging($(".Wikiplus-InterBox-Header"));
         $(".Wikiplus-InterBox").fadeIn(500);
         callback();
+        return dialogBox;
     }
 
     /**
@@ -101,6 +102,17 @@ class UI {
         } else {
             Log.error("cant_add_funcbtn");
         }
+    }
+
+    /**
+     * 插入快速重定向按钮
+     * @param {*} onClick
+     */
+    insertSimpleRedirectButton(onClick = () => {}) {
+        this.addFunctionButton(i18n.translate("redirect_from"), "Wikiplus-SR-Intro").on(
+            "click",
+            onClick
+        );
     }
 
     /**
@@ -338,6 +350,43 @@ class UI {
             window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
             $(this).remove();
         });
+    }
+
+    /**
+     * 显示快速重定向弹窗
+     * @param {*}
+     */
+    showSimpleRedirectPanel({ onEdit = () => {} } = {}) {
+        const input = $("<input>").addClass("Wikiplus-InterBox-Input");
+        const applyBtn = $("<div>")
+            .addClass("Wikiplus-InterBox-Btn")
+            .attr("id", "Wikiplus-SR-Apply")
+            .text(i18n.translate("submit"));
+        const cancelBtn = $("<div>")
+            .addClass("Wikiplus-InterBox-Btn")
+            .attr("id", "Wikiplus-SR-Cancel")
+            .text(i18n.translate("cancel"));
+        const continueBtn = $("<div>")
+            .addClass("Wikiplus-InterBox-Btn")
+            .attr("id", "Wikiplus-SR-Continue")
+            .text(i18n.translate("continue"));
+        const content = $("<div>")
+            .append(input)
+            .append($("<hr>"))
+            .append(applyBtn)
+            .append(cancelBtn); //拼接
+        const dialog = this.createDialogBox(i18n.translate("redirect_desc"), content, 600);
+        cancelBtn.on("click", () => {
+            this.hideSimpleRedirectPanel(dialog);
+        });
+    }
+
+    /**
+     * 隐藏快速重定向弹窗
+     * @param {*} dialog
+     */
+    hideSimpleRedirectPanel(dialog) {
+        dialog.find(".Wikiplus-InterBox-Close").trigger("click");
     }
 }
 
