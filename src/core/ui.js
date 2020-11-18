@@ -100,7 +100,7 @@ class UI {
             $("#p-cactions ul").append(button);
             return $("#p-cactions ul").find("li").last();
         } else {
-            Log.error("cant_add_funcbtn");
+            Log.info(i18n.translate("cant_add_funcbtn"));
         }
     }
 
@@ -109,10 +109,10 @@ class UI {
      * @param {*} onClick
      */
     insertSimpleRedirectButton(onClick = () => {}) {
-        this.addFunctionButton(i18n.translate("redirect_from"), "Wikiplus-SR-Intro").on(
-            "click",
-            onClick
-        );
+        const button = this.addFunctionButton(i18n.translate("redirect_from"), "Wikiplus-SR-Intro");
+        if (button) {
+            button.on("click", onClick);
+        }
     }
 
     /**
@@ -356,7 +356,7 @@ class UI {
      * 显示快速重定向弹窗
      * @param {*}
      */
-    showSimpleRedirectPanel({ onEdit = () => {} } = {}) {
+    showSimpleRedirectPanel({ onEdit = () => {}, onSuccess = () => {} } = {}) {
         const input = $("<input>").addClass("Wikiplus-InterBox-Input");
         const applyBtn = $("<div>")
             .addClass("Wikiplus-InterBox-Btn")
@@ -376,6 +376,52 @@ class UI {
             .append(applyBtn)
             .append(cancelBtn); //拼接
         const dialog = this.createDialogBox(i18n.translate("redirect_desc"), content, 600);
+        applyBtn.on("click", async () => {
+            const title = $(".Wikiplus-InterBox-Input").val();
+            $(".Wikiplus-InterBox-Content").html(
+                `<div class="Wikiplus-Banner">${i18n.translate("submitting_edit")}</div>`
+            );
+            try {
+                await onEdit({
+                    title,
+                    forceOverwrite: false,
+                });
+                $(".Wikiplus-Banner").text(i18n.translate("redirect_saved"));
+                this.hideSimpleRedirectPanel(dialog);
+                onSuccess({ title });
+            } catch (e) {
+                $(".Wikiplus-Banner").css("background", "rgba(218, 142, 167, 0.65)");
+                $(".Wikiplus-Banner").text(e.message);
+                if (e.code === "articleexists") {
+                    $(".Wikiplus-InterBox-Content")
+                        .append($("<hr>"))
+                        .append(continueBtn)
+                        .append(cancelBtn);
+                    cancelBtn.on("click", () => {
+                        this.hideSimpleRedirectPanel(dialog);
+                    });
+                    continueBtn.on("click", async () => {
+                        $(".Wikiplus-InterBox-Content").html(
+                            `<div class="Wikiplus-Banner">${i18n.translate(
+                                "submitting_edit"
+                            )}</div>`
+                        );
+                        try {
+                            await onEdit({
+                                title,
+                                forceOverwrite: true,
+                            });
+                            $(".Wikiplus-Banner").text(i18n.translate("redirect_saved"));
+                            this.hideSimpleRedirectPanel(dialog);
+                            onSuccess({ title });
+                        } catch (e) {
+                            $(".Wikiplus-Banner").css("background", "rgba(218, 142, 167, 0.65)");
+                            $(".Wikiplus-Banner").text(e.message);
+                        }
+                    });
+                }
+            }
+        });
         cancelBtn.on("click", () => {
             this.hideSimpleRedirectPanel(dialog);
         });
@@ -385,7 +431,7 @@ class UI {
      * 隐藏快速重定向弹窗
      * @param {*} dialog
      */
-    hideSimpleRedirectPanel(dialog) {
+    hideSimpleRedirectPanel(dialog = $("body")) {
         dialog.find(".Wikiplus-InterBox-Close").trigger("click");
     }
 }

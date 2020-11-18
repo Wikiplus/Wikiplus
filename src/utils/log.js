@@ -1,5 +1,12 @@
 import i18n from "./i18n";
 
+class WikiplusError extends Error {
+    constructor(message, code) {
+        super(message);
+        this.code = code;
+    }
+}
+
 class Log {
     static debug(message = "") {
         console.debug(`[Wikiplus-DEBUG] ${message}`);
@@ -16,7 +23,7 @@ class Log {
             });
         }
         console.error(`[Wikiplus-ERROR] ${template}`);
-        throw new Error(`${template}`);
+        throw new WikiplusError(`${template}`, errorCode);
     }
 }
 

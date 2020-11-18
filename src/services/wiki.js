@@ -126,8 +126,9 @@ class Wiki {
      * 编辑页面
      */
     async edit({ title, content, editToken, timestamp, config = {}, additionalConfig = {} } = {}) {
+        let response;
         try {
-            const response = await requests.post({
+            response = await requests.post({
                 action: "edit",
                 format: "json",
                 text: content,
@@ -137,33 +138,33 @@ class Wiki {
                 ...config,
                 ...additionalConfig,
             });
-            if (response.edit) {
-                if (response.edit.result === "Success") {
-                    return true;
-                } else {
-                    if (response.edit.code) {
-                        // Abuse Filter
-                        throw new Error(`
-                            ${i18n.translate("hit_abusefilter")}:${response.data.info.replace(
-                            "/Hit AbuseFilter: /ig",
-                            ""
-                        )}
-                            <br>
-                            <div style="font-size: smaller;">${response.edit.warning}</div>
-                        `);
-                    } else {
-                        Log.error("unknown_edit_error");
-                    }
-                }
-            } else if (response.error && response.error.code) {
-                Log.error("unknown_edit_error_message", [response.error.code]);
-            } else if (response.code) {
-                Log.error("unknown_edit_error_message", [response.code]);
-            } else {
-                Log.error("unknown_edit_error");
-            }
         } catch (e) {
             Log.error("network_edit_error");
+        }
+        if (response.edit) {
+            if (response.edit.result === "Success") {
+                return true;
+            } else {
+                if (response.edit.code) {
+                    // Abuse Filter
+                    throw new Error(`
+                        ${i18n.translate("hit_abusefilter")}:${response.data.info.replace(
+                        "/Hit AbuseFilter: /ig",
+                        ""
+                    )}
+                        <br>
+                        <div style="font-size: smaller;">${response.edit.warning}</div>
+                    `);
+                } else {
+                    Log.error("unknown_edit_error");
+                }
+            }
+        } else if (response.error && response.error.code) {
+            Log.error(response.error.code);
+        } else if (response.code) {
+            Log.error(response.code);
+        } else {
+            Log.error("unknown_edit_error");
         }
     }
 

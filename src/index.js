@@ -126,7 +126,25 @@ $(document).ready(async () => {
     };
 
     const handleSimpleRedirectButtonClicked = async () => {
-        UI.showSimpleRedirectPanel();
+        UI.showSimpleRedirectPanel({
+            onEdit: async ({ title, forceOverwrite = false }) => {
+                const page = await getPage({ title });
+                const currentPageName = Constants.currentPageName;
+                const payload = {
+                    content: `#REDIRECT [[${currentPageName}]]`,
+                    config: {
+                        summary: i18n.translate("redirect_from_summary", [title, currentPageName]),
+                    },
+                };
+                if (!forceOverwrite) {
+                    payload.config.createonly = "true";
+                }
+                await page.edit(payload);
+            },
+            onSuccess: ({ title }) => {
+                location.href = Constants.articlePath.replace(/\$1/gi, title);
+            },
+        });
     };
 
     UI.loadCSS(`https://wikiplus-app.com/wikiplus.css`);

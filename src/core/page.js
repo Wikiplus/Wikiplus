@@ -58,11 +58,15 @@ class Page {
      * Get Base Timestamp
      */
     async getTimestamp() {
-        const { timestamp } = await Wiki.getPageInfo({
+        const { timestamp, revisionId } = await Wiki.getPageInfo({
             revisionId: this.revisionId,
             title: this.title,
         });
         this.timestamp = timestamp;
+        if (revisionId) {
+            this.revisionId = revisionId;
+            this.isNewPage = false;
+        }
     }
 
     /**

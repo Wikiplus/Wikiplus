@@ -5,6 +5,9 @@ class Constants {
     get articleId() {
         return window.mw.config.get("wgArticleId");
     }
+    get articlePath() {
+        return window.mw.config.get("wgArticlePath");
+    }
     get revisionId() {
         return window.mw.config.get("wgRevisionId");
     }
