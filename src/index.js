@@ -16,6 +16,12 @@ $(document).ready(async () => {
     const Pages = {};
     const isNewPage = $(".noarticletext").length > 0 && Constants.articleId === 0;
 
+    /**
+     * Get page instance.
+     * @param {*} params
+     * @param {number} params.revisionId 页面修订版本号
+     * @param {string} params.title 页面标题
+     */
     const getPage = async ({ revisionId, title }) => {
         if (Pages[revisionId]) {
             return Pages[revisionId];
@@ -30,12 +36,13 @@ $(document).ready(async () => {
     };
 
     Log.info(`Wikiplus now loading. Version: ${version}`);
+
     if (!window.mw) {
         console.log("页面Javascript载入不完全或这不是一个Mediawiki站点");
         return;
     }
     if (!Constants.userGroups.includes("autoconfirmed")) {
-        Log.info("not_autoconfirmed_user");
+        Log.info(i18n.translate("not_autoconfirmed_user"));
         return;
     }
 
@@ -44,15 +51,15 @@ $(document).ready(async () => {
         return;
     }
 
-    // Initialize current page
+    // Initialize current page 默认初始化当前页面
     window.Pages = Pages;
-    window.Constants = Constants;
     const currentPageName = Constants.currentPageName;
     const revisionId = Constants.revisionId;
     const currentPage = await getPage({
         revisionId,
         title: currentPageName,
     });
+
     const handleQuickEditButtonClicked = async ({
         sectionNumber,
         sectionName,
