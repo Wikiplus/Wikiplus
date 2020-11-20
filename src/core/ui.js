@@ -116,6 +116,20 @@ class UI {
     }
 
     /**
+     * 插入设置面板按钮
+     * @param {*} onClick
+     */
+    insertSettingsPanelButton(onClick = () => {}) {
+        const button = this.addFunctionButton(
+            i18n.translate("wikiplus_settings"),
+            "Wikiplus-Settings-Intro"
+        );
+        if (button) {
+            button.on("click", onClick);
+        }
+    }
+
+    /**
      * 插入顶部快速编辑按钮
      * Insert QuickEdit button besides page edit button.
      */
@@ -433,6 +447,79 @@ class UI {
      */
     hideSimpleRedirectPanel(dialog = $("body")) {
         dialog.find(".Wikiplus-InterBox-Close").trigger("click");
+    }
+
+    showSettingsPanel({ onSubmit = () => {} } = {}) {
+        const input = $("<textarea>").attr("id", "Wikiplus-Setting-Input").attr("rows", "10");
+        const applyBtn = $("<div>")
+            .addClass("Wikiplus-InterBox-Btn")
+            .attr("id", "Wikiplus-Setting-Apply")
+            .text(i18n.translate("submit"));
+        const cancelBtn = $("<div>")
+            .addClass("Wikiplus-InterBox-Btn")
+            .attr("id", "Wikiplus-Setting-Cancel")
+            .text(i18n.translate("cancel"));
+        const content = $("<div>")
+            .append(input)
+            .append($("<hr>"))
+            .append(applyBtn)
+            .append(cancelBtn); //拼接
+
+        const dialog = this.createDialogBox(
+            i18n.translate("wikiplus_settings_desc"),
+            content,
+            600,
+            function () {
+                if (localStorage.Wikiplus_Settings) {
+                    $("#Wikiplus-Setting-Input").val(localStorage.Wikiplus_Settings);
+                    try {
+                        const settings = JSON.parse(localStorage.Wikiplus_Settings);
+                        $("#Wikiplus-Setting-Input").val(JSON.stringify(settings, null, 2));
+                    } catch (e) {
+                        // ignore
+                    }
+                } else {
+                    $("#Wikiplus-Setting-Input").attr(
+                        "placeholder",
+                        i18n.translate("wikiplus_settings_placeholder")
+                    );
+                }
+            }
+        );
+        applyBtn.on("click", () => {
+            const savedBanner = $("<div>")
+                .addClass("Wikiplus-Banner")
+                .text(i18n.translate("wikiplus_settings_saved"));
+            const settings = $("#Wikiplus-Setting-Input").val();
+            try {
+                onSubmit({ settings });
+                $(".Wikiplus-InterBox-Content").html("").append(savedBanner);
+                this.hideSettingsPanel(dialog);
+            } catch (e) {
+                Notification.error(i18n.translate("wikiplus_settings_grammar_error"));
+            }
+        });
+        cancelBtn.on("click", () => {
+            this.hideSettingsPanel(dialog);
+        });
+    }
+
+    hideSettingsPanel(dialog = $("body")) {
+        dialog.find(".Wikiplus-InterBox-Close").trigger("click");
+    }
+
+    bindPreloadEvents(onPreload) {
+        $("#toc")
+            .children("ul")
+            .find("a")
+            .each(function (i) {
+                $(this).on("mouseover", function () {
+                    $(this).off("mouseover");
+                    onPreload({
+                        sectionNumber: i + 1,
+                    });
+                });
+            });
     }
 }
 

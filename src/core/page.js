@@ -84,6 +84,7 @@ class Page {
             section: sec,
             revisionId: this.revisionId,
         });
+        Log.info(`Wikitext of ${this.title}#${section} fetched.`);
         this.sectionCache[sec] = wikiText;
         return wikiText;
     }

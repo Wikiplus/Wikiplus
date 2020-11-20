@@ -4,13 +4,12 @@
  */
 import Page from "./core/page";
 import UI from "./core/ui";
+import Notification from "./core/notification";
 import Wiki from "./services/wiki";
 import Settings from "./utils/settings";
 import Log from "./utils/log";
 import Constants from "./utils/constants";
-import Notification from "./core/notification";
 import i18n from "./utils/i18n";
-import wiki from "./services/wiki";
 
 $(document).ready(async () => {
     const version = "3.0.0";
@@ -147,9 +146,26 @@ $(document).ready(async () => {
         });
     };
 
+    const handleSettingsButtonClicked = async () => {
+        UI.showSettingsPanel({
+            onSubmit: ({ settings }) => {
+                JSON.parse(settings);
+                localStorage.setItem("Wikiplus_Settings", settings);
+            },
+        });
+    };
+
+    const handlePreload = async ({ sectionNumber }) => {
+        await currentPage.getWikiText({
+            section: sectionNumber,
+        });
+    };
+
     UI.loadCSS(`https://wikiplus-app.com/wikiplus.css`);
     UI.insertTopQuickEditEntry(handleQuickEditButtonClicked);
     UI.insertSectionQuickEditEntries(handleQuickEditButtonClicked);
     UI.insertLinkEditEntries(handleQuickEditButtonClicked);
     UI.insertSimpleRedirectButton(handleSimpleRedirectButtonClicked);
+    UI.insertSettingsPanelButton(handleSettingsButtonClicked);
+    UI.bindPreloadEvents(handlePreload);
 });
