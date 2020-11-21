@@ -356,6 +356,21 @@ class UI {
                 ).prop("disabled", false);
             }
         });
+        //Ctrl+S提交 Ctrl+Shift+S小编辑
+        $("#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input,#Wikiplus-Quickedit-MinorEdit").on(
+            "keydown",
+            function (e) {
+                console.log(e);
+                if (e.ctrlKey && e.which == 83) {
+                    if (e.shiftKey) {
+                        $("#Wikiplus-Quickedit-MinorEdit").trigger("click");
+                    }
+                    $("#Wikiplus-Quickedit-Submit").trigger("click");
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+        );
     }
 
     hideQuickEditPanel() {
