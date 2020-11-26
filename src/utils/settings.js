@@ -1,19 +1,20 @@
 class Settings {
-    getSetting(key, object) {
-        var w = object;
+    getSetting(key, object = {}) {
+        const w = object;
+        let settings;
         try {
-            var settings = JSON.parse(localStorage.Wikiplus_Settings);
+            settings = JSON.parse(localStorage.Wikiplus_Settings);
         } catch (e) {
-            return localStorage.Wikiplus_Settings || "";
+            return;
         }
         try {
-            var _setting = new Function("return " + settings[key]);
-            if (typeof _setting == "function") {
+            const customSettingFunction = new Function("return " + settings[key]);
+            if (typeof customSettingFunction == "function") {
                 try {
-                    if (_setting()(w) === true) {
-                        return undefined;
+                    if (customSettingFunction()(w) === true) {
+                        return;
                     } else {
-                        return _setting()(w) || settings[key];
+                        return customSettingFunction()(w) || settings[key];
                     }
                 } catch (e) {
                     return settings[key];
@@ -23,9 +24,13 @@ class Settings {
             }
         } catch (e) {
             try {
-                return settings[key];
+                let result = settings[key];
+                for (const key of Object.keys(object)) {
+                    result = result.replace(`\${${key}}`, object[key]);
+                }
+                return result;
             } catch (e) {
-                return undefined;
+                return;
             }
         }
     }
