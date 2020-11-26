@@ -148,7 +148,7 @@ class Wiki {
                 if (response.edit.code) {
                     // Abuse Filter
                     throw new Error(`
-                        ${i18n.translate("hit_abusefilter")}:${response.data.info.replace(
+                        ${i18n.translate("hit_abusefilter")}:${response.edit.info.replace(
                         "/Hit AbuseFilter: /ig",
                         ""
                     )}
