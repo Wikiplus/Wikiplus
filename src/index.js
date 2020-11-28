@@ -128,6 +128,9 @@ $(document).ready(async () => {
                 }
                 await page.edit(editPayload);
             },
+            escExit:
+                Settings.getSetting("esc_to_exit_quickedit") === true ||
+                Settings.getSetting("esc_to_exit_quickedit") === "true",
         });
     };
 

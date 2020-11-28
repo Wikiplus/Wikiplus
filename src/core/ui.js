@@ -230,6 +230,7 @@ class UI {
         onBack = () => {},
         onParse = () => {},
         onEdit = () => {},
+        escExit = false,
     }) {
         const self = this;
         this.scrollTop = $(document).scrollTop();
@@ -371,6 +372,14 @@ class UI {
                 }
             }
         );
+        //Esc退出
+        if (escExit) {
+            $(document).on("keydown", function (e) {
+                if (e.which === 27) {
+                    $("#Wikiplus-Quickedit-Back").click();
+                }
+            });
+        }
     }
 
     hideQuickEditPanel() {
