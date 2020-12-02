@@ -2,6 +2,7 @@ import Constants from "../utils/constants";
 import Notification from "./notification";
 import i18n from "../utils/i18n";
 import Log from "../utils/log";
+import sleep from '../utils/sleep';
 import { parseQuery } from "../utils/helpers";
 
 class UI {
@@ -510,7 +511,7 @@ class UI {
                 }
             }
         );
-        applyBtn.on("click", () => {
+        applyBtn.on("click", async () => {
             const savedBanner = $("<div>")
                 .addClass("Wikiplus-Banner")
                 .text(i18n.translate("wikiplus_settings_saved"));
@@ -518,6 +519,7 @@ class UI {
             try {
                 onSubmit({ settings });
                 $(".Wikiplus-InterBox-Content").html("").append(savedBanner);
+                await sleep(1500);
                 this.hideSettingsPanel(dialog);
             } catch (e) {
                 Notification.error(i18n.translate("wikiplus_settings_grammar_error"));

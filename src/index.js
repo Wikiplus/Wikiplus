@@ -97,6 +97,11 @@ $(document).ready(async () => {
         const isEditHistoryRevision =
             targetPageName === currentPageName &&
             Constants.latestRevisionId !== Constants.revisionId;
+        const escToExit =
+            Settings.getSetting("esc_to_exit_quickedit") === true || // 兼容老设置key
+            Settings.getSetting("esc_to_exit_quickedit") === "true" ||
+            Settings.getSetting("escToExitQuickEdit") === true ||
+            Settings.getSetting("escToExitQuickEdit") === "true";
         clearTimeout(timer);
         Notification.empty();
 
@@ -128,9 +133,7 @@ $(document).ready(async () => {
                 }
                 await page.edit(editPayload);
             },
-            escExit:
-                Settings.getSetting("esc_to_exit_quickedit") === true ||
-                Settings.getSetting("esc_to_exit_quickedit") === "true",
+            escExit: escToExit,
         });
     };
 
