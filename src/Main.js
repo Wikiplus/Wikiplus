@@ -1403,7 +1403,12 @@ $(function () {
                     var reg = /(([^?&=]+)(?:=([^?&=]*))*)/g;
                     var params = {}, match;
                     while (match = reg.exec(url)) {
-                        params[match[2]] = decodeURIComponent(match[3]);
+                        try {
+                            params[match[2]] = decodeURIComponent(match[3]);
+                        } catch (e) {
+                            // cannot decode
+                            params[match[2]] = match[3];
+                        }
                     }
                     if (params.action === 'edit' && params.title !== undefined && params.section !== 'new') {
                         $(this).after($('<a>')
@@ -1677,7 +1682,7 @@ $(function () {
 
             }
             constructor() {
-                this.version = '2.3.0';
+                this.version = '2.3.1';
                 this.langVersion = '211';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
