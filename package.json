@@ -1,6 +1,6 @@
 {
     "name": "wikiplus",
-    "version": "2.0.1",
+    "version": "4.0.1",
     "homepage": "https://wikiplus-app.smartgslb.com/",
     "description": "A front-end jQuery-based Mediawiki plugin.",
     "scripts": {
