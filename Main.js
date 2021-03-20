@@ -1490,8 +1490,8 @@ $(function () {
                             $(this).remove();
                         });
                     }
-                    var clientWidth = document.body.clientWidth;
-                    var clientHeight = document.body.clientHeight;
+                    var clientWidth = window.innerWidth;
+                    var clientHeight = window.innerHeight;
                     var dialogWidth = Math.min(clientWidth, width);
                     var diglogBox = $('<div>').addClass('Wikiplus-InterBox').css({
                         'margin-left': clientWidth / 2 - dialogWidth / 2,
@@ -1731,7 +1731,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.3.1';
+                this.version = '2.3.2';
                 this.langVersion = '211';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
