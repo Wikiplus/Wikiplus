@@ -36,8 +36,8 @@ class UI {
                 $(this).remove();
             });
         }
-        const clientWidth = document.body.clientWidth;
-        const clientHeight = document.body.clientHeight;
+        const clientWidth = window.innerWidth;
+        const clientHeight = window.innerHeight;
         const dialogWidth = Math.min(clientWidth, width);
         const dialogBox = $("<div>")
             .addClass("Wikiplus-InterBox")

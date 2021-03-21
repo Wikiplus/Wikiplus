@@ -8,7 +8,11 @@ export function parseQuery(url) {
     const params = {};
     let match;
     while ((match = reg.exec(url))) {
-        params[match[2]] = decodeURIComponent(match[3]);
+        try {
+            params[match[2]] = decodeURIComponent(match[3]);
+        } catch {
+            params[match[2]] = match[3];
+        }
     }
     return params;
 }
