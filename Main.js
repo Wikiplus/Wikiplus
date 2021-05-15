@@ -1042,7 +1042,7 @@ $(function () {
                                 });
                                 if (mw.config.get('skin') === 'minerva') {
                                     mw.loader.using('mediawiki.util').done(function() {
-                                        mw.util.addCSS('.mw-parser-output .mw-editsection{display:flex;align-items:center}.mw-parser-output .section-heading>div{vertical-align:baseline}');
+                                        mw.util.addCSS('.mw-parser-output .mw-editsection{display:flex!important;align-items:center}.mw-parser-output .section-heading>div{vertical-align:baseline}');
                                     });
                                     $(this).append(_sectionBtn);
                                 } else {
