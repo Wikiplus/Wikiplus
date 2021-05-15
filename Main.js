@@ -1018,7 +1018,7 @@ $(function () {
                     } else {
                         throwError('fail_to_init_quickedit');
                     }
-                    if ($('.mw-editsection').length > 0 && !/meta\.wikimedia\.org/.test(location.host) && mw.config.get('skin') !== 'minerva') {
+                    if ($('.mw-editsection').length > 0 && !/meta\.wikimedia\.org/.test(location.host)) {
                         self.sectionMap = {};
                         //段落快速编辑按钮
                         var sectionBtn = mw.config.get('skin') === 'minerva' ? $('<span>').append($('<a>').addClass('Wikiplus-Edit-SectionBtn mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 edit-page mw-ui-icon-flush-right').css('margin-left', '0.75em').attr('href', 'javascript:void(0)').attr('title', i18n('quickedit_sectionbtn'))) : $('<span>').append($('<span>').addClass('mw-editsection-divider').text(' | ')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn')));
