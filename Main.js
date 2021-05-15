@@ -1041,8 +1041,9 @@ $(function () {
                                     target: sectionTargetName
                                 });
                                 if (mw.config.get('skin') === 'minerva') {
-                                    $('.mw-parser-output .section-heading>div').css('vertical-align', 'baseline');
-                                    $('.mw-parser-output .mw-editsection').css({ 'display': 'flex', 'align-items': 'center' });
+                                    mw.loader.using('mediawiki.util').done(function() {
+                                        mw.util.addCSS('.mw-parser-output .mw-editsection{display:flex;align-items:center}.mw-parser-output .section-heading>div{vertical-align:baseline}');
+                                    });
                                     $(this).append(_sectionBtn);
                                 } else {
                                     $(this).find('.mw-editsection-bracket').last().before(_sectionBtn);
