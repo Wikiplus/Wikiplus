@@ -4,6 +4,10 @@
 #Wikiplus-Quickedit-Summary-Input{
 	width: 300px;
 }
+.skin-minerva #Wikiplus-Quickedit-Summary-Input{
+	all:revert;
+	width: 300px;
+}
 .Wikiplus-Btn{
 	cursor: pointer;
 	position: relative;
@@ -93,6 +97,9 @@
 #Wikiplus-Quickedit{
 	width: 100%;
 	min-height: 500px;
+}
+.skin-minerva #Wikiplus-Quickedit-Submit,.skin-minerva #Wikiplus-Quickedit-Preview-Submit {
+	all: revert;
 }
 .Wikiplus-Banner{
 	background: rgba(193, 222, 214, 0.51);
