@@ -1041,6 +1041,7 @@ $(function () {
                                     target: sectionTargetName
                                 });
                                 if (mw.config.get('skin') === 'minerva') {
+                                    $('.mw-parser-output .section-heading>div').css('vertical-align', 'baseline');
                                     $('.mw-parser-output .mw-editsection').css({ 'display': 'flex', 'align-items': 'center' });
                                     $(this).append(_sectionBtn);
                                 } else {
