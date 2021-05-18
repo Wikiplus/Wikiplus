@@ -1688,7 +1688,7 @@ $(function () {
             constructor() {
                 this.version = '2.3.3';
                 this.langVersion = '212';
-                this.releaseNote = '修正一些问题';
+                this.releaseNote = '适配Minerva皮肤';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
@@ -1712,7 +1712,7 @@ $(function () {
                 if (this.version !== localStorage.Wikiplus_Version) {
                     localStorage.Wikiplus_Version = this.version;
                     this.notice.create.success(`Wikiplus ${this.version}`);
-                    this.notice.create.success(language === 'zh-cn' ? this.releaseNote : 'Minor bug fixes.'); // 避免给其他语言用户不必要的理解困难
+                    this.notice.create.success(language === 'zh-cn' ? this.releaseNote : 'Compatible with Minerva Skin'); // 避免给其他语言用户不必要的理解困难
                 }
                 if (i18nData[language] === undefined) {
                     loadLanguage(language);
