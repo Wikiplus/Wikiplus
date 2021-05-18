@@ -181,7 +181,7 @@ $(function () {
         "cross_page_edit": "编辑目标位于其他页面 正在获取基础信息",
         "cross_page_edit_submit": "基础信息获取成功 正在提交编辑",
         "cross_page_edit_error": "无法获得基础信息>.<",
-        "install_tip": "您是否允许Wikiplus采集非敏感数据用于改进Wikiplus及为当前Wiki：$1提供改进建议?",
+        "install_tip": "您是否允许Wikiplus采集非敏感数据用于改进Wikiplus及为当前Wiki：$1提供改进建议？",
         "accept": "接受",
         "decline": "拒绝",
         "install_finish": "Wikiplus安装完毕",
