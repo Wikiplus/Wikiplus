@@ -12,15 +12,15 @@
 function MoeNotification() {
     var self = this;
     this.display = function (text = '喵~', type = 'success', callback = () => {}) {
-        $("#MoeNotification").append(
-            $("<div>").addClass('MoeNotification-notice')
+        $('#MoeNotification').append(
+            $('<div>').addClass('MoeNotification-notice')
                 .addClass('MoeNotification-notice-' + type)
                 .append('<span>' + text + '</span>')
         );
-        $("#MoeNotification").find('.MoeNotification-notice').last().fadeIn(300);
+        $('#MoeNotification').find('.MoeNotification-notice').last().fadeIn(300);
         self.bind();
         self.clear();
-        callback($("#MoeNotification").find('.MoeNotification-notice').last());
+        callback($('#MoeNotification').find('.MoeNotification-notice').last());
     }
     this.create = {
         success: function (text, callback) {
@@ -37,8 +37,8 @@ function MoeNotification() {
         }
     };
     this.clear = function () {
-        if ($(".MoeNotification-notice").length >= 10) {
-            $("#MoeNotification").children().first().fadeOut(150, function () {
+        if ($('.MoeNotification-notice').length >= 10) {
+            $('#MoeNotification').children().first().fadeOut(150, function () {
                 $(this).remove();
             });
             setTimeout(self.clear, 300);
@@ -48,7 +48,7 @@ function MoeNotification() {
         }
     }
     this.empty = function (f) {
-        $(".MoeNotification-notice").each(function (i) {
+        $('.MoeNotification-notice').each(function (i) {
             if ($.isFunction(f)) {
                 var object = this;
                 setTimeout(function () {
@@ -63,14 +63,14 @@ function MoeNotification() {
         })
     }
     this.bind = function () {
-        $(".MoeNotification-notice").mouseover(function () {
+        $('.MoeNotification-notice').mouseover(function () {
             self.slideLeft($(this));
         });
     }
     this.slideLeft = function (object, speed) {
         object.css('position', 'relative');
         object.animate({
-            left: "-200%",
+            left: '-200%',
         },
             speed || 150, function () {
                 $(this).fadeOut('fast', function () {
@@ -79,9 +79,9 @@ function MoeNotification() {
             });
     }
     this.init = function () {
-        $("body").append('<div id="MoeNotification"></div>');
+        $('body').append('<div id="MoeNotification"></div>');
     }
-    if (!($("#MoeNotification").length > 0)) {
+    if (!($('#MoeNotification').length > 0)) {
         this.init();
     }
 }
@@ -181,7 +181,7 @@ $(function () {
         "cross_page_edit": "编辑目标位于其他页面 正在获取基础信息",
         "cross_page_edit_submit": "基础信息获取成功 正在提交编辑",
         "cross_page_edit_error": "无法获得基础信息>.<",
-        "install_tip": "您是否允许Wikiplus采集非敏感数据用于改进Wikiplus及为当前Wiki：$1提供改进建议？",
+        "install_tip": "您是否允许Wikiplus采集非敏感数据用于改进Wikiplus及为当前Wiki：$1提供改进建议?",
         "accept": "接受",
         "decline": "拒绝",
         "install_finish": "Wikiplus安装完毕",
@@ -716,8 +716,8 @@ $(function () {
                                     //前端拿不到Token 尝试通过API
                                     $.ajax({
                                         url: self.API,
-                                        type: "GET",
-                                        dataType: "json",
+                                        type: 'GET',
+                                        dataType: 'json',
                                         data: {
                                             'action': 'query',
                                             'meta': 'tokens',
@@ -886,8 +886,8 @@ $(function () {
             callback.fail = callback.fail || new Function();
             $.ajax({
                 url: location.protocol + '//' + location.host + mw.config.get('wgScriptPath') + '/index.php',
-                type: "GET",
-                dataType: "text",
+                type: 'GET',
+                dataType: 'text',
                 cache: false,
                 data: $.extend({
                     'title': title,
@@ -945,7 +945,7 @@ $(function () {
                 var self = this;
                 callback.success = callback.success || new Function();
                 callback.fail = callback.fail || new Function();
-                if (!(mw.config.get('wgIsArticle') && mw.config.get('wgAction') === "view" && mw.config.get('wgIsProbablyEditable'))) {
+                if (!(mw.config.get('wgIsArticle') && mw.config.get('wgAction') === 'view' && mw.config.get('wgIsProbablyEditable'))) {
                     console.log('该页面无法编辑 快速编辑界面加载终止');
                     return;
                 }
@@ -976,7 +976,7 @@ $(function () {
                         : $('<span>').append($('<span>').addClass('mw-editsection-divider').text(' | ')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn')));
                     $('.mw-editsection').each(function (i) {
                         try {
-                            var editURL = $(this).find("a").last().attr('href');
+                            var editURL = $(this).find('a').last().attr('href');
                             var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
                             var sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
                             var cloneNode = $(this).prev().clone();
@@ -1117,7 +1117,7 @@ $(function () {
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     //事件绑定
                     //返回
-                    $("#Wikiplus-Quickedit-Back").click(function () {
+                    $('#Wikiplus-Quickedit-Back').click(function () {
                         $('.Wikiplus-InterBox').fadeOut('fast', function () {
                             window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                             $(this).remove();
@@ -1247,7 +1247,7 @@ $(function () {
                     if (self.getSetting('esc_to_exit_quickedit') === 'true') {
                         $(document).keydown(function (e) {
                             if (e.which === 27) {
-                                $("#Wikiplus-Quickedit-Back").click();
+                                $('#Wikiplus-Quickedit-Back').click();
                             }
                         })
                     }
@@ -1362,7 +1362,7 @@ $(function () {
              */
             preloadEventBinding() {
                 var self = this;
-                $("#toc").children("ul").find("a").each(function (i) {
+                $('#toc').children('ul').find('a').each(function (i) {
                     $(this).mouseover(function () {
                         $(this).unbind('mouseover');
                         self.preload(i + 1);
@@ -1414,8 +1414,8 @@ $(function () {
                     if (params.action === 'edit' && params.title !== undefined && params.section !== 'new') {
                         $(this).after($('<a>')
                             .attr({
-                                'href': "javascript:void(0)",
-                                'class': "Wikiplus-Edit-EveryWhereBtn"
+                                'href': 'javascript:void(0)',
+                                'class': 'Wikiplus-Edit-EveryWhereBtn'
                             })
                             .text(`(${i18n('quickedit_sectionbtn')})`)
                             .data({
@@ -1697,10 +1697,10 @@ $(function () {
                 };
                 console.log(`正在加载Wikiplus ${this.version}`);
                 //载入CSS
-                $("head").append("<link>");
-                $("head").children(":last").attr({
-                    rel: "stylesheet",
-                    type: "text/css",
+                $('head').append('<link>');
+                $('head').children(':last').attr({
+                    rel: 'stylesheet',
+                    type: 'text/css',
                     href: `${scriptPath}/wikiplus.css`
                 });
                 //一些初始化工作
@@ -1718,7 +1718,7 @@ $(function () {
                     loadLanguage(language);
                 }
                 //真正的初始化
-                if (!this.inValidNameSpaces.includes(mw.config.get('wgNamespaceNumber')) && mw.config.get('wgIsArticle') && mw.config.get('wgAction') === "view") {
+                if (!this.inValidNameSpaces.includes(mw.config.get('wgNamespaceNumber')) && mw.config.get('wgIsArticle') && mw.config.get('wgAction') === 'view') {
                     this.kotori = new Wikipage();
                     this.checki18nCache();
                     this.initBasicFunctions();
