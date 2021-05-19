@@ -2,11 +2,11 @@
 /// <reference path="../typings/jquery/jquery.d.ts"/>
 /**
 * Wikiplus
-* Author:+Eridanus Sora/@妹空酱
-* Github:https://github.com/Last-Order/Wikiplus
+* Author: +Eridanus Sora/@妹空酱
+* Github: https://github.com/Last-Order/Wikiplus
 */
 /**
-* 依赖组件:MoeNotification
+* 依赖组件: MoeNotification
 * https://github.com/Last-Order/MoeNotification
 */
 function MoeNotification() {
@@ -49,7 +49,12 @@ function MoeNotification() {
     }
     this.empty = function (f) {
         $('.MoeNotification-notice').each(function (i) {
-            if ($.isFunction(f)) {
+            var isFunction = f => {
+                if (typeof f === 'function') return true;
+                var t = Object.prototype.toString(f);
+                return t === '[object Function]' || t === '[object GeneratorFunction]';
+            };
+            if (isFunction(f)) {
                 var object = this;
                 setTimeout(function () {
                     f($(object));
@@ -652,7 +657,7 @@ $(function () {
                 return;
             }
             //从MediaWiki定义的全局变量中获得信息
-            this.pageName = pageName.replace(/ /ig, '_'); // Mediawiki处理空格时可能会出错
+            this.pageName = pageName.replace(/ /ig, '_'); // MediaWiki处理空格时可能会出错
             this.revisionId = window.mw.config.get('wgRevisionId');
             this.articleId = window.mw.config.get('wgArticleId');
             this.API = `${location.protocol}//${location.host}${window.mw.config.get('wgScriptPath')}/api.php`;
@@ -981,7 +986,7 @@ $(function () {
                             var sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
                             var cloneNode = $(this).prev().clone();
                             cloneNode.find('.mw-headline-number').remove();
-                            var sectionName = $.trim(cloneNode.text());
+                            var sectionName = cloneNode.text().trim();
                             self.sectionMap[sectionNumber] = {
                                 name: sectionName,
                                 target: sectionTargetName
