@@ -2,11 +2,11 @@
 /// <reference path="../typings/jquery/jquery.d.ts"/>
 /**
 * Wikiplus
-* Author:+Eridanus Sora/@妹空酱
-* Github:https://github.com/Last-Order/Wikiplus
+* Author: +Eridanus Sora/@妹空酱
+* Github: https://github.com/Last-Order/Wikiplus
 */
 /**
-* 依赖组件:MoeNotification
+* 依赖组件: MoeNotification
 * https://github.com/Last-Order/MoeNotification
 */
 'use strict';
@@ -22,11 +22,11 @@ function MoeNotification() {
         var type = arguments.length <= 1 || arguments[1] === undefined ? 'success' : arguments[1];
         var callback = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
 
-        $("#MoeNotification").append($("<div>").addClass('MoeNotification-notice').addClass('MoeNotification-notice-' + type).append('<span>' + text + '</span>'));
-        $("#MoeNotification").find('.MoeNotification-notice').last().fadeIn(300);
+        $('#MoeNotification').append($('<div>').addClass('MoeNotification-notice').addClass('MoeNotification-notice-' + type).append('<span>' + text + '</span>'));
+        $('#MoeNotification').find('.MoeNotification-notice').last().fadeIn(300);
         self.bind();
         self.clear();
-        callback($("#MoeNotification").find('.MoeNotification-notice').last());
+        callback($('#MoeNotification').find('.MoeNotification-notice').last());
     };
     this.create = {
         success: function success(text, callback) {
@@ -43,8 +43,8 @@ function MoeNotification() {
         }
     };
     this.clear = function () {
-        if ($(".MoeNotification-notice").length >= 10) {
-            $("#MoeNotification").children().first().fadeOut(150, function () {
+        if ($('.MoeNotification-notice').length >= 10) {
+            $('#MoeNotification').children().first().fadeOut(150, function () {
                 $(this).remove();
             });
             setTimeout(self.clear, 300);
@@ -53,8 +53,13 @@ function MoeNotification() {
         }
     };
     this.empty = function (f) {
-        $(".MoeNotification-notice").each(function (i) {
-            if ($.isFunction(f)) {
+        $('.MoeNotification-notice').each(function (i) {
+            var isFunction = function isFunction(f) {
+                if (typeof f === 'function') return true;
+                var t = Object.prototype.toString(f);
+                return t === '[object Function]' || t === '[object GeneratorFunction]';
+            };
+            if (isFunction(f)) {
                 var object = this;
                 setTimeout(function () {
                     f($(object));
@@ -67,14 +72,14 @@ function MoeNotification() {
         });
     };
     this.bind = function () {
-        $(".MoeNotification-notice").mouseover(function () {
+        $('.MoeNotification-notice').mouseover(function () {
             self.slideLeft($(this));
         });
     };
     this.slideLeft = function (object, speed) {
         object.css('position', 'relative');
         object.animate({
-            left: "-200%"
+            left: '-200%'
         }, speed || 150, function () {
             $(this).fadeOut('fast', function () {
                 $(this).remove();
@@ -82,9 +87,9 @@ function MoeNotification() {
         });
     };
     this.init = function () {
-        $("body").append('<div id="MoeNotification"></div>');
+        $('body').append('<div id="MoeNotification"></div>');
     };
-    if (!($("#MoeNotification").length > 0)) {
+    if (!($('#MoeNotification').length > 0)) {
         this.init();
     }
 }
@@ -95,7 +100,7 @@ $(function () {
     i18nData['zh-cn'] = {
         "__language": "zh-cn",
         "__author": ["Eridanus Sora"],
-        "__version": "211",
+        "__version": "212",
         "unknown_error_name": "未知的错误名",
         "api_unaccessiable": "无可用的API",
         "api_unwriteable": "无可用的写入API",
@@ -156,7 +161,7 @@ $(function () {
         "customjsprotected": "无法编辑用户JS页",
         "cascadeprotected": "该页面被级联保护",
         "network_edit_error": "由于网络原因编辑失败",
-        "redirect_to_summary": "重定向页面至 [[$1]] \/\/ Wikiplus",
+        "redirect_to_summary": "重定向页面至[[$1]] \/\/ Wikiplus",
         "redirect_from_summary": "将[[$1]]重定向至[[$2]] \/\/ Wikiplus",
         "need_init": "页面类未加载完成",
         "fail_to_get_wikitext": "无法获得页面文本",
@@ -172,7 +177,7 @@ $(function () {
         "preview": "预览",
         "cancel": "取消",
         "mark_minoredit": "标记为小编辑",
-        "onclose_confirm": "[Wikiplus] 您确认要关闭/刷新页面吗 这会导致您的编辑数据丢失",
+        "onclose_confirm": "[Wikiplus] 您确认要关闭/刷新页面吗？这会导致您的编辑数据丢失",
         "fail_to_get_wikitext_when_edit": "无法获得页面文本以编辑",
         "cant_parse_wikitext": "无法解析维基文本",
         "loading_preview": "正在读取预览",
@@ -182,7 +187,7 @@ $(function () {
         "cross_page_edit": "编辑目标位于其他页面 正在获取基础信息",
         "cross_page_edit_submit": "基础信息获取成功 正在提交编辑",
         "cross_page_edit_error": "无法获得基础信息>.<",
-        "install_tip": "您是否允许Wikiplus采集非敏感数据用于改进Wikiplus及为当前Wiki: $1 提供改进建议?",
+        "install_tip": "您是否允许Wikiplus采集非敏感数据用于改进Wikiplus及为当前Wiki：$1提供改进建议？",
         "accept": "接受",
         "decline": "拒绝",
         "install_finish": "Wikiplus安装完毕",
@@ -209,7 +214,7 @@ $(function () {
     i18nData['en-us'] = {
         "__language": "en-us",
         "__author": ["Eridanus Sora", "AnnAngela", "YinYan"],
-        "__version": "211",
+        "__version": "212",
         "unknown_error_name": "Unknown error",
         "api_unaccessiable": "API of this wiki is not available",
         "api_unwriteable": "Write API of this wiki is not available",
@@ -272,11 +277,11 @@ $(function () {
         "network_edit_error": "Failed to edit this page because of network errors",
         "redirect_to_summary": "Redirect to [[$1]] \/\/ Wikiplus",
         "redirect_from_summary": "Redirect [[$1]] to [[$2]] \/\/ Wikiplus",
-        "need_init": "WikiPlus haven't been loaded completely. It's a rare occasion so you can try to refresh and try again.",
+        "need_init": "Wikiplus haven't been loaded completely. It's a rare occasion so you can try to refresh and try again.",
         "fail_to_get_wikitext": "Failed to load the wikitext of this page",
         "quickedit_topbtn": "QuickEdit",
         "quickedit_sectionbtn": "QuickEdit",
-        "fail_to_init_quickedit": "Failed to initialize WikiPlus",
+        "fail_to_init_quickedit": "Failed to initialize Wikiplus",
         "back": "Back",
         "goto_editbox": "Jump to editbox",
         "summary_placehold": "Edit summary",
@@ -296,12 +301,12 @@ $(function () {
         "cross_page_edit": "The content you are editing belongs to another page, please wait...",
         "cross_page_edit_submit": "Submitting your edit...",
         "cross_page_edit_error": "Failed to load the infomation",
-        "install_tip": "Do you allow WikiPlus to collect insensitive data to help us develop WikiPlus and provide feedback to current site: $1 ?",
+        "install_tip": "Do you allow Wikiplus to collect insensitive data to help us develop Wikiplus and provide feedback to current site: $1 ?",
         "accept": "Yes",
         "decline": "No",
         "install_finish": "Wikiplus is installed, enjoy it",
         "loading": "Loading",
-        "cant_add_funcbtn": "Failed to add buttons for WikiPlus",
+        "cant_add_funcbtn": "Failed to add buttons for Wikiplus",
         "wikiplus_settings": "Wikiplus Setting",
         "wikiplus_settings_desc": "Please modify your setting according to the standards below",
         "wikiplus_settings_placeholder": "Your setting is empty, please modify your setting according to the documentation.",
@@ -366,7 +371,7 @@ $(function () {
         } else if (i18nData['en-us'][key]) {
             return i18nData['en-us'][key];
         } else {
-            return 'undefined';
+            return;
         }
     }
     /**
@@ -609,17 +614,6 @@ $(function () {
             };
         }
     }
-    /**
-     * 判断值是否存在于数组
-     * @param {string} value
-     * @param {array} array
-     * @return {boolean} whether the value is in the array
-    */
-    function inArray(value) {
-        var array = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
-
-        return $.inArray(value, array) === -1 ? false : true;
-    }
     /** 
      * 抛出错误
      * @param {string} name
@@ -649,15 +643,15 @@ $(function () {
             console.log('页面类构建中');
             //可用性和权限检测
             if (!window.mw) {
-                console.log('页面Javascript载入不完全或这不是一个Mediawiki站点');
+                console.log('页面JavaScript载入不完全或这不是一个MediaWiki站点');
                 return;
             }
-            if (!inArray('autoconfirmed', window.mw.config.get('wgUserGroups'))) {
+            if (!window.mw.config.get('wgUserGroups').includes('autoconfirmed')) {
                 throwError('not_autoconfirmed_user');
                 return;
             }
             //从MediaWiki定义的全局变量中获得信息
-            this.pageName = pageName.replace(/ /ig, '_'); // Mediawiki处理空格时可能会出错
+            this.pageName = pageName.replace(/ /ig, '_'); // MediaWiki处理空格时可能会出错
             this.revisionId = window.mw.config.get('wgRevisionId');
             this.articleId = window.mw.config.get('wgArticleId');
             this.API = location.protocol + '//' + location.host + window.mw.config.get('wgScriptPath') + '/api.php';
@@ -731,8 +725,8 @@ $(function () {
                                         //前端拿不到Token 尝试通过API
                                         $.ajax({
                                             url: self.API,
-                                            type: "GET",
-                                            dataType: "json",
+                                            type: 'GET',
+                                            dataType: 'json',
                                             data: {
                                                 'action': 'query',
                                                 'meta': 'tokens',
@@ -925,8 +919,8 @@ $(function () {
                 callback.fail = callback.fail || new Function();
                 $.ajax({
                     url: location.protocol + '//' + location.host + mw.config.get('wgScriptPath') + '/index.php',
-                    type: "GET",
-                    dataType: "text",
+                    type: 'GET',
+                    dataType: 'text',
                     cache: false,
                     data: $.extend({
                         'title': title,
@@ -998,7 +992,7 @@ $(function () {
                     var self = this;
                     callback.success = callback.success || new Function();
                     callback.fail = callback.fail || new Function();
-                    if (!(mw.config.get('wgIsArticle') && mw.config.get('wgAction') === "view" && mw.config.get('wgIsProbablyEditable'))) {
+                    if (!(mw.config.get('wgIsArticle') && mw.config.get('wgAction') === 'view' && mw.config.get('wgIsProbablyEditable'))) {
                         console.log('该页面无法编辑 快速编辑界面加载终止');
                         return;
                     }
@@ -1007,21 +1001,28 @@ $(function () {
                         number: -1,
                         target: self.kotori.pageName
                     });
+                    if (mw.config.get('skin') === 'minerva') {
+                        $(topBtn).css({ 'align-items': 'center', 'display': 'flex' });
+                        $(topBtn).find('span').addClass('page-actions-menu__list-item');
+                        $(topBtn).find('a').addClass('mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop').css('vertical-align', 'middle');
+                    }
                     if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length == 0) {
-                        $('#ca-edit').before(topBtn);
+                        mw.config.get('skin') === 'minerva' ? $('#ca-edit').parent().after(topBtn) : $('#ca-edit').after(topBtn);
+                    } else {
+                        throwError('fail_to_init_quickedit');
                     }
                     if ($('.mw-editsection').length > 0) {
                         self.sectionMap = {};
                         //段落快速编辑按钮
-                        var sectionBtn = $('<span>').append($('<span>').addClass('mw-editsection-divider').text(' | ')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn')));
+                        var sectionBtn = mw.config.get('skin') === 'minerva' ? $('<span>').append($('<a>').addClass('Wikiplus-Edit-SectionBtn mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 edit-page mw-ui-icon-flush-right').css('margin-left', '0.75em').attr('href', 'javascript:void(0)').attr('title', i18n('quickedit_sectionbtn'))) : $('<span>').append($('<span>').addClass('mw-editsection-divider').text(' | ')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn')));
                         $('.mw-editsection').each(function (i) {
                             try {
-                                var editURL = $(this).find("a").last().attr('href');
+                                var editURL = $(this).find('a').last().attr('href');
                                 var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
                                 var sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
                                 var cloneNode = $(this).prev().clone();
                                 cloneNode.find('.mw-headline-number').remove();
-                                var sectionName = $.trim(cloneNode.text());
+                                var sectionName = cloneNode.text().trim();
                                 self.sectionMap[sectionNumber] = {
                                     name: sectionName,
                                     target: sectionTargetName
@@ -1032,7 +1033,12 @@ $(function () {
                                     name: sectionName,
                                     target: sectionTargetName
                                 });
-                                $(this).find('.mw-editsection-bracket').last().before(_sectionBtn);
+                                if (mw.config.get('skin') === 'minerva') {
+                                    mw.loader.addStyleTag('.mw-parser-output .mw-editsection{display:flex!important;align-items:center}.mw-parser-output .section-heading>div{vertical-align:baseline}');
+                                    $(this).append(_sectionBtn);
+                                } else {
+                                    $(this).find('.mw-editsection-bracket').last().before(_sectionBtn);
+                                }
                             } catch (e) {
                                 throwError('fail_to_init_quickedit');
                             }
@@ -1148,7 +1154,7 @@ $(function () {
                         $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                         //事件绑定
                         //返回
-                        $("#Wikiplus-Quickedit-Back").click(function () {
+                        $('#Wikiplus-Quickedit-Back').click(function () {
                             $('.Wikiplus-InterBox').fadeOut('fast', function () {
                                 window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                                 $(this).remove();
@@ -1277,7 +1283,7 @@ $(function () {
                         if (self.getSetting('esc_to_exit_quickedit') === 'true') {
                             $(document).keydown(function (e) {
                                 if (e.which === 27) {
-                                    $("#Wikiplus-Quickedit-Back").click();
+                                    $('#Wikiplus-Quickedit-Back').click();
                                 }
                             });
                         }
@@ -1396,7 +1402,7 @@ $(function () {
                 key: 'preloadEventBinding',
                 value: function preloadEventBinding() {
                     var self = this;
-                    $("#toc").children("ul").find("a").each(function (i) {
+                    $('#toc').children('ul').find('a').each(function (i) {
                         $(this).mouseover(function () {
                             $(this).unbind('mouseover');
                             self.preload(i + 1);
@@ -1451,8 +1457,8 @@ $(function () {
                         }
                         if (params.action === 'edit' && params.title !== undefined && params.section !== 'new') {
                             $(this).after($('<a>').attr({
-                                'href': "javascript:void(0)",
-                                'class': "Wikiplus-Edit-EveryWhereBtn"
+                                'href': 'javascript:void(0)',
+                                'class': 'Wikiplus-Edit-EveryWhereBtn'
                             }).text('(' + i18n('quickedit_sectionbtn') + ')').data({
                                 'target': decodeURIComponent(params.title),
                                 'number': params.section || -1
@@ -1541,7 +1547,10 @@ $(function () {
             }, {
                 key: 'addFunctionButton',
                 value: function addFunctionButton(text, id, clickEvent) {
-                    var button = $('<li></li>').attr('id', id).append($('<a></a>').attr('href', 'javascript:void(0);').text(text));
+                    var button = $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
+                    if (mw.config.get('skin') === 'minerva') {
+                        return;
+                    }
                     if ($('#p-cactions').length > 0) {
                         $('#p-cactions ul').append(button);
                         $('#p-cactions ul').find('li').last().click(clickEvent);
@@ -1731,21 +1740,21 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.3.2';
-                this.langVersion = '211';
-                this.releaseNote = '修正一些问题';
+                this.version = '2.3.3';
+                this.langVersion = '212';
+                this.releaseNote = '适配Minerva皮肤';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
                     'key': 'value',
-                    'documatation': 'http://zh.moegirl.org/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
+                    'documatation': 'https://zh.moegirl.org.cn/User:%E5%A6%B9%E7%A9%BA%E9%85%B1/Wikiplus/%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E'
                 };
                 console.log('正在加载Wikiplus ' + this.version);
                 //载入CSS
-                $("head").append("<link>");
-                $("head").children(":last").attr({
-                    rel: "stylesheet",
-                    type: "text/css",
+                $('head').append('<link>');
+                $('head').children(':last').attr({
+                    rel: 'stylesheet',
+                    type: 'text/css',
                     href: scriptPath + '/wikiplus.css'
                 });
                 //一些初始化工作
@@ -1757,13 +1766,13 @@ $(function () {
                 if (this.version !== localStorage.Wikiplus_Version) {
                     localStorage.Wikiplus_Version = this.version;
                     this.notice.create.success('Wikiplus ' + this.version);
-                    this.notice.create.success(language === 'zh-cn' ? this.releaseNote : 'Minor bug fixes.'); // 避免给其他语言用户不必要的理解困难
+                    this.notice.create.success(language === 'zh-cn' ? this.releaseNote : 'Compatible with Minerva Skin'); // 避免给其他语言用户不必要的理解困难
                 }
                 if (i18nData[language] === undefined) {
                     loadLanguage(language);
                 }
                 //真正的初始化
-                if (!inArray(mw.config.get('wgNameSpaceNumber'), this.inValidNameSpaces) && mw.config.get('wgIsArticle') && mw.config.get('wgAction') === "view") {
+                if (!this.inValidNameSpaces.includes(mw.config.get('wgNamespaceNumber')) && mw.config.get('wgIsArticle') && mw.config.get('wgAction') === 'view') {
                     this.kotori = new Wikipage();
                     this.checki18nCache();
                     this.initBasicFunctions();
