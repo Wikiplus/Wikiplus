@@ -4,10 +4,6 @@
 #Wikiplus-Quickedit-Summary-Input{
 	width: 300px;
 }
-.skin-minerva #Wikiplus-Quickedit-Summary-Input{
-	all: revert;
-	width: 300px;
-}
 .Wikiplus-Btn{
 	cursor: pointer;
 	position: relative;
@@ -26,7 +22,6 @@
     position: relative;
     margin: 0px;
 }
-
 .Wikiplus-InterBox{
 	z-index: 200;
 	position: absolute;
@@ -98,9 +93,6 @@
 	width: 100%;
 	min-height: 500px;
 }
-.skin-minerva #Wikiplus-Quickedit-Submit,.skin-minerva #Wikiplus-Quickedit-Preview-Submit{
-	all: revert;
-}
 .Wikiplus-Banner{
 	background: rgba(193, 222, 214, 0.51);
 	text-align: center;
@@ -115,7 +107,7 @@
 	width: 4.5rem;
 }
 /*.Wikiplus-Edit-EveryWhereBtn{
-    position: absolute;
+	position: absolute;
 }*/
 .MoeNotification-notice{
 	position: relative;
@@ -166,4 +158,31 @@
 table.diff{border:none;border-spacing:4px;margin:0;width:100%;table-layout:fixed}table.diff td{padding:0.33em 0.5em}table.diff td.diff-marker{padding:0.25em}table.diff col.diff-marker{width:2%}table.diff col.diff-content{width:48%}table.diff td div{word-wrap:break-word}td.diff-otitle,td.diff-ntitle{text-align:center}td.diff-lineno{font-weight:bold}td.diff-marker{text-align:right;font-weight:bold;font-size:1.25em;line-height:1.2}td.diff-addedline,td.diff-deletedline,td.diff-context{font-size:88%;line-height:1.6;vertical-align:top;white-space:-moz-pre-wrap;white-space:pre-wrap;border-style:solid;border-width:1px 1px 1px 4px;border-radius:0.33em}td.diff-addedline{border-color:#a3d3ff}td.diff-deletedline{border-color:#ffe49c}td.diff-context{background:#f9f9f9;border-color:#e6e6e6;color:#333333}.diffchange{font-weight:bold;text-decoration:none}td.diff-addedline .diffchange,td.diff-deletedline .diffchange{border-radius:0.33em;padding:0.25em 0}td.diff-addedline .diffchange{background:#d8ecff}td.diff-deletedline .diffchange{background:#feeec8}@media print{td.diff-context,td.diff-addedline .diffchange,td.diff-deletedline .diffchange{background-color:transparent}td.diff-addedline .diffchange{text-decoration:underline}td.diff-deletedline .diffchange{text-decoration:line-through}}
 .mw-editsection-divider{
 	display: inline !important;
+}
+.skin-minerva #Wikiplus-Quickedit-Preview-Submit,.skin-minerva #Wikiplus-Quickedit-Submit,.skin-minerva #Wikiplus-Quickedit-Summary-Input,.skin-minerva .Wikiplus-InterBox-Input{
+	all: revert;
+}
+.skin-minerva #Wikiplus-Quickedit-Summary-Input{
+	width: 300px;
+}
+.skin-minerva #Wikiplus-Setting-Input{
+	max-width: calc(100% - 10px);
+	width: calc(100% - 10px);
+}
+.skin-minerva .Wikiplus-InterBox-Input{
+	margin: 20px;
+	width: 60%;
+}
+.skin-minerva #Wikiplus-Settings-Intro a:before{
+	background-image: linear-gradient(transparent,transparent),url(/w/load.php?modules=skins.minerva.mainMenu.icons&image=settings&format=original&skin=minerva&version=1up49);
+}
+.skin-minerva #Wikiplus-SR-Intro a:before{
+	background-image: linear-gradient(transparent,transparent),url(/w/load.php?modules=skins.minerva.overflow.icons&image=articleRedirect&format=original&lang=zh-cn&skin=minerva&version=1vckg);
+}
+.skin-minerva .mw-parser-output .mw-editsection{
+	display: flex !important;
+	align-items: center;
+}
+.skin-minerva .mw-parser-output .section-heading>div{
+	vertical-align: baseline;
 }

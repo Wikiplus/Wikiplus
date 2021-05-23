@@ -1,54 +1,49 @@
 /* global mw */
 /// <reference path="../typings/jquery/jquery.d.ts"/>
 /**
-* Wikiplus
-* Author: +Eridanus Sora/@妹空酱
-* Github: https://github.com/Last-Order/Wikiplus
-*/
+ * Wikiplus
+ * Author: +Eridanus Sora/@妹空酱
+ * Github: https://github.com/Last-Order/Wikiplus
+ */
 /**
-* 依赖组件: MoeNotification
-* https://github.com/Last-Order/MoeNotification
-*/
+ * 依赖组件: MoeNotification
+ * https://github.com/Last-Order/MoeNotification
+ */
 function MoeNotification() {
     var self = this;
-    this.display = function (text = '喵~', type = 'success', callback = () => {}) {
-        $('#MoeNotification').append(
-            $('<div>').addClass('MoeNotification-notice')
-                .addClass('MoeNotification-notice-' + type)
-                .append('<span>' + text + '</span>')
-        );
+    this.display = function(text = '喵~', type = 'success', callback = () => {}) {
+        $('#MoeNotification').append($('<div>').addClass('MoeNotification-notice').addClass('MoeNotification-notice-' + type).append('<span>' + text + '</span>'));
         $('#MoeNotification').find('.MoeNotification-notice').last().fadeIn(300);
         self.bind();
         self.clear();
         callback($('#MoeNotification').find('.MoeNotification-notice').last());
     }
     this.create = {
-        success: function (text, callback) {
-            var _callback = callback || function () { };
+        success: function(text, callback) {
+            var _callback = callback || function() {};
             self.display(text, 'success', _callback);
         },
-        warning: function (text, callback) {
-            var _callback = callback || function () { };
+        warning: function(text, callback) {
+            var _callback = callback || function() {};
             self.display(text, 'warning', _callback);
         },
-        error: function (text, callback) {
-            var _callback = callback || function () { };
+        error: function(text, callback) {
+            var _callback = callback || function() {};
             self.display(text, 'error', _callback);
         }
     };
-    this.clear = function () {
+    this.clear = function() {
         if ($('.MoeNotification-notice').length >= 10) {
-            $('#MoeNotification').children().first().fadeOut(150, function () {
+            $('#MoeNotification').children().first().fadeOut(150, function() {
                 $(this).remove();
             });
             setTimeout(self.clear, 300);
-        }
-        else {
+        } else {
             return false;
         }
     }
-    this.empty = function (f) {
-        $('.MoeNotification-notice').each(function (i) {
+    this.empty = function(f) {
+        $('.MoeNotification-notice').each(function(i) {
             var isFunction = f => {
                 if (typeof f === 'function') return true;
                 var t = Object.prototype.toString(f);
@@ -56,34 +51,33 @@ function MoeNotification() {
             };
             if (isFunction(f)) {
                 var object = this;
-                setTimeout(function () {
+                setTimeout(function() {
                     f($(object));
                 }, 200 * i);
-            }
-            else {
-                $(this).delay(i * 200).fadeOut('fast', function () {
+            } else {
+                $(this).delay(i * 200).fadeOut('fast', function() {
                     $(this).remove();
-                })
+                });
             }
-        })
+        });
     }
-    this.bind = function () {
-        $('.MoeNotification-notice').mouseover(function () {
+    this.bind = function() {
+        $('.MoeNotification-notice').mouseover(function() {
             self.slideLeft($(this));
         });
     }
-    this.slideLeft = function (object, speed) {
+    this.slideLeft = function(object, speed) {
         object.css('position', 'relative');
         object.animate({
             left: '-200%',
         },
-            speed || 150, function () {
-                $(this).fadeOut('fast', function () {
-                    $(this).remove();
-                });
+            speed || 150, function() {
+            $(this).fadeOut('fast', function() {
+                $(this).remove();
             });
+        });
     }
-    this.init = function () {
+    this.init = function() {
         $('body').append('<div id="MoeNotification"></div>');
     }
     if (!($('#MoeNotification').length > 0)) {
@@ -91,7 +85,7 @@ function MoeNotification() {
     }
 }
 
-$(function () {
+$(function() {
     var i18nData = {};
     var scriptPath = `${location.protocol}//wikiplus-app.com`;
     i18nData['zh-cn'] = {
@@ -337,27 +331,25 @@ $(function () {
         $.ajax({
             url: `${scriptPath}/languages/get.php?lang=${language}`,
             dataType: 'json',
-            success: function (data) {
+            success: function(data) {
                 if (data.__language && data.__version) {
                     if (i18nData[data.__language]) {
                         if (data.__version >= i18nData[data.__language].__version) {
                             i18nData[data.__language] = data;
                             console.log(`更新语言版本${data.___language}至${data.___version}`);
-                        }
-                        else {
+                        } else {
                             // 服务端未跟进语言版本 不更新本地缓存
                         }
-                    }
-                    else {
+                    } else {
                         i18nData[data.__language] = data;
                     }
-                    localStorage.Wikiplus_i18nCache = JSON.stringify(i18nData);//更新缓存
+                    localStorage.Wikiplus_i18nCache = JSON.stringify(i18nData); //更新缓存
                 }
             },
-            error: function (e) {
+            error: function(e) {
                 console.log(`无法加载语言${language}`);
             }
-        })
+        });
     }
     /**
      * 多语言转换
@@ -368,17 +360,14 @@ $(function () {
         var language;
         try {
             language = (JSON.parse(localStorage.Wikiplus_Settings))['language'] || window.navigator.language.toLowerCase();
-        }
-        catch (e) {
+        } catch(e) {
             language = window.navigator.language.toLowerCase();
         }
         if (i18nData[language] && i18nData[language][key]) {
             return i18nData[language][key];
-        }
-        else if (i18nData['en-us'][key]) {
+        } else if (i18nData['en-us'][key]) {
             return i18nData['en-us'][key];
-        }
-        else {
+        } else {
             return;
         }
     }
@@ -604,32 +593,29 @@ $(function () {
                     number: errorList[name].number,
                     message: errorList[name].message
                 };
-            }
-            else if (i18n(name) !== 'undefined') {
+            } else if (i18n(name) !== 'undefined') {
                 return {
                     number: errorList[name].number,
                     message: i18n(name)
                 }
-            }
-            else {
+            } else {
                 return {
                     number: errorList[name].number,
                     message: i18n('unknownerror')
                 }
             }
-        }
-        else {
+        } else {
             return {
                 number: errorList.unknown_error_name.number,
                 message: errorList.unknown_error_name.message
             }
         }
     }
-    /** 
+    /**
      * 抛出错误
      * @param {string} name
      * @return boolean
-    */
+     */
     function throwError(name, message) {
         var errInfo = getErrorInfo(name);
         var e = new Error();
@@ -665,11 +651,11 @@ $(function () {
             this.editToken = {};
             this.timeStamp = {};
             this.init(this.pageName, {
-                success: function () {
+                success: function() {
                     console.log('Wikiplus加载完毕');
                 },
-                fail: function (e) {
-                    console.log(`Wikiplus未能正确加载(${e.message})`)
+                fail: function(e) {
+                    console.log(`Wikiplus未能正确加载(${e.message})`);
                 }
             })
         }
@@ -699,25 +685,23 @@ $(function () {
                     'rvprop': 'timestamp',
                     'format': 'json'
                 },
-                beforeSend: function () {
+                beforeSend: function() {
                     console.time('获得页面基础信息时间耗时');
                 },
-                success: function (data) {
+                success: function(data) {
                     if (data && data.query && data.query.pages) {
                         var info = data.query.pages;
                         for (var key in info) {
                             if (key !== '-1') {
                                 if (info[key].revisions && info[key].revisions.length > 0) {
                                     self.timeStamp[title] = info[key].revisions[0].timestamp;
-                                }
-                                else {
+                                } else {
                                     callback.fail(throwError('fail_to_get_timestamp'));
                                 }
-                                if (mw.user.tokens.get('csrfToken')  && mw.user.tokens.get('csrfToken')  !== '+\\') {
-                                    self.editToken[title] = mw.user.tokens.get('csrfToken') ;
-                                    console.log('成功获得编辑令牌 来自前端API')
-                                }
-                                else {
+                                if (mw.user.tokens.get('csrfToken') && mw.user.tokens.get('csrfToken') !== '+\\') {
+                                    self.editToken[title] = mw.user.tokens.get('csrfToken');
+                                    console.log('成功获得编辑令牌 来自前端API');
+                                } else {
                                     //前端拿不到Token 尝试通过API
                                     $.ajax({
                                         url: self.API,
@@ -728,36 +712,32 @@ $(function () {
                                             'meta': 'tokens',
                                             'format': 'json'
                                         },
-                                        success: function (data) {
+                                        success: function(data) {
                                             if (data.query && data.query.tokens && data.query.tokens.csrftoken && data.query.tokens.csrftoken !== '+\\') {
                                                 self.editToken[title] = data.query.tokens.csrftoken;
                                                 console.log('成功获得编辑令牌 通过后端API');
-                                            }
-                                            else {
+                                            } else {
                                                 callback.fail(throwError('fail_to_get_edittoken'));
                                             }
                                         },
-                                        error: function (e) {
+                                        error: function(e) {
                                             callback.fail(throwError('fail_to_get_edittoken'));
                                         }
-                                    })
+                                    });
                                     callback.fail(throwError('fail_to_get_edittoken'));
                                 }
-                            }
-                            else {
+                            } else {
                                 if (mw.config.get('wgArticleId') === 0) {
                                     // 如果是空页面就只拿一个edittoken
-                                    if (mw.user.tokens.get('csrfToken')  && mw.user.tokens.get('csrfToken') !== '+\\') {
+                                    if (mw.user.tokens.get('csrfToken') && mw.user.tokens.get('csrfToken') !== '+\\') {
                                         self.editToken[title] = mw.user.tokens.get('csrfToken');
                                         console.log('成功获得编辑令牌 来自前端API');
                                         self.inited = true;
-                                    }
-                                    else {
+                                    } else {
                                         self.inited = false;
                                         callback.fail(throwError('fail_to_get_edittoken'));
                                     }
-                                }
-                                else {
+                                } else {
                                     // 如果不是 那就是失败了 抛出错误
                                     self.inited = false;
                                     callback.fail(throwError('fail_to_get_pageinfo'));
@@ -766,11 +746,11 @@ $(function () {
                         }
                     }
                 }
-            }).done(function () {
+            }).done(function() {
                 console.timeEnd('获得页面基础信息时间耗时');
                 self.inited = (self.inited === false) ? false : true;
                 callback.success();
-            })
+            });
         }
         /**
          * 页面编辑
@@ -801,37 +781,31 @@ $(function () {
                         'token': self.editToken[title] || self.editToken[self.pageName],
                         'basetimestamp': self.timeStamp[title]
                     }, config),
-                    success: function (data) {
+                    success: function(data) {
                         if (data && data.edit) {
-                            if (data.edit.result && data.edit.result == 'Success') {
+                            if (data.edit.result && data.edit.result === 'Success') {
                                 callback.success();
-                            }
-                            else {
+                            } else {
                                 if (data.edit.code) {
                                     //防滥用过滤器
                                     callback.fail(throwError('hit_abusefilter', `${i18n('hit_abusefilter')}:${data.edit.info.replace('/Hit AbuseFilter: /ig', '')}<br><small>${data.edit.warning}</small>`));
-                                }
-                                else {
+                                } else {
                                     callback.fail(throwError('unknown_edit_error'));
                                 }
                             }
-                        }
-                        else if (data && data.error && data.error.code) {
+                        } else if (data && data.error && data.error.code) {
                             callback.fail(throwError(data.error.code.replace(/-/ig, '_')), i18n('unknown_edit_error_message').replace(/\$1/ig, data.error.code));
-                        }
-                        else if (data.code) {
+                        } else if (data.code) {
                             callback.fail(throwError('unknown_edit_error'), i18n('unknown_edit_error_message').replace(/\$1/ig, data.code));
-                        }
-                        else {
+                        } else {
                             callback.fail(throwError('unknown_edit_error'));
                         }
                     },
-                    error: function (e) {
+                    error: function(e) {
                         callback.fail(throwError('network_edit_error'));
                     }
-                })
-            }
-            else {
+                });
+            } else {
                 callback.fail(throwError('uninited'));
             }
         }
@@ -840,15 +814,15 @@ $(function () {
          * @param {number} section 段落编号
          * @param {string} content 内容
          * @param {string} title 页面标题
-         * @param {object} callback 回调函数 
-         * @param {object} config 设置 
+         * @param {object} callback 回调函数
+         * @param {object} config 设置
          */
         editSection(section, content, title = this.pageName, config = {}, callback = {}) {
             callback.success = callback.success || new Function();
             callback.fail = callback.fail || new Function();
             this.edit(content, title, callback, $.extend({
-                'section': section
-            }, config));
+                    'section': section
+                }, config));
         }
         /**
          * 重定向页面至
@@ -898,17 +872,17 @@ $(function () {
                     'title': title,
                     'action': 'raw'
                 }, config),
-                beforeSend: function () {
+                beforeSend: function() {
                     console.time('获得页面文本耗时');
                 },
-                success: function (data) {
+                success: function(data) {
                     console.timeEnd('获得页面文本耗时');
                     callback.success(data);
                 },
-                error: function (e) {
+                error: function(e) {
                     callback.fail(throwError('fail_to_get_wikitext'));
                 }
-            })
+            });
         }
         /**
          * 解析Wikitext
@@ -930,18 +904,17 @@ $(function () {
                     'pst': 'true'
                 }, config),
                 url: this.API,
-                success: function (data) {
+                success: function(data) {
                     if (data && data.parse && data.parse.text) {
                         callback.success(data.parse.text['*']);
-                    }
-                    else {
+                    } else {
                         callback.fail(throwError('cant_parse_wikitext'));
                     }
                 }
-            })
+            });
         }
     }
-    $(document).ready(function () {
+    $(document).ready(function() {
         class Wikiplus {
             /**
              * 加载快速编辑 第一步 插入页面按钮并绑定入口事件
@@ -955,11 +928,7 @@ $(function () {
                     return;
                 }
                 //顶部编辑入口
-                var topBtn = $('<li>').attr('id', 'Wikiplus-Edit-TopBtn').append(
-                    $('<span>').append(
-                        $('<a>').attr('href', 'javascript:void(0)').text(`${i18n('quickedit_topbtn')}`)
-                    )
-                ).data({
+                var topBtn = $('<li>').attr('id', 'Wikiplus-Edit-TopBtn').append($('<span>').append($('<a>').attr('href', 'javascript:void(0)').text(`${i18n('quickedit_topbtn')}`))).data({
                     number: -1,
                     target: self.kotori.pageName
                 });
@@ -968,7 +937,7 @@ $(function () {
                     $(topBtn).find('span').addClass('page-actions-menu__list-item');
                     $(topBtn).find('a').addClass('mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop').css('vertical-align', 'middle');
                 }
-                if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length == 0) {
+                if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length === 0) {
                     mw.config.get('skin') === 'minerva' ? $('#ca-edit').parent().after(topBtn) : $('#ca-edit').after(topBtn);
                 } else {
                     throwError('fail_to_init_quickedit');
@@ -979,7 +948,7 @@ $(function () {
                     var sectionBtn = mw.config.get('skin') === 'minerva'
                         ? $('<span>').append($('<a>').addClass('Wikiplus-Edit-SectionBtn mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 edit-page mw-ui-icon-flush-right').css('margin-left', '0.75em').attr('href', 'javascript:void(0)').attr('title', i18n('quickedit_sectionbtn')))
                         : $('<span>').append($('<span>').addClass('mw-editsection-divider').text(' | ')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn')));
-                    $('.mw-editsection').each(function (i) {
+                    $('.mw-editsection').each(function(i) {
                         try {
                             var editURL = $(this).find('a').last().attr('href');
                             var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
@@ -997,24 +966,18 @@ $(function () {
                                 name: sectionName,
                                 target: sectionTargetName
                             });
-                            if (mw.config.get('skin') === 'minerva') {
-                                mw.loader.addStyleTag('.mw-parser-output .mw-editsection{display:flex!important;align-items:center}.mw-parser-output .section-heading>div{vertical-align:baseline}');
-                                $(this).append(_sectionBtn);
-                            } else {
-                                $(this).find('.mw-editsection-bracket').last().before(_sectionBtn);
-                            }
-                        }
-                        catch (e) {
+                            mw.config.get('skin') === 'minerva' ? $(this).append(_sectionBtn) : $(this).find('.mw-editsection-bracket').last().before(_sectionBtn);
+                        } catch(e) {
                             throwError('fail_to_init_quickedit');
                         }
                     });
                 }
-                $('.Wikiplus-Edit-SectionBtn').click(function () {
+                $('.Wikiplus-Edit-SectionBtn').click(function() {
                     self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
                 });
-                $('#Wikiplus-Edit-TopBtn').click(function () {
+                $('#Wikiplus-Edit-TopBtn').click(function() {
                     self.initQuickEditInterface($(this));
-                })
+                });
             }
             /**
              * 加载快速编辑主界面相关内容
@@ -1039,38 +1002,36 @@ $(function () {
                             if (sectionTargetName === this.kotori.pageName) {
                                 additionalConfig.oldid = mw.config.get('wgRevisionId');
                             }
-                            this.notice.create.success(i18n('loading'))
+                            this.notice.create.success(i18n('loading'));
                             this.preload(sectionNumber, sectionTargetName, {
-                                success: function (data) {
+                                success: function(data) {
                                     obj.data('content', data);
                                     self.notice.empty();
                                     self.displayQuickEditInterface(obj);
                                 },
-                                fail: function (e) {
+                                fail: function(e) {
                                     throwError('fail_to_get_wikitext_when_edit');
                                 }
-                            }, additionalConfig)
-                        }
-                        else {
+                            }, additionalConfig);
+                        } else {
                             obj.data('content', self.preloadData[`${sectionTargetName}.${sectionNumber}`]);
                             self.displayQuickEditInterface(obj);
                         }
-                    }
-                    else {
+                    } else {
                         this.notice.create.warning(i18n('history_edit_warning'));
-                        this.notice.create.success(i18n('loading'))
+                        this.notice.create.success(i18n('loading'));
                         this.preload(sectionNumber, sectionTargetName, {
-                            success: function (data) {
+                            success: function(data) {
                                 obj.data('content', data);
                                 self.notice.empty();
                                 self.displayQuickEditInterface(obj, `${i18n('history_edit_warning')}`);
                             },
-                            fail: function (data) {
+                            fail: function(data) {
                                 throwError('fail_to_get_wikitext_when_edit');
                             }
                         }, {
-                                'oldid': mw.config.get('wgRevisionId')
-                            })
+                            'oldid': mw.config.get('wgRevisionId')
+                        });
                     }
                 }
             }
@@ -1092,64 +1053,57 @@ $(function () {
                 if (summary === undefined) {
                     if (sectionName === undefined) {
                         summary = i18n('default_summary_suffix');
-                    }
-                    else {
+                    } else {
                         summary = `/* ${sectionName} */ ${i18n('default_summary_suffix')}`;
                     }
                 }
                 //DOM定义
-                var heightBefore = $(document).scrollTop();//记住当前高度
-                var backBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text(`${i18n('back')}`);//返回按钮
-                var jumpBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Jump').addClass('Wikiplus-Btn').append(
-                    $('<a>').attr('href', '#Wikiplus-Quickedit').text(`${i18n('goto_editbox')}`)
-                );//到编辑框
-                var inputBox = $('<textarea>').attr('id', 'Wikiplus-Quickedit');//主编辑框
-                var previewBox = $('<div>').attr('id', 'Wikiplus-Quickedit-Preview-Output');//预览输出
-                var summaryBox = $('<input>').attr('id', 'Wikiplus-Quickedit-Summary-Input').attr('placeholder', `${i18n('summary_placehold')}`);//编辑摘要输入
-                var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text(`${i18n(isNewPage ? 'publish_page' : 'publish_change')}(Ctrl+S)`);//提交按钮
-                var previewSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Preview-Submit').text(`${i18n('preview')}`);//预览按钮
-                var isMinorEdit = $('<div>').append(
-                    $('<input>').attr({ 'type': 'checkbox', 'id': 'Wikiplus-Quickedit-MinorEdit' })
-                )
-                    .append(
-                    $('<label>').attr('for', 'Wikiplus-Quickedit-MinorEdit').text(`${i18n('mark_minoredit')}(Ctrl+Shift+S)`)
-                    )
-                    .css({ 'margin': '5px 5px 5px -3px', 'display': 'inline' });
+                var heightBefore = $(document).scrollTop(); //记住当前高度
+                var backBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Back').addClass('Wikiplus-Btn').text(`${i18n('back')}`); //返回按钮
+                var jumpBtn = $('<span>').attr('id', 'Wikiplus-Quickedit-Jump').addClass('Wikiplus-Btn').append($('<a>').attr('href', '#Wikiplus-Quickedit').text(`${i18n('goto_editbox')}`)); //到编辑框
+                var inputBox = $('<textarea>').attr('id', 'Wikiplus-Quickedit'); //主编辑框
+                var previewBox = $('<div>').attr('id', 'Wikiplus-Quickedit-Preview-Output'); //预览输出
+                var summaryBox = $('<input>').attr('id', 'Wikiplus-Quickedit-Summary-Input').attr('placeholder', `${i18n('summary_placehold')}`); //编辑摘要输入
+                var editSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Submit').text(`${i18n(isNewPage ? 'publish_page' : 'publish_change')}(Ctrl+S)`); //提交按钮
+                var previewSubmitBtn = $('<button>').attr('id', 'Wikiplus-Quickedit-Preview-Submit').text(`${i18n('preview')}`); //预览按钮
+                var isMinorEdit = $('<div>').append($('<input>').attr({ 'type': 'checkbox', 'id': 'Wikiplus-Quickedit-MinorEdit' })).append($('<label>').attr('for', 'Wikiplus-Quickedit-MinorEdit').text(i18n('mark_minoredit') + '(Ctrl+Shift+S)')).css({ 'margin': '5px 5px 5px -3px', 'display': 'inline' });
                 //DOM定义结束
                 var editBody = $('<div>').append(backBtn, jumpBtn, previewBox, inputBox, summaryBox, $('<br>'), isMinorEdit, editSubmitBtn, previewSubmitBtn);
-                this.createDialogBox(`${i18n('quickedit_topbtn')}${message}`, editBody, 1000, function () {
+                this.createDialogBox(`${i18n('quickedit_topbtn')}${message}`, editBody, 1000, function() {
                     $('#Wikiplus-Quickedit').text(sectionContent);
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     //事件绑定
                     //返回
-                    $('#Wikiplus-Quickedit-Back').click(function () {
-                        $('.Wikiplus-InterBox').fadeOut('fast', function () {
+                    $('#Wikiplus-Quickedit-Back').click(function() {
+                        $('.Wikiplus-InterBox').fadeOut('fast', function() {
                             window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                             $(this).remove();
-                        })
+                        });
                     });
                     //预览
                     var onPreload = $('<div>').addClass('Wikiplus-Banner').text(`${i18n('loading_preview')}`);
-                    $('#Wikiplus-Quickedit-Preview-Submit').click(function () {
+                    $('#Wikiplus-Quickedit-Preview-Submit').click(function() {
                         var wikiText = $('#Wikiplus-Quickedit').val();
                         $(this).attr('disabled', 'disabled');
-                        $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
+                        $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function() {
                             $('#Wikiplus-Quickedit-Preview-Output').html('').append(onPreload);
                             $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                         });
-                        $('html, body').animate({ scrollTop: heightBefore }, 200);//返回顶部
+                        $('html, body').animate({
+                            scrollTop: heightBefore
+                        }, 200); //返回顶部
                         self.kotori.parseWikiText(wikiText, {
-                            success: function (data) {
-                                $('#Wikiplus-Quickedit-Preview-Output').fadeOut('100', function () {
+                            success: function(data) {
+                                $('#Wikiplus-Quickedit-Preview-Output').fadeOut('100', function() {
                                     $('#Wikiplus-Quickedit-Preview-Output').html('<hr><div class="mw-body-content">' + data + '</div><hr>');
                                     $('#Wikiplus-Quickedit-Preview-Output').fadeIn('100');
                                     $('#Wikiplus-Quickedit-Preview-Submit').prop('disabled', false);
                                 });
                             }
-                        })
+                        });
                     });
                     //提交
-                    $('#Wikiplus-Quickedit-Submit').click(function () {
+                    $('#Wikiplus-Quickedit-Submit').click(function() {
                         var wikiText = $('#Wikiplus-Quickedit').val();
                         var summary = $('#Wikiplus-Quickedit-Summary-Input').val();
                         var timer = new Date().valueOf();
@@ -1167,71 +1121,72 @@ $(function () {
                         }
                         //准备编辑 禁用各类按钮 返回顶部 显示信息
                         $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
-                        $('html, body').animate({ scrollTop: heightBefore }, 200);
-                        
+                        $('html, body').animate({
+                            scrollTop: heightBefore
+                        }, 200);
+
                         //开始提交编辑
                         if (sectionTargetName === self.kotori.pageName) {
-                            $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
+                            $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function() {
                                 $('#Wikiplus-Quickedit-Preview-Output').html('').append(onEdit);
                                 $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                             });
                             self.kotori.edit(wikiText, sectionTargetName, {
-                                success: function () {
+                                success: function() {
                                     var useTime = new Date().valueOf() - timer;
                                     $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
                                     $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text(`${i18n('edit_success')}`.replace(/\$1/ig, useTime.toString()));
                                     self.sendStatistic(sectionTargetName, useTime);
                                     window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
-                                    setTimeout(function () {
+                                    setTimeout(function() {
                                         location.reload();
                                     }, 500);
                                 },
-                                fail: function (e) {
+                                fail: function(e) {
                                     console.log(e);
                                     $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').prop('disabled', false);
                                     $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
                                     $('.Wikiplus-Banner').html(e.message);
                                 }
                             }, addtionalConfig);
-                        }
-                        else {
+                        } else {
                             //编辑目标非当前页面
-                            $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function () {
+                            $('#Wikiplus-Quickedit-Preview-Output').fadeOut(100, function() {
                                 $('#Wikiplus-Quickedit-Preview-Output').html('').append(onEdit.text(i18n('cross_page_edit')));
                                 $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                             });
                             self.kotori.reConstruct(sectionTargetName, {
-                                success: function () {
+                                success: function() {
                                     $('.Wikiplus-Banner').text(i18n('cross_page_edit_submit'));
                                     self.kotori.edit(wikiText, sectionTargetName, {
-                                        success: function () {
+                                        success: function() {
                                             var useTime = new Date().valueOf() - timer;
                                             $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').css('background', 'rgba(6, 239, 92, 0.44)');
                                             $('#Wikiplus-Quickedit-Preview-Output').find('.Wikiplus-Banner').text(`${i18n('edit_success')}`.replace(/\$1/ig, '' + useTime));
                                             self.sendStatistic(sectionTargetName, useTime);
                                             window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
-                                            setTimeout(function () {
+                                            setTimeout(function() {
                                                 location.reload();
                                             }, 500);
                                         },
-                                        fail: function (e) {
+                                        fail: function(e) {
                                             $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').prop('disabled', false);
                                             $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
                                             $('.Wikiplus-Banner').text(e.message);
                                         }
                                     }, addtionalConfig);
                                 },
-                                fail: function (e) {
+                                fail: function(e) {
                                     $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
                                     $('.Wikiplus-Banner').text(i18n('cross_page_edit_error'));
                                 }
-                            })
+                            });
                         }
-                    })
+                    });
                     //快捷键
                     //Ctrl+S提交 Ctrl+Shift+S小编辑
-                    $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input,#Wikiplus-Quickedit-MinorEdit').keydown(function (e) {
-                        if (e.ctrlKey && e.which == 83) {
+                    $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input,#Wikiplus-Quickedit-MinorEdit').keydown(function(e) {
+                        if (e.ctrlKey && e.which === 83) {
                             if (e.shiftKey) {
                                 $('#Wikiplus-Quickedit-MinorEdit').click();
                             }
@@ -1239,65 +1194,62 @@ $(function () {
                             e.preventDefault();
                             e.stopPropagation();
                         }
-                    })
+                    });
                     //由于是异步提交 Wikiplus即使编辑失败 也不会丢失数据 唯一丢失数据的可能性是手滑关了页面
                     //第一 关闭页面确认
-                    $('#Wikiplus-Quickedit').keydown(function () {
-                        window.onclose = window.onbeforeunload = function () {
+                    $('#Wikiplus-Quickedit').keydown(function() {
+                        window.onclose = window.onbeforeunload = function() {
                             return `${i18n('onclose_confirm')}`;
                         }
                     });
 
                     //Esc退出
                     if (self.getSetting('esc_to_exit_quickedit') === 'true') {
-                        $(document).keydown(function (e) {
+                        $(document).keydown(function(e) {
                             if (e.which === 27) {
                                 $('#Wikiplus-Quickedit-Back').click();
                             }
-                        })
+                        });
                     }
-                })
+                });
             }
             /**
              * 编辑设置
              */
             editSettings() {
                 var self = this;
-                self.addFunctionButton(i18n('wikiplus_settings'), 'Wikiplus-Settings-Intro', function () {
+                self.addFunctionButton(i18n('wikiplus_settings'), 'Wikiplus-Settings-Intro', function() {
                     var input = $('<textarea>').attr('id', 'Wikiplus-Setting-Input').attr('rows', '10');
                     var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Apply').text(i18n('submit'));
                     var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Cancel').text(i18n('cancel'));
-                    var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
-                    self.createDialogBox(i18n('wikiplus_settings_desc'), content, 600, function () {
+                    var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn); //拼接
+                    self.createDialogBox(i18n('wikiplus_settings_desc'), content, 600, function() {
                         if (localStorage.Wikiplus_Settings) {
                             $('#Wikiplus-Setting-Input').val(localStorage.Wikiplus_Settings);
-                        }
-                        else {
+                        } else {
                             $('#Wikiplus-Setting-Input').attr('placeholder', i18n('wikiplus_settings_placeholder'));
                         }
-                        $('#Wikiplus-Setting-Apply').click(function () {
+                        $('#Wikiplus-Setting-Apply').click(function() {
                             var settings = $('#Wikiplus-Setting-Input').val();
                             try {
                                 settings = JSON.parse(settings);
-                            }
-                            catch (e) {
+                            } catch(e) {
                                 self.notice.create.error(i18n('wikiplus_settings_grammar_error'));
                                 return;
                             }
                             localStorage.Wikiplus_Settings = JSON.stringify(settings);
                             $('.Wikiplus-InterBox-Content').html('').append(
-                                $('<div>').addClass('Wikiplus-Banner').text(i18n('wikiplus_settings_saved'))
-                            );
+                                $('<div>').addClass('Wikiplus-Banner').text(i18n('wikiplus_settings_saved')));
 
-                            $('.Wikiplus-InterBox').fadeOut(300, function () {
+                            $('.Wikiplus-InterBox').fadeOut(300, function() {
                                 $(this).remove();
                             });
-                        })
-                        $('#Wikiplus-Setting-Cancel').click(function () {
-                            $('.Wikiplus-InterBox').fadeOut(300, function () {
+                        });
+                        $('#Wikiplus-Setting-Cancel').click(function() {
+                            $('.Wikiplus-InterBox').fadeOut(300, function() {
                                 $(this).remove();
                             });
-                        })
+                        });
                     });
                 });
             }
@@ -1306,30 +1258,30 @@ $(function () {
              */
             simpleRedirector() {
                 var self = this;
-                self.addFunctionButton(i18n('redirect_from'), 'Wikiplus-SR-Intro', function () {
+                self.addFunctionButton(i18n('redirect_from'), 'Wikiplus-SR-Intro', function() {
                     var input = $('<input>').addClass('Wikiplus-InterBox-Input');
                     var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Apply').text(i18n('submit'));
                     var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Cancel').text(i18n('cancel'));
                     var continueBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-SR-Continue').text(i18n('continue'));
-                    var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
-                    self.createDialogBox(i18n('redirect_desc'), content, 600, function () {
-                        applyBtn.click(function () {
+                    var content = $('<div>').append(input).append($('<hr>')).append(applyBtn).append(cancelBtn); //拼接
+                    self.createDialogBox(i18n('redirect_desc'), content, 600, function() {
+                        applyBtn.click(function() {
                             if ($('.Wikiplus-InterBox-Input').val() != '') {
-                                var title = $('.Wikiplus-InterBox-Input').val()
+                                var title = $('.Wikiplus-InterBox-Input').val();
                                 $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit')}</div>`);
                                 self.kotori.redirectFrom(title, self.kotori.pageName, {
-                                    success: function () {
+                                    success: function() {
                                         $('.Wikiplus-Banner').text(i18n('redirect_saved'));
                                         $('.Wikiplus-InterBox').fadeOut(300);
                                         location.href = mw.config.get('wgArticlePath').replace(/\$1/ig, title);
                                     },
-                                    fail: function (e) {
+                                    fail: function(e) {
                                         $('.Wikiplus-Banner').css('background', 'rgba(218, 142, 167, 0.65)');
                                         $('.Wikiplus-Banner').text(e.message);
                                         if (e.number === 1018) {
                                             // 目标页面已经存在 确认哟
                                             $('.Wikiplus-InterBox-Content').append($('<hr>')).append(continueBtn).append(cancelBtn);
-                                            continueBtn.click(function () {
+                                            continueBtn.click(function() {
                                                 $('.Wikiplus-InterBox-Content').html(`<div class="Wikiplus-Banner">${i18n('submitting_edit')}</div>`);
                                                 self.kotori.redirectFrom(title, self.kotori.pageName, {
                                                     success: () => {
@@ -1343,32 +1295,31 @@ $(function () {
                                                     }
                                                 }, true);
                                             });
-                                            cancelBtn.click(function () {
+                                            cancelBtn.click(function() {
                                                 $('.Wikiplus-InterBox-Close').click();
-                                            })
+                                            });
                                         }
                                     }
                                 });
-                            }
-                            else {
+                            } else {
                                 self.showNotice.create.warning(i18n('empty_input'));
                             }
                         });
-                        $('#Wikiplus-SR-Cancel').click(function () {
-                            $('.Wikiplus-InterBox').fadeOut(300, function () {
+                        $('#Wikiplus-SR-Cancel').click(function() {
+                            $('.Wikiplus-InterBox').fadeOut(300, function() {
                                 $(this).remove();
                             });
-                        })
+                        });
                     });
-                })
+                });
             }
             /**
              * 预读取相关事件绑定
              */
             preloadEventBinding() {
                 var self = this;
-                $('#toc').children('ul').find('a').each(function (i) {
-                    $(this).mouseover(function () {
+                $('#toc').children('ul').find('a').each(function(i) {
+                    $(this).mouseover(function() {
                         $(this).unbind('mouseover');
                         self.preload(i + 1);
                     });
@@ -1384,18 +1335,15 @@ $(function () {
                         for (var languages in _i18nData) {
                             if (_i18nData[languages]['__version'] === this.langVersion) {
                                 i18nData[_i18nData[languages]['__language']] = _i18nData[languages];
-                            }
-                            else {
+                            } else {
                                 console.log(`多语言文件[${languages}]已经过期`);
-                                loadLanguage(_i18nData[languages]['__language']);//尝试重新取
+                                loadLanguage(_i18nData[languages]['__language']); //尝试重新取
                             }
                         }
-                    }
-                    catch (e) {
+                    } catch(e) {
                         throwError('cant_parse_i18ncache');
                     }
-                }
-                else {
+                } else {
                     localStorage.Wikiplus_i18nCache = JSON.stringify(i18nData);
                 }
             }
@@ -1404,35 +1352,32 @@ $(function () {
              */
             editEveryWhere() {
                 var self = this;
-                $('#mw-content-text a.external').each(function (i) {
+                $('#mw-content-text a.external').each(function(i) {
                     var url = $(this).attr('href');
                     var reg = /(([^?&=]+)(?:=([^?&=]*))*)/g;
-                    var params = {}, match;
+                    var params = {},
+                    match;
                     while (match = reg.exec(url)) {
                         try {
                             params[match[2]] = decodeURIComponent(match[3]);
-                        } catch (e) {
+                        } catch(e) {
                             // cannot decode
                             params[match[2]] = match[3];
                         }
                     }
                     if (params.action === 'edit' && params.title !== undefined && params.section !== 'new') {
-                        $(this).after($('<a>')
-                            .attr({
-                                'href': 'javascript:void(0)',
-                                'class': 'Wikiplus-Edit-EveryWhereBtn'
-                            })
-                            .text(`(${i18n('quickedit_sectionbtn')})`)
-                            .data({
-                                'target': decodeURIComponent(params.title),
-                                'number': params.section || -1
-                            })
-                        );
+                        $(this).after($('<a>').attr({
+                            'href': 'javascript:void(0)',
+                            'class': 'Wikiplus-Edit-EveryWhereBtn'
+                        }).text(`(${i18n('quickedit_sectionbtn')})`).data({
+                            'target': decodeURIComponent(params.title),
+                            'number': params.section || -1
+                        }));
                     }
                 });
-                $('.Wikiplus-Edit-EveryWhereBtn').click(function () {
+                $('.Wikiplus-Edit-EveryWhereBtn').click(function() {
                     self.initQuickEditInterface($(this));
-                })
+                });
             }
             /**
              * ===========================
@@ -1443,63 +1388,51 @@ $(function () {
             /**
              * 创建对话框
              * @param {string} title 对话框标题
-             * @param {HTML} content 内容 
+             * @param {HTML} content 内容
              * @param {interger} width 宽度 单位像素 默认600px
              * @param {function} callback 回调函数
              */
             createDialogBox(title = 'Dialog Box', content = $('<div>'), width = 600, callback = new Function()) {
                 if ($('.Wikiplus-InterBox').length > 0) {
-                    $('.Wikiplus-InterBox').each(function () {
+                    $('.Wikiplus-InterBox').each(function() {
                         $(this).remove();
                     });
                 }
                 var clientWidth = window.innerWidth;
                 var clientHeight = window.innerHeight;
                 var dialogWidth = Math.min(clientWidth, width);
-                var diglogBox = $('<div>').addClass('Wikiplus-InterBox')
-                    .css({
-                        'margin-left': (clientWidth / 2) - (dialogWidth / 2),
-                        'top': $(document).scrollTop() + clientHeight * 0.2,
-                        'display': 'none'
-                    })
-                    .append(
-                    $('<div>').addClass('Wikiplus-InterBox-Header')
-                        .html(title)
-                    )
-                    .append(
-                    $('<div>').addClass('Wikiplus-InterBox-Content')
-                        .append(content)
-                    )
-                    .append(
-                    $('<span>').text('×').addClass('Wikiplus-InterBox-Close')
-                    )
+                var diglogBox = $('<div>').addClass('Wikiplus-InterBox').css({
+                    'margin-left': clientWidth / 2 - dialogWidth / 2,
+                    'top': $(document).scrollTop() + clientHeight * 0.2,
+                    'display': 'none'
+                }).append($('<div>').addClass('Wikiplus-InterBox-Header').html(title)).append($('<div>').addClass('Wikiplus-InterBox-Content').append(content)).append($('<span>').text('×').addClass('Wikiplus-InterBox-Close'));
                 $('body').append(diglogBox);
                 $('.Wikiplus-InterBox').width(dialogWidth);
-                $('.Wikiplus-InterBox-Close').click(function () {
-                    $(this).parent().fadeOut('fast', function () {
+                $('.Wikiplus-InterBox-Close').click(function() {
+                    $(this).parent().fadeOut('fast', function() {
                         window.onclose = window.onbeforeunload = undefined; //取消页面关闭确认
                         $(this).remove();
-                    })
+                    });
                 });
                 //拖曳
-                var bindDragging = function (element) {
-                    element.mousedown(function (e) {
+                var bindDragging = function(element) {
+                    element.mousedown(function(e) {
                         var baseX = e.clientX;
                         var baseY = e.clientY;
                         var baseOffsetX = element.parent().offset().left;
                         var baseOffsetY = element.parent().offset().top;
-                        $(document).mousemove(function (e) {
+                        $(document).mousemove(function(e) {
                             element.parent().css({
                                 'margin-left': baseOffsetX + e.clientX - baseX,
                                 'top': baseOffsetY + e.clientY - baseY
-                            })
+                            });
                         });
-                        $(document).mouseup(function () {
+                        $(document).mouseup(function() {
                             element.unbind('mousedown');
                             $(document).unbind('mousemove');
                             $(document).unbind('mouseup');
                             bindDragging(element);
-                        })
+                        });
                     });
                 }
                 bindDragging($('.Wikiplus-InterBox-Header'));
@@ -1510,18 +1443,19 @@ $(function () {
              * 增加功能按钮
              * @param {string} text 按钮名
              * @param {string} id 按钮id
-             * @param {function} clickEvent 点击事件 
+             * @param {function} clickEvent 点击事件
              */
             addFunctionButton(text, id, clickEvent) {
-                var button = $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
-                if (mw.config.get('skin') === 'minerva') {
-                    return;
-                }
-                if ($('#p-cactions').length > 0) {
+                var button = mw.config.get('skin') === 'minerva'
+                    ? $('<li>').attr('id', id).addClass('toggle-list-item').append($('<a>').addClass('mw-ui-icon mw-ui-icon-before toggle-list-item__anchor').append($('<span>').attr('href', 'javascript:void(0);').addClass('toggle-list-item__label').text(text)))
+                    $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
+                if (mw.config.get('skin') === 'minerva' && $('#p-tb').length > 0) {
+                    $('#p-tb').append(button);
+                    $(`#${id}`).click(clickEvent);
+                } else if ($('#p-cactions').length > 0) {
                     $('#p-cactions ul').append(button);
-                    $('#p-cactions ul').find('li').last().click(clickEvent);
-                }
-                else {
+                    $(`#${id}`).click(clickEvent);
+                } else {
                     throwError('cant_add_funcbtn');
                 }
             }
@@ -1542,8 +1476,7 @@ $(function () {
                         callback.success(this.preloadData[`${config.oldid}.${section}`]);
                         return;
                     }
-                }
-                else {
+                } else {
                     if (this.preloadData[`${title}.${section}`]) {
                         console.log(`[${title}.${section}]已经预读取 跳过本次预读取`);
                         callback.success(this.preloadData[`${title}.${section}`]);
@@ -1551,29 +1484,27 @@ $(function () {
                     }
                 }
                 this.kotori.getWikiText({
-                    success: function (data) {
+                    success: function(data) {
                         if (config.oldid !== undefined) {
                             self.preloadData[`${config.oldid}.${section}`] = data;
                             console.log(`预读取[修订版本${config.oldid}.${section}]成功`);
-                        }
-                        else {
+                        } else {
                             self.preloadData[`${title}.${section}`] = data;
                             console.log(`预读取[${title}.${section}]成功`);
                         }
                         callback.success(data);
                     },
-                    fail: function (e) {
+                    fail: function(e) {
                         if (config.oldid !== undefined) {
                             console.log(`预读取[修订版本${config.oldid}.${section}]失败`);
-                        }
-                        else {
+                        } else {
                             console.log(`预读取[${title}.${section}]失败:${e.message}`);
                         }
                         callback.fail(e);
                     }
                 }, title, $.extend({
-                    section: section === -1 ? '' : section
-                }, config));
+                        section: section === -1 ? '' : section
+                    }, config));
             }
             /**
              * 提交统计数据
@@ -1581,7 +1512,7 @@ $(function () {
              * @param {interger} useTime 用时 单位毫秒
              */
             sendStatistic(title = mw.config.get('wgPageName'), useTime) {
-                if (localStorage.Wikiplus_SendStatistics == 'True') {
+                if (localStorage.Wikiplus_SendStatistics === 'True') {
                     $.ajax({
                         url: `${scriptPath}/statistics/api/submit`,
                         type: 'POST',
@@ -1592,10 +1523,10 @@ $(function () {
                             'username': mw.config.get('wgUserName'),
                             'pagename': title
                         },
-                        success: function (data) {
+                        success: function(data) {
                             //提交成功
                         }
-                    })
+                    });
                 }
             }
             /**
@@ -1606,32 +1537,32 @@ $(function () {
                 var self = this;
                 if (!localStorage.Wikiplus_Installed || localStorage.Wikiplus_Installed == 'False') {
                     //安装
-                    var install = function () {
-                        localStorage.Wikiplus_Installed = 'True';//标记已安装
+                    var install = function() {
+                        localStorage.Wikiplus_Installed = 'True'; //标记已安装
                         localStorage.Wikiplus_Version = self.version;
                         localStorage.Wikiplus_StartUseAt = new Date().valueOf();
                         localStorage.Wikiplus_SrartEditCount = mw.config.get('wgUserEditCount');
                         localStorage.Wikiplus_Settings = JSON.stringify(self.defaultSettings);
-                        $('.Wikiplus-InterBox').fadeOut('fast', function () {
+                        $('.Wikiplus-InterBox').fadeOut('fast', function() {
                             self.notice.create.success(i18n('install_finish'));
                             $(this).remove();
-                        })
+                        });
                     }
                     var notice = $('<div>').text(i18n('install_tip').replace(/\$1/ig, mw.config.get('wgSiteName'))).attr('id', 'Wikiplus-InterBox-Content');
                     var applyBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Apply').text(i18n('accept'));
                     var cancelBtn = $('<div>').addClass('Wikiplus-InterBox-Btn').attr('id', 'Wikiplus-Setting-Cancel').text(i18n('decline'));
-                    var content = $('<div>').append(notice).append($('<hr>')).append(applyBtn).append(cancelBtn);//拼接
-                    self.createDialogBox('安装Wikiplus', content, 600, function () {
+                    var content = $('<div>').append(notice).append($('<hr>')).append(applyBtn).append(cancelBtn); //拼接
+                    self.createDialogBox('安装Wikiplus', content, 600, function() {
                         $('#Wikiplus-InterBox-Content').css('text-align', 'left');
-                        $('#Wikiplus-Setting-Apply').click(function () {
+                        $('#Wikiplus-Setting-Apply').click(function() {
                             localStorage.Wikiplus_SendStatistics = 'True';
                             install();
                         });
-                        $('#Wikiplus-Setting-Cancel').click(function () {
+                        $('#Wikiplus-Setting-Cancel').click(function() {
                             localStorage.Wikiplus_SendStatistics = 'False';
                             install();
                         });
-                    })
+                    });
                 }
             }
             /**
@@ -1643,55 +1574,45 @@ $(function () {
                 var w = object;
                 try {
                     var settings = JSON.parse(localStorage.Wikiplus_Settings);
-                }
-                catch (e) {
+                } catch(e) {
                     return localStorage.Wikiplus_Settings || '';
                 }
                 try {
                     var _setting = new Function('return ' + settings[key]);
-                    if (typeof _setting == 'function') {
+                    if (typeof _setting === 'function') {
                         try {
                             if (_setting()(w) === true) {
                                 return undefined
-                            }
-                            else {
+                            } else {
                                 return _setting()(w) || settings[key];
                             }
-                        }
-                        catch (e) {
+                        } catch(e) {
                             return settings[key];
                         }
-                    }
-                    else {
+                    } else {
                         return settings[key];
                     }
-                }
-                catch (e) {
+                } catch(e) {
                     try {
                         return settings[key];
-                    }
-                    catch (e) {
+                    } catch(e) {
                         return undefined;
                     }
                 }
             }
             initBasicFunctions() {
-                this.initQuickEdit();//加载快速编辑
-                this.editSettings();//编辑设置
-                this.simpleRedirector();//快速重定向
-                this.preloadEventBinding();//预读取
+                this.initQuickEdit(); //加载快速编辑
+                this.editSettings(); //编辑设置
+                this.simpleRedirector(); //快速重定向
+                this.preloadEventBinding(); //预读取
                 if (!this.getSetting('disableEditEveryWhere')) {
-                    this.editEveryWhere();//任意编辑
+                    this.editEveryWhere(); //任意编辑
                 }
             }
-            initRecentChangesPageFunctions() {
-
-            }
-            initAdvancedFunctions() {
-
-            }
+            initRecentChangesPageFunctions() {}
+            initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.3';
+                this.version = '2.3.4';
                 this.langVersion = '212';
                 this.releaseNote = '适配Minerva皮肤';
                 this.notice = new MoeNotification();
@@ -1727,12 +1648,11 @@ $(function () {
                     this.kotori = new Wikipage();
                     this.checki18nCache();
                     this.initBasicFunctions();
-                }
-                else {
+                } else {
                     console.log('不符合加载条件 Wikiplus终止');
                 }
             }
         }
         window.Wikiplus = new Wikiplus();
-    })
-})
+    });
+});
