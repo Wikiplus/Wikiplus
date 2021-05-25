@@ -685,7 +685,8 @@ $(function() {
                     'rvprop': 'timestamp',
                     'format': 'json'
                 },
-                beforeSend: function() {
+                beforeSend: function(request) {
+                    request.setRequestHeader('Api-User-Agent', `Wikiplus/2 (${mw.config.get('wgWikiID')})`);
                     console.time('获得页面基础信息时间耗时');
                 },
                 success: function(data) {
@@ -711,6 +712,9 @@ $(function() {
                                             'action': 'query',
                                             'meta': 'tokens',
                                             'format': 'json'
+                                        },
+                                        beforeSend: function(request) {
+                                            request.setRequestHeader('Api-User-Agent', `Wikiplus/2 (${mw.config.get('wgWikiID')})`);
                                         },
                                         success: function(data) {
                                             if (data.query && data.query.tokens && data.query.tokens.csrftoken && data.query.tokens.csrftoken !== '+\\') {
@@ -781,6 +785,9 @@ $(function() {
                         'token': self.editToken[title] || self.editToken[self.pageName],
                         'basetimestamp': self.timeStamp[title]
                     }, config),
+                    beforeSend: function(request) {
+                        request.setRequestHeader('Api-User-Agent', `Wikiplus/2 (${mw.config.get('wgWikiID')})`);
+                    },
                     success: function(data) {
                         if (data && data.edit) {
                             if (data.edit.result && data.edit.result === 'Success') {
@@ -872,7 +879,8 @@ $(function() {
                     'title': title,
                     'action': 'raw'
                 }, config),
-                beforeSend: function() {
+                beforeSend: function(request) {
+                    request.setRequestHeader('Api-User-Agent', `Wikiplus/2 (${mw.config.get('wgWikiID')})`);
                     console.time('获得页面文本耗时');
                 },
                 success: function(data) {
@@ -903,6 +911,9 @@ $(function() {
                     'title': this.pageName,
                     'pst': 'true'
                 }, config),
+                beforeSend: function(request) {
+                    request.setRequestHeader('Api-User-Agent', `Wikiplus/2 (${mw.config.get('wgWikiID')})`);
+                },
                 url: this.API,
                 success: function(data) {
                     if (data && data.parse && data.parse.text) {
