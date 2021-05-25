@@ -366,7 +366,7 @@ class UI {
             "keydown",
             function (e) {
                 console.log(e);
-                if (e.ctrlKey && e.which == 83) {
+                if (e.ctrlKey && e.which === 83) {
                     if (e.shiftKey) {
                         $("#Wikiplus-Quickedit-MinorEdit").trigger("click");
                     }
