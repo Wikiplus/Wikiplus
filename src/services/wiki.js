@@ -22,7 +22,7 @@ class Wiki {
             response.query &&
             response.query.tokens &&
             response.query.tokens.csrftoken &&
-            response.query.tokens.csrftoken != "+\\"
+            response.query.tokens.csrftoken !== "+\\"
         ) {
             return response.query.tokens.csrftoken;
         } else {
