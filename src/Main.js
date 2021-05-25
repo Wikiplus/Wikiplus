@@ -950,7 +950,7 @@ $(function() {
                         : $('<span>').append($('<span>').addClass('mw-editsection-divider').text(' | ')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn')));
                     $('.mw-editsection').each(function(i) {
                         try {
-                            var editURL = $(this).find('a').last().attr('href');
+                            var editURL = $(this).find('a').first().attr('href');
                             var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
                             var sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
                             var cloneNode = $(this).prev().clone();
