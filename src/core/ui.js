@@ -94,12 +94,15 @@ class UI {
      * @return {JQuery<HTMLElement>} button
      */
     addFunctionButton(text, id) {
-        const button = $("<li></li>")
-            .attr("id", id)
-            .append($("<a></a>").attr("href", "javascript:void(0);").text(text));
-        if ($("#p-cactions").length > 0) {
+        const button = mw.config.get("skin") === "minerva"
+            ? $("<li>").attr("id", id).addClass("toggle-list-item").append($("<a>").addClass("mw-ui-icon mw-ui-icon-before toggle-list-item__anchor").append($("<span>").attr("href", "javascript:void(0);").addClass("toggle-list-item__label").text(text)))
+            : $("<li>").attr("id", id).append($("<a>").attr("href", "javascript:void(0);").text(text));
+        if (mw.config.get("skin") === "minerva" && $("#p-tb").length > 0) {
+            $("#p-tb").append(button);
+            return $(`#${id}`);
+        } else if ($("#p-cactions").length > 0) {
             $("#p-cactions ul").append(button);
-            return $("#p-cactions ul").find("li").last();
+            return $(`#${id}`);
         } else {
             Log.info(i18n.translate("cant_add_funcbtn"));
         }
