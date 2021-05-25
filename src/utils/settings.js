@@ -9,7 +9,7 @@ class Settings {
         }
         try {
             const customSettingFunction = new Function("return " + settings[key]);
-            if (typeof customSettingFunction == "function") {
+            if (typeof customSettingFunction === "function") {
                 try {
                     if (customSettingFunction()(w) === true) {
                         return;
@@ -34,6 +34,7 @@ class Settings {
             }
         }
     }
+    static version = "3.0.0";
 }
 
 export default new Settings();

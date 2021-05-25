@@ -26,6 +26,9 @@ class Constants {
     get action() {
         return window.mw.config.get("wgAction");
     }
+    get wikiId() {
+        return window.mw.config.get("wgWikiID");
+    }
 }
 
 export default new Constants();

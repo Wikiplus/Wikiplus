@@ -1,4 +1,5 @@
 import Constants from "../utils/constants";
+import Settings from "../utils/settings";
 
 class Requests {
     static base = `${location.protocol}//${location.host}${Constants.scriptPath}/api.php`;
@@ -9,6 +10,9 @@ class Requests {
         });
         const response = await fetch(url, {
             credentials: "same-origin",
+            headers: {
+                "Api-User-Agent": `Wikiplus/${Settings.version} (${Constants.wikiId})`
+            }
         });
         return await response.json();
     }
@@ -22,6 +26,9 @@ class Requests {
             method: "POST",
             body: form,
             credentials: "same-origin",
+            headers: {
+                "Api-User-Agent": `Wikiplus/${Settings.version} (${Constants.wikiId})`
+            }
         });
         return await response.json();
     }
