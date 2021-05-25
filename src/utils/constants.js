@@ -29,6 +29,9 @@ class Constants {
     get wikiId() {
         return window.mw.config.get("wgWikiID");
     }
+    get skin() {
+        return window.mw.config.get('skin');
+    }
 }
 
 export default new Constants();
