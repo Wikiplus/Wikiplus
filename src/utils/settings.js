@@ -1,4 +1,5 @@
 class Settings {
+    static version = "3.0.0";
     getSetting(key, object = {}) {
         const w = object;
         let settings;
@@ -34,7 +35,6 @@ class Settings {
             }
         }
     }
-    static version = "3.0.0";
 }
 
 export default new Settings();

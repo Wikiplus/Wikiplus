@@ -97,7 +97,7 @@ class UI {
         const button = Constants.skin === "minerva"
             ? $("<li>").attr("id", id).addClass("toggle-list-item").append($("<a>").addClass("mw-ui-icon mw-ui-icon-before toggle-list-item__anchor").append($("<span>").attr("href", "javascript:void(0);").addClass("toggle-list-item__label").text(text)))
             : $("<li>").attr("id", id).append($("<a>").attr("href", "javascript:void(0);").text(text));
-        if (mw.config.get("skin") === "minerva" && $("#p-tb").length > 0) {
+        if (Constants.skin === "minerva" && $("#p-tb").length > 0) {
             $("#p-tb").append(button);
             return $(`#${id}`);
         } else if ($("#p-cactions").length > 0) {
@@ -147,10 +147,10 @@ class UI {
                         .text(`${i18n.translate("quickedit_topbtn")}`)
                 )
         );
-        if (Constants.skin === 'minerva') {
-            $(topBtn).css({ 'align-items': 'center', 'display': 'flex' });
-            $(topBtn).find('span').addClass('page-actions-menu__list-item');
-            $(topBtn).find('a').addClass('mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop').css('vertical-align', 'middle');
+        if (Constants.skin === "minerva") {
+            $(topBtn).css({ "align-items": "center", "display": "flex" });
+            $(topBtn).find("span").addClass("page-actions-menu__list-item");
+            $(topBtn).find("a").addClass("mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop").css("vertical-align", "middle");
         }
         $(topBtn).on("click", () => {
             onClick({
@@ -158,8 +158,8 @@ class UI {
                 targetPageName: Constants.currentPageName,
             });
         });
-        if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length === 0) {
-            Constants.skin === 'minerva' ? $('#ca-edit').parent().after(topBtn) : $('#ca-edit').after(topBtn);
+        if ($("#ca-edit").length > 0 && $("#Wikiplus-Edit-TopBtn").length === 0) {
+            Constants.skin === "minerva" ? $("#ca-edit").parent().after(topBtn) : $("#ca-edit").after(topBtn);
         }
     }
 

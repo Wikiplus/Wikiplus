@@ -12,7 +12,6 @@ import Constants from "./utils/constants";
 import i18n from "./utils/i18n";
 
 $(document).ready(async () => {
-    const version = Settings.version;
     const Pages = {};
     const isNewPage = $(".noarticletext").length > 0 && Constants.articleId === 0;
 
@@ -35,10 +34,10 @@ $(document).ready(async () => {
         return Pages[revisionId];
     };
 
-    Log.info(`Wikiplus now loading. Version: ${version}`);
+    Log.info(`Wikiplus now loading. Version: ${Settings.version}`);
 
     if (!window.mw) {
-        console.log("页面Javascript载入不完全或这不是一个Mediawiki站点");
+        console.log("页面JavaScript载入不完全或这不是一个MediaWiki站点");
         return;
     }
     if (!Constants.userGroups.includes("autoconfirmed")) {
@@ -174,7 +173,7 @@ $(document).ready(async () => {
         });
     };
 
-    UI.loadCSS(`https://wikiplus-app.com/wikiplus.css`);
+    UI.loadCSS("https://wikiplus-app.com/wikiplus.css");
     UI.insertTopQuickEditEntry(handleQuickEditButtonClicked);
     UI.insertSectionQuickEditEntries(handleQuickEditButtonClicked);
     UI.insertLinkEditEntries(handleQuickEditButtonClicked);
