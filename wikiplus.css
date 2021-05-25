@@ -1,76 +1,76 @@
-.clear{
+.clear {
 	clear: both;
 }
-#Wikiplus-Quickedit-Summary-Input{
+#Wikiplus-Quickedit-Summary-Input {
 	width: 300px;
 }
-.Wikiplus-Btn{
-	cursor: pointer;
+.Wikiplus-Btn {
 	position: relative;
-	text-align: center;
 	float: left;
-	width: auto;
 	margin: 3px 5px 3px 5px;
-	padding:3px 1em 3px 1em;
-	box-shadow:0 1px 2px #aaa;
-	background-color: white;
+	padding: 3px 1em 3px 1em;
+	width: auto;
+	background-color: #fff;
+	box-shadow: 0 1px 2px #aaa;
+	text-align: center;
+	cursor: pointer;
 }
-.Wikiplus-Btn a{
-    display: block;
-    text-decoration: none;
-    color: black;
-    position: relative;
-    margin: 0px;
-}
-.Wikiplus-InterBox{
-	z-index: 200;
-	position: absolute;
-	top:20%;
-	min-height: 100px;
-	width: 600px;
-	padding: 20px 10px 20px 10px;
-	border: 1px rgba(161, 154, 220, 0.41) solid;
-	background-color: #EDF9F7;
-}
-.Wikiplus-InterBox-Header{
+.Wikiplus-Btn a {
 	position: relative;
-	top: 0px;
-	width: 100%;
-	margin: 0px;
-	text-align:left;
-	font-size: 15px;
-	border-bottom: 1px #66ccff solid;
-	cursor: move;
-    line-height: 30px;
-    top: -8px;
+	display: block;
+	margin: 0;
+	color: #000;
+	text-decoration: none;
 }
-.Wikiplus-InterBox-Input{
+.Wikiplus-InterBox {
+	position: absolute;
+	top: 20%;
+	z-index: 200;
+	padding: 20px 10px 20px 10px;
+	width: 600px;
+	min-height: 100px;
+	border: 1px rgba(161, 154, 220, 0.41) solid;
+	background-color: #edf9f7;
+}
+.Wikiplus-InterBox-Header {
+	position: relative;
+	top: 0;
+	top: -8px;
+	margin: 0;
+	width: 100%;
+	border-bottom: 1px #6cf solid;
+	text-align: left;
+	font-size: 15px;
+	line-height: 30px;
+	cursor: move;
+}
+.Wikiplus-InterBox-Input {
 	margin: 20px;
 	width: 60%;
 }
-.Wikiplus-InterBox-Btn{
-	cursor: pointer;
+.Wikiplus-InterBox-Btn {
 	position: relative;
 	float: right;
-	padding: 6px 12px;
 	margin: auto 3px auto 3px;
-	text-align: center;
+	padding: 6px 12px;
+	border: 1px solid #dedede;
+	background-color: #fff;
 	vertical-align: middle;
-	border: 1px solid rgb(222, 222, 222);
-	background-color: white;
-}
-.Wikiplus-InterBox-Btn:hover{
-	background-color: #E8E8E8;
-}
-.Wikiplus-InterBox-Close{
+	text-align: center;
 	cursor: pointer;
+}
+.Wikiplus-InterBox-Btn:hover {
+	background-color: #e8e8e8;
+}
+.Wikiplus-InterBox-Close {
 	position: absolute;
-	top: 0px;
-	right: 0px;
+	top: 0;
+	right: 0;
 	margin: 3px 7px;
 	font-size: 20px;
+	cursor: pointer;
 }
-.Wikiplus-InterBox label{
+.Wikiplus-InterBox label {
 	font-size: 13px;
 }
 .Wikiplus-InterBox table.diff {
@@ -79,110 +79,186 @@
 .Wikiplus-InterBox table.diff .diff-lineno {
 	width: 50%;
 }
-.Wikiplus-InterBox table.diff .diff-deletedline,.Wikiplus-InterBox table.diff .diff-addedline{
+.Wikiplus-InterBox table.diff .diff-addedline, .Wikiplus-InterBox table.diff .diff-deletedline {
 	width: 50%;
 }
-.Wikiplus-InterBox table.diff .diff-marker{
+.Wikiplus-InterBox table.diff .diff-marker {
 	text-align: left;
 }
-#Wikiplus-Quickedit-Preview-Output{
-	margin:5px 0px 5px 0px;
+#Wikiplus-Quickedit-Preview-Output {
 	clear: both;
+	margin: 5px 0 5px 0;
 }
-#Wikiplus-Quickedit{
+#Wikiplus-Quickedit {
 	width: 100%;
 	min-height: 500px;
 }
-.Wikiplus-Banner{
+.Wikiplus-Banner {
+	margin: 0;
+	padding: 10px 5px 10px 5px;
+	min-height: 50px;
 	background: rgba(193, 222, 214, 0.51);
 	text-align: center;
 	font-size: 30px;
-	font-family: '微软雅黑';
-	padding: 10px 5px 10px 5px;
-	min-height: 50px;
-	margin:0px;
+	font-family: 微软雅黑;
 }
-.navbox .Wikiplus-Edit-EveryWhereBtn{
+.navbox .Wikiplus-Edit-EveryWhereBtn {
 	position: absolute;
 	width: 4.5rem;
 }
-/*.Wikiplus-Edit-EveryWhereBtn{
-	position: absolute;
-}*/
-.MoeNotification-notice{
+.MoeNotification-notice {
 	position: relative;
-	width: auto;
-	margin: 3px 5px 3px 5px;
+	display: none;
 	overflow: hidden;
+	margin: 3px 5px 3px 5px;
+	width: auto;
 	box-shadow: 0 3px 3px #aaa;
 	font-size: 14px !important;
-	display: none;
 }
-.MoeNotification-notice span{
-	text-align: left;
+.MoeNotification-notice span {
 	position: relative;
 	margin: 3px auto 3px 3px;
-	color: white;
-	font-family: Arial,Tahoma,Microsoft YaHei,\5fae\8f6f\96c5\9ed1,Hiragino Sans GB,Microsoft JhengHei,微軟正黑體,sans-serif;
+	color: #fff;
+	text-align: left;
 	font-size: 14px !important;
+	font-family: Arial, Tahoma, Microsoft YaHei, \5fae\8f6f\96c5\9ed1, Hiragino Sans GB, Microsoft JhengHei, 微軟正黑體, sans-serif;
 	line-height: 1.5 !important;
 }
-.MoeNotification-notice-success{
-	border-top-left-radius:3px;
-	border-bottom-left-radius:3px;
-	border-left: 5px #8DDA93 solid;
-	background-color: #008A00;
+.MoeNotification-notice-success {
+	border-left: 5px #8dda93 solid;
+	border-bottom-left-radius: 3px;
+	border-top-left-radius: 3px;
+	background-color: #008a00;
 }
-.MoeNotification-notice-warning{
-	border-top-left-radius:3px;
-	border-bottom-left-radius:3px;
-	border-left: 5px #FFDF00 solid;
-	background-color: #F4BD00;
+.MoeNotification-notice-warning {
+	border-left: 5px #ffdf00 solid;
+	border-bottom-left-radius: 3px;
+	border-top-left-radius: 3px;
+	background-color: #f4bd00;
 }
-.MoeNotification-notice-warning span{
-	color: black;
+.MoeNotification-notice-warning span {
+	color: #000;
 }
-.MoeNotification-notice-error{
-	border-top-left-radius:3px;
-	border-bottom-left-radius:3px;
-	border-left: 5px #E71717 solid;
-	background-color: #B00E06;
+.MoeNotification-notice-error {
+	border-left: 5px #e71717 solid;
+	border-bottom-left-radius: 3px;
+	border-top-left-radius: 3px;
+	background-color: #b00e06;
 }
-#MoeNotification{
+#MoeNotification {
 	position: fixed;
-	width: 30%;
-	left:0px;
 	bottom: 30px;
-	z-index:713;
+	left: 0;
+	z-index: 713;
+	width: 30%;
 }
-table.diff{border:none;border-spacing:4px;margin:0;width:100%;table-layout:fixed}table.diff td{padding:0.33em 0.5em}table.diff td.diff-marker{padding:0.25em}table.diff col.diff-marker{width:2%}table.diff col.diff-content{width:48%}table.diff td div{word-wrap:break-word}td.diff-otitle,td.diff-ntitle{text-align:center}td.diff-lineno{font-weight:bold}td.diff-marker{text-align:right;font-weight:bold;font-size:1.25em;line-height:1.2}td.diff-addedline,td.diff-deletedline,td.diff-context{font-size:88%;line-height:1.6;vertical-align:top;white-space:-moz-pre-wrap;white-space:pre-wrap;border-style:solid;border-width:1px 1px 1px 4px;border-radius:0.33em}td.diff-addedline{border-color:#a3d3ff}td.diff-deletedline{border-color:#ffe49c}td.diff-context{background:#f9f9f9;border-color:#e6e6e6;color:#333333}.diffchange{font-weight:bold;text-decoration:none}td.diff-addedline .diffchange,td.diff-deletedline .diffchange{border-radius:0.33em;padding:0.25em 0}td.diff-addedline .diffchange{background:#d8ecff}td.diff-deletedline .diffchange{background:#feeec8}@media print{td.diff-context,td.diff-addedline .diffchange,td.diff-deletedline .diffchange{background-color:transparent}td.diff-addedline .diffchange{text-decoration:underline}td.diff-deletedline .diffchange{text-decoration:line-through}}
-.mw-editsection-divider{
+table.diff {
+	margin: 0;
+	width: 100%;
+	border: none;
+	table-layout: fixed;
+	border-spacing: 4px;
+}
+table.diff td {
+	padding: 0.33em 0.5em;
+}
+table.diff td.diff-marker {
+	padding: 0.25em;
+}
+table.diff col.diff-marker {
+	width: 2%;
+}
+table.diff col.diff-content {
+	width: 48%;
+}
+table.diff td div {
+	word-wrap: break-word;
+}
+td.diff-ntitle,td.diff-otitle {
+	text-align: center;
+}
+td.diff-lineno {
+	font-weight: 700;
+}
+td.diff-marker {
+	text-align: right;
+	font-weight: 700;
+	font-size: 1.25em;
+	line-height: 1.2;
+}
+td.diff-addedline,td.diff-context,td.diff-deletedline {
+	border-style: solid;
+	border-width: 1px 1px 1px 4px;
+	border-radius: 0.33em;
+	vertical-align: top;
+	white-space: -moz-pre-wrap;
+	white-space: pre-wrap;
+	font-size: 88%;
+	line-height: 1.6;
+}
+td.diff-addedline {
+	border-color: #a3d3ff;
+}
+td.diff-deletedline {
+	border-color: #ffe49c;
+}
+td.diff-context {
+	border-color: #e6e6e6;
+	background: #f9f9f9;
+	color: #333;
+}
+.diffchange {
+	text-decoration: none;
+	font-weight: 700;
+}
+td.diff-addedline .diffchange,td.diff-deletedline .diffchange {
+	padding: 0.25em 0;
+	border-radius: 0.33em;
+}
+td.diff-addedline .diffchange {
+	background: #d8ecff;
+}
+td.diff-deletedline .diffchange {
+	background: #feeec8;
+}
+@media print {
+	td.diff-addedline .diffchange,td.diff-context,td.diff-deletedline .diffchange {
+		background-color: transparent;
+	}
+	td.diff-addedline .diffchange {
+		text-decoration: underline;
+	}
+	td.diff-deletedline .diffchange {
+		text-decoration: line-through;
+	}
+}
+.mw-editsection-divider {
 	display: inline !important;
 }
-.skin-minerva #Wikiplus-Quickedit-Preview-Submit,.skin-minerva #Wikiplus-Quickedit-Submit,.skin-minerva #Wikiplus-Quickedit-Summary-Input,.skin-minerva .Wikiplus-InterBox-Input{
+.skin-minerva #Wikiplus-Quickedit-Preview-Submit, .skin-minerva #Wikiplus-Quickedit-Submit, .skin-minerva #Wikiplus-Quickedit-Summary-Input, .skin-minerva .Wikiplus-InterBox-Input {
 	all: revert;
 }
-.skin-minerva #Wikiplus-Quickedit-Summary-Input{
+.skin-minerva #Wikiplus-Quickedit-Summary-Input {
 	width: 300px;
 }
-.skin-minerva #Wikiplus-Setting-Input{
-	max-width: calc(100% - 10px);
+.skin-minerva #Wikiplus-Setting-Input {
 	width: calc(100% - 10px);
+	max-width: calc(100% - 10px);
 }
-.skin-minerva .Wikiplus-InterBox-Input{
+.skin-minerva .Wikiplus-InterBox-Input {
 	margin: 20px;
 	width: 60%;
 }
-.skin-minerva #Wikiplus-Settings-Intro a:before{
-	background-image: linear-gradient(transparent,transparent),url(/w/load.php?modules=skins.minerva.mainMenu.icons&image=settings&format=original&skin=minerva&version=1up49);
+.skin-minerva #Wikiplus-Settings-Intro a:before {
+	background-image: linear-gradient(transparent,transparent), url(/w/load.php?modules=skins.minerva.mainMenu.icons&image=settings&format=original&skin=minerva&version=1up49);
 }
-.skin-minerva #Wikiplus-SR-Intro a:before{
-	background-image: linear-gradient(transparent,transparent),url(/w/load.php?modules=skins.minerva.overflow.icons&image=articleRedirect&format=original&lang=zh-cn&skin=minerva&version=1vckg);
+.skin-minerva #Wikiplus-SR-Intro a:before {
+	background-image: linear-gradient(transparent,transparent), url(/w/load.php?modules=skins.minerva.overflow.icons&image=articleRedirect&format=original&lang=zh-cn&skin=minerva&version=1vckg);
 }
-.skin-minerva .mw-parser-output .mw-editsection{
+.skin-minerva .mw-parser-output .mw-editsection {
 	display: flex !important;
 	align-items: center;
 }
-.skin-minerva .mw-parser-output .section-heading>div{
+.skin-minerva .mw-parser-output .section-heading>div {
 	vertical-align: baseline;
 }
