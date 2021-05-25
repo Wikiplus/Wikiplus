@@ -168,24 +168,19 @@ class UI {
      * Insert QuickEdit buttons for each section.
      */
     insertSectionQuickEditEntries(onClick = () => {}) {
-        const sectionBtn = $("<span>")
-            .append($("<span>").addClass("mw-editsection-divider").text(" | "))
-            .append(
-                $("<a>")
-                    .addClass("Wikiplus-Edit-SectionBtn")
-                    .attr("href", "javascript:void(0)")
-                    .text(i18n.translate("quickedit_sectionbtn"))
-            );
+        const sectionBtn = Constants.skin === "minerva"
+            ? $("<span>").append($("<a>").addClass("Wikiplus-Edit-SectionBtn mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 edit-page mw-ui-icon-flush-right").css("margin-left", "0.75em").attr("href", "javascript:void(0)").attr("title", i18n("quickedit_sectionbtn")))
+            : $("<span>").append($("<span>").addClass("mw-editsection-divider").text(" | ")).append($("<a>").addClass("Wikiplus-Edit-SectionBtn").attr("href", "javascript:void(0)").text(i18n("quickedit_sectionbtn")));
         $(".mw-editsection").each(function (i) {
             try {
-                const editURL = $(this).find("a").last().attr("href");
+                const editURL = $(this).find("a").first().attr("href");
                 const sectionNumber = editURL
                     .match(/&[ve]*section\=([^&]+)/)[1] // `ve` for visual editor
                     .replace(/T-/gi, ""); // embedded pages use T-series section number
                 const sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
                 const cloneNode = $(this).prev().clone();
                 cloneNode.find(".mw-headline-number").remove();
-                const sectionName = $.trim(cloneNode.text());
+                const sectionName = cloneNode.text().trim();
                 const _sectionBtn = sectionBtn.clone();
                 _sectionBtn.find(".Wikiplus-Edit-SectionBtn").on("click", () => {
                     onClick({
@@ -194,7 +189,7 @@ class UI {
                         targetPageName: sectionTargetName,
                     });
                 });
-                $(this).find(".mw-editsection-bracket").last().before(_sectionBtn);
+                Constants.skin === "minerva" ? $(this).append(_sectionBtn) : $(this).find(".mw-editsection-bracket").last().before(_sectionBtn);
             } catch (e) {
                 Log.error("fail_to_init_quickedit");
             }
