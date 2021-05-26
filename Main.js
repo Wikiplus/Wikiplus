@@ -1,14 +1,14 @@
 /* global mw */
 /// <reference path="../typings/jquery/jquery.d.ts"/>
 /**
-* Wikiplus
-* Author: +Eridanus Sora/@妹空酱
-* Github: https://github.com/Last-Order/Wikiplus
-*/
+ * Wikiplus
+ * Author: +Eridanus Sora/@妹空酱
+ * Github: https://github.com/Last-Order/Wikiplus
+ */
 /**
-* 依赖组件: MoeNotification
-* https://github.com/Last-Order/MoeNotification
-*/
+ * 依赖组件: MoeNotification
+ * https://github.com/Last-Order/MoeNotification
+ */
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -614,11 +614,11 @@ $(function () {
             };
         }
     }
-    /** 
+    /**
      * 抛出错误
      * @param {string} name
      * @return boolean
-    */
+     */
     function throwError(name, message) {
         var errInfo = getErrorInfo(name);
         var e = new Error();
@@ -705,7 +705,8 @@ $(function () {
                         'rvprop': 'timestamp',
                         'format': 'json'
                     },
-                    beforeSend: function beforeSend() {
+                    beforeSend: function beforeSend(request) {
+                        request.setRequestHeader('Api-User-Agent', 'Wikiplus/2 (' + mw.config.get('wgWikiID') + ')');
                         console.time('获得页面基础信息时间耗时');
                     },
                     success: function success(data) {
@@ -731,6 +732,9 @@ $(function () {
                                                 'action': 'query',
                                                 'meta': 'tokens',
                                                 'format': 'json'
+                                            },
+                                            beforeSend: function beforeSend(request) {
+                                                request.setRequestHeader('Api-User-Agent', 'Wikiplus/2 (' + mw.config.get('wgWikiID') + ')');
                                             },
                                             success: function success(data) {
                                                 if (data.query && data.query.tokens && data.query.tokens.csrftoken && data.query.tokens.csrftoken !== '+\\') {
@@ -808,9 +812,12 @@ $(function () {
                             'token': self.editToken[title] || self.editToken[self.pageName],
                             'basetimestamp': self.timeStamp[title]
                         }, config),
+                        beforeSend: function beforeSend(request) {
+                            request.setRequestHeader('Api-User-Agent', 'Wikiplus/2 (' + mw.config.get('wgWikiID') + ')');
+                        },
                         success: function success(data) {
                             if (data && data.edit) {
-                                if (data.edit.result && data.edit.result == 'Success') {
+                                if (data.edit.result && data.edit.result === 'Success') {
                                     callback.success();
                                 } else {
                                     if (data.edit.code) {
@@ -842,8 +849,8 @@ $(function () {
              * @param {number} section 段落编号
              * @param {string} content 内容
              * @param {string} title 页面标题
-             * @param {object} callback 回调函数 
-             * @param {object} config 设置 
+             * @param {object} callback 回调函数
+             * @param {object} config 设置
              */
         }, {
             key: 'editSection',
@@ -926,7 +933,8 @@ $(function () {
                         'title': title,
                         'action': 'raw'
                     }, config),
-                    beforeSend: function beforeSend() {
+                    beforeSend: function beforeSend(request) {
+                        request.setRequestHeader('Api-User-Agent', 'Wikiplus/2 (' + mw.config.get('wgWikiID') + ')');
                         console.time('获得页面文本耗时');
                     },
                     success: function success(data) {
@@ -963,6 +971,9 @@ $(function () {
                         'title': this.pageName,
                         'pst': 'true'
                     }, config),
+                    beforeSend: function beforeSend(request) {
+                        request.setRequestHeader('Api-User-Agent', 'Wikiplus/2 (' + mw.config.get('wgWikiID') + ')');
+                    },
                     url: this.API,
                     success: function success(data) {
                         if (data && data.parse && data.parse.text) {
@@ -1006,7 +1017,7 @@ $(function () {
                         $(topBtn).find('span').addClass('page-actions-menu__list-item');
                         $(topBtn).find('a').addClass('mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop').css('vertical-align', 'middle');
                     }
-                    if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length == 0) {
+                    if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length === 0) {
                         mw.config.get('skin') === 'minerva' ? $('#ca-edit').parent().after(topBtn) : $('#ca-edit').after(topBtn);
                     } else {
                         throwError('fail_to_init_quickedit');
@@ -1017,7 +1028,7 @@ $(function () {
                         var sectionBtn = mw.config.get('skin') === 'minerva' ? $('<span>').append($('<a>').addClass('Wikiplus-Edit-SectionBtn mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 edit-page mw-ui-icon-flush-right').css('margin-left', '0.75em').attr('href', 'javascript:void(0)').attr('title', i18n('quickedit_sectionbtn'))) : $('<span>').append($('<span>').addClass('mw-editsection-divider').text(' | ')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn')));
                         $('.mw-editsection').each(function (i) {
                             try {
-                                var editURL = $(this).find('a').last().attr('href');
+                                var editURL = $(this).find('a').first().attr('href');
                                 var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
                                 var sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
                                 var cloneNode = $(this).prev().clone();
@@ -1033,12 +1044,7 @@ $(function () {
                                     name: sectionName,
                                     target: sectionTargetName
                                 });
-                                if (mw.config.get('skin') === 'minerva') {
-                                    mw.loader.addStyleTag('.mw-parser-output .mw-editsection{display:flex!important;align-items:center}.mw-parser-output .section-heading>div{vertical-align:baseline}');
-                                    $(this).append(_sectionBtn);
-                                } else {
-                                    $(this).find('.mw-editsection-bracket').last().before(_sectionBtn);
-                                }
+                                mw.config.get('skin') === 'minerva' ? $(this).append(_sectionBtn) : $(this).find('.mw-editsection-bracket').last().before(_sectionBtn);
                             } catch (e) {
                                 throwError('fail_to_init_quickedit');
                             }
@@ -1169,7 +1175,9 @@ $(function () {
                                 $('#Wikiplus-Quickedit-Preview-Output').html('').append(onPreload);
                                 $('#Wikiplus-Quickedit-Preview-Output').fadeIn(100);
                             });
-                            $('html, body').animate({ scrollTop: heightBefore }, 200); //返回顶部
+                            $('html, body').animate({
+                                scrollTop: heightBefore
+                            }, 200); //返回顶部
                             self.kotori.parseWikiText(wikiText, {
                                 success: function success(data) {
                                     $('#Wikiplus-Quickedit-Preview-Output').fadeOut('100', function () {
@@ -1199,7 +1207,9 @@ $(function () {
                             }
                             //准备编辑 禁用各类按钮 返回顶部 显示信息
                             $('#Wikiplus-Quickedit-Submit,#Wikiplus-Quickedit,#Wikiplus-Quickedit-Preview-Submit').attr('disabled', 'disabled');
-                            $('html, body').animate({ scrollTop: heightBefore }, 200);
+                            $('html, body').animate({
+                                scrollTop: heightBefore
+                            }, 200);
 
                             //开始提交编辑
                             if (sectionTargetName === self.kotori.pageName) {
@@ -1262,7 +1272,7 @@ $(function () {
                         //快捷键
                         //Ctrl+S提交 Ctrl+Shift+S小编辑
                         $('#Wikiplus-Quickedit,#Wikiplus-Quickedit-Summary-Input,#Wikiplus-Quickedit-MinorEdit').keydown(function (e) {
-                            if (e.ctrlKey && e.which == 83) {
+                            if (e.ctrlKey && e.which === 83) {
                                 if (e.shiftKey) {
                                     $('#Wikiplus-Quickedit-MinorEdit').click();
                                 }
@@ -1479,7 +1489,7 @@ $(function () {
                 /**
                  * 创建对话框
                  * @param {string} title 对话框标题
-                 * @param {HTML} content 内容 
+                 * @param {HTML} content 内容
                  * @param {interger} width 宽度 单位像素 默认600px
                  * @param {function} callback 回调函数
                  */
@@ -1542,18 +1552,18 @@ $(function () {
                  * 增加功能按钮
                  * @param {string} text 按钮名
                  * @param {string} id 按钮id
-                 * @param {function} clickEvent 点击事件 
+                 * @param {function} clickEvent 点击事件
                  */
             }, {
                 key: 'addFunctionButton',
                 value: function addFunctionButton(text, id, clickEvent) {
-                    var button = $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
-                    if (mw.config.get('skin') === 'minerva') {
-                        return;
-                    }
-                    if ($('#p-cactions').length > 0) {
+                    var button = mw.config.get('skin') === 'minerva' ? $('<li>').attr('id', id).addClass('toggle-list-item').append($('<a>').addClass('mw-ui-icon mw-ui-icon-before toggle-list-item__anchor').append($('<span>').attr('href', 'javascript:void(0);').addClass('toggle-list-item__label').text(text))) : $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
+                    if (mw.config.get('skin') === 'minerva' && $('#p-tb').length > 0) {
+                        $('#p-tb').append(button);
+                        $('#' + id).click(clickEvent);
+                    } else if ($('#p-cactions').length > 0) {
                         $('#p-cactions ul').append(button);
-                        $('#p-cactions ul').find('li').last().click(clickEvent);
+                        $('#' + id).click(clickEvent);
                     } else {
                         throwError('cant_add_funcbtn');
                     }
@@ -1624,7 +1634,7 @@ $(function () {
                 value: function sendStatistic(title, useTime) {
                     if (title === undefined) title = mw.config.get('wgPageName');
 
-                    if (localStorage.Wikiplus_SendStatistics == 'True') {
+                    if (localStorage.Wikiplus_SendStatistics === 'True') {
                         $.ajax({
                             url: scriptPath + '/statistics/api/submit',
                             type: 'POST',
@@ -1697,7 +1707,7 @@ $(function () {
                     }
                     try {
                         var _setting = new Function('return ' + settings[key]);
-                        if (typeof _setting == 'function') {
+                        if (typeof _setting === 'function') {
                             try {
                                 if (_setting()(w) === true) {
                                     return undefined;
@@ -1740,7 +1750,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.3.3';
+                this.version = '2.3.4';
                 this.langVersion = '212';
                 this.releaseNote = '适配Minerva皮肤';
                 this.notice = new MoeNotification();

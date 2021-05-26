@@ -1459,7 +1459,7 @@ $(function() {
             addFunctionButton(text, id, clickEvent) {
                 var button = mw.config.get('skin') === 'minerva'
                     ? $('<li>').attr('id', id).addClass('toggle-list-item').append($('<a>').addClass('mw-ui-icon mw-ui-icon-before toggle-list-item__anchor').append($('<span>').attr('href', 'javascript:void(0);').addClass('toggle-list-item__label').text(text)))
-                    $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
+                    : $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
                 if (mw.config.get('skin') === 'minerva' && $('#p-tb').length > 0) {
                     $('#p-tb').append(button);
                     $(`#${id}`).click(clickEvent);
