@@ -7,8 +7,8 @@
 .Wikiplus-Btn {
 	position: relative;
 	float: left;
-	margin: 3px 5px 3px 5px;
-	padding: 3px 1em 3px 1em;
+	margin: 3px 5px;
+	padding: 3px 1em;
 	width: auto;
 	background-color: #fff;
 	box-shadow: 0 1px 2px #aaa;
@@ -26,7 +26,7 @@
 	position: absolute;
 	top: 20%;
 	z-index: 200;
-	padding: 20px 10px 20px 10px;
+	padding: 20px 10px;
 	width: 600px;
 	min-height: 100px;
 	border: 1px rgba(161, 154, 220, 0.41) solid;
@@ -51,7 +51,7 @@
 .Wikiplus-InterBox-Btn {
 	position: relative;
 	float: right;
-	margin: auto 3px auto 3px;
+	margin: auto 3px;
 	padding: 6px 12px;
 	border: 1px solid #dedede;
 	background-color: #fff;
@@ -87,14 +87,15 @@
 }
 #Wikiplus-Quickedit-Preview-Output {
 	clear: both;
-	margin: 5px 0 5px 0;
+	margin: 5px 0;
 }
 #Wikiplus-Quickedit {
+	width: 100%;
 	min-height: 500px;
 }
 .Wikiplus-Banner {
 	margin: 0;
-	padding: 10px 5px 10px 5px;
+	padding: 10px 5px;
 	min-height: 50px;
 	background: rgba(193, 222, 214, 0.51);
 	text-align: center;
@@ -105,8 +106,8 @@
 	position: relative;
 	display: none;
 	overflow: hidden;
-	margin: 3px 5px 3px 5px;
-	padding-left: 5px;
+	margin: 3px 5px;
+	padding: 0 5px;
 	width: auto;
 	box-shadow: 0 3px 3px #aaa;
 	font-size: 14px !important;
@@ -146,7 +147,7 @@
 	bottom: 30px;
 	left: 0;
 	z-index: 713;
-	width: 20%;
+	min-width: 20%;
 }
 .mw-editsection-divider {
 	display: inline !important;
