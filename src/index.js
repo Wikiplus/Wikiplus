@@ -34,7 +34,7 @@ $(document).ready(async () => {
         return Pages[revisionId];
     };
 
-    Log.info(`Wikiplus now loading. Version: ${Settings.version}`);
+    Log.info(`Wikiplus now loading. Version: ${Constants.version}`);
 
     if (!window.mw) {
         console.log("页面JavaScript载入不完全或这不是一个MediaWiki站点");
