@@ -7,8 +7,8 @@
 .Wikiplus-Btn {
 	position: relative;
 	float: left;
-	margin: 3px 5px 3px 5px;
-	padding: 3px 1em 3px 1em;
+	margin: 3px 5px;
+	padding: 3px 1em;
 	width: auto;
 	background-color: #fff;
 	box-shadow: 0 1px 2px #aaa;
@@ -26,7 +26,7 @@
 	position: absolute;
 	top: 20%;
 	z-index: 200;
-	padding: 20px 10px 20px 10px;
+	padding: 20px 10px;
 	width: 600px;
 	min-height: 100px;
 	border: 1px rgba(161, 154, 220, 0.41) solid;
@@ -51,7 +51,7 @@
 .Wikiplus-InterBox-Btn {
 	position: relative;
 	float: right;
-	margin: auto 3px auto 3px;
+	margin: auto 3px;
 	padding: 6px 12px;
 	border: 1px solid #dedede;
 	background-color: #fff;
@@ -87,7 +87,7 @@
 }
 #Wikiplus-Quickedit-Preview-Output {
 	clear: both;
-	margin: 5px 0 5px 0;
+	margin: 5px 0;
 }
 #Wikiplus-Quickedit {
 	width: 100%;
@@ -95,22 +95,19 @@
 }
 .Wikiplus-Banner {
 	margin: 0;
-	padding: 10px 5px 10px 5px;
+	padding: 10px 5px;
 	min-height: 50px;
 	background: rgba(193, 222, 214, 0.51);
 	text-align: center;
 	font-size: 30px;
 	font-family: 微软雅黑;
 }
-.navbox .Wikiplus-Edit-EveryWhereBtn {
-	position: absolute;
-	width: 4.5rem;
-}
 .MoeNotification-notice {
 	position: relative;
 	display: none;
 	overflow: hidden;
-	margin: 3px 5px 3px 5px;
+	margin: 3px 5px;
+	padding: 0 5px;
 	width: auto;
 	box-shadow: 0 3px 3px #aaa;
 	font-size: 14px !important;
@@ -150,87 +147,7 @@
 	bottom: 30px;
 	left: 0;
 	z-index: 713;
-	width: 30%;
-}
-table.diff {
-	margin: 0;
-	width: 100%;
-	border: none;
-	table-layout: fixed;
-	border-spacing: 4px;
-}
-table.diff td {
-	padding: 0.33em 0.5em;
-}
-table.diff td.diff-marker {
-	padding: 0.25em;
-}
-table.diff col.diff-marker {
-	width: 2%;
-}
-table.diff col.diff-content {
-	width: 48%;
-}
-table.diff td div {
-	word-wrap: break-word;
-}
-td.diff-ntitle,td.diff-otitle {
-	text-align: center;
-}
-td.diff-lineno {
-	font-weight: 700;
-}
-td.diff-marker {
-	text-align: right;
-	font-weight: 700;
-	font-size: 1.25em;
-	line-height: 1.2;
-}
-td.diff-addedline,td.diff-context,td.diff-deletedline {
-	border-style: solid;
-	border-width: 1px 1px 1px 4px;
-	border-radius: 0.33em;
-	vertical-align: top;
-	white-space: -moz-pre-wrap;
-	white-space: pre-wrap;
-	font-size: 88%;
-	line-height: 1.6;
-}
-td.diff-addedline {
-	border-color: #a3d3ff;
-}
-td.diff-deletedline {
-	border-color: #ffe49c;
-}
-td.diff-context {
-	border-color: #e6e6e6;
-	background: #f9f9f9;
-	color: #333;
-}
-.diffchange {
-	text-decoration: none;
-	font-weight: 700;
-}
-td.diff-addedline .diffchange,td.diff-deletedline .diffchange {
-	padding: 0.25em 0;
-	border-radius: 0.33em;
-}
-td.diff-addedline .diffchange {
-	background: #d8ecff;
-}
-td.diff-deletedline .diffchange {
-	background: #feeec8;
-}
-@media print {
-	td.diff-addedline .diffchange,td.diff-context,td.diff-deletedline .diffchange {
-		background-color: transparent;
-	}
-	td.diff-addedline .diffchange {
-		text-decoration: underline;
-	}
-	td.diff-deletedline .diffchange {
-		text-decoration: line-through;
-	}
+	min-width: 20%;
 }
 .mw-editsection-divider {
 	display: inline !important;
