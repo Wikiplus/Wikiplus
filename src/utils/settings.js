@@ -9,7 +9,7 @@ class Settings {
         }
         try {
             const customSettingFunction = new Function("return " + settings[key]);
-            if (typeof customSettingFunction == "function") {
+            if (typeof customSettingFunction === "function") {
                 try {
                     if (customSettingFunction()(w) === true) {
                         return;

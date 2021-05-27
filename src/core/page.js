@@ -42,15 +42,17 @@ class Page {
      * Get EditToken
      */
     async getEditToken() {
-        if (mw.user.tokens.get("csrfToken") && mw.user.tokens.get("csrfToken") !== "+\\") {
-            // 如果 MediaWiki JavaScript API 可以直接获得 EditToken 则直接返回
-            // Return EditToken retrieved from MediaWiki JavaScript API if accessible
-            this.editToken = mw.user.tokens.get("csrfToken");
-            return;
-        }
-        // 从API获得EditToken
-        // Get EditToken from MediaWiki API
-        this.editToken = await Wiki.getEditToken();
+        mw.loader.using('mediawiki.user').then(() => {
+            if (mw.user.tokens.get("csrfToken") && mw.user.tokens.get("csrfToken") !== "+\\") {
+                // 如果 MediaWiki JavaScript API 可以直接获得 EditToken 则直接返回
+                // Return EditToken retrieved from MediaWiki JavaScript API if accessible
+                this.editToken = mw.user.tokens.get("csrfToken");
+                return;
+            }
+            // 从API获得EditToken
+            // Get EditToken from MediaWiki API
+            this.editToken = await Wiki.getEditToken();
+        });
     }
 
     /**

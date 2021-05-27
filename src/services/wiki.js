@@ -22,7 +22,7 @@ class Wiki {
             response.query &&
             response.query.tokens &&
             response.query.tokens.csrftoken &&
-            response.query.tokens.csrftoken != "+\\"
+            response.query.tokens.csrftoken !== "+\\"
         ) {
             return response.query.tokens.csrftoken;
         } else {
@@ -63,8 +63,7 @@ class Wiki {
                     // Page not found.
                     return {};
                 }
-                const pageInfo =
-                    response.query.pages[Object.keys(response.query.pages)[0]].revisions[0];
+                const pageInfo = response.query.pages[Object.keys(response.query.pages)[0]].revisions[0];
                 if (title) {
                     this.pageInfoCache[title] = pageInfo;
                 }
@@ -89,9 +88,7 @@ class Wiki {
     async getWikiText({ section, revisionId }) {
         try {
             const response = await (
-                await fetch(`
-                ${location.protocol}//${location.host}${Constants.scriptPath}/index.php?oldid=${revisionId}&section=${section}&action=raw
-            `)
+                await fetch(`${location.protocol}//${location.host}${Constants.scriptPath}/index.php?oldid=${revisionId}&section=${section}&action=raw`)
             ).text();
             return response;
         } catch (e) {
