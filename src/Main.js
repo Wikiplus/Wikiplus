@@ -638,7 +638,7 @@ $(function() {
                 console.log('页面JavaScript载入不完全或这不是一个MediaWiki站点');
                 return;
             }
-            if (!window.mw.config.get('wgUserGroups').includes('autoconfirmed')) {
+            if (!window.mw.config.get('wgUserGroups').includes('autoconfirmed') && !window.mw.config.get('wgUserGroups').includes('confirmed')) {
                 throwError('not_autoconfirmed_user');
                 return;
             }
@@ -1623,9 +1623,9 @@ $(function() {
             initRecentChangesPageFunctions() {}
             initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.4';
+                this.version = '2.3.5';
                 this.langVersion = '212';
-                this.releaseNote = '适配Minerva皮肤';
+                this.releaseNote = '允许确认用户使用 Wikiplus';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
