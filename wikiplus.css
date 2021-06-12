@@ -38,7 +38,6 @@
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 }
 .Wikiplus-InterBox-Header {
 	position: relative;
@@ -93,6 +92,9 @@
 #Wikiplus-Quickedit-Preview-Output {
 	clear: both;
 	margin: 5px 0;
+	user-select: text;
+	-webkit-user-select: text;
+	-moz-user-select: text;
 }
 #Wikiplus-Quickedit {
 	width: 100%;

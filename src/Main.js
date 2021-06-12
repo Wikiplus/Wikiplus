@@ -1612,20 +1612,23 @@ $(function() {
                 }
             }
             initBasicFunctions() {
-                this.initQuickEdit(); //加载快速编辑
+                var self = this;
+                mw.hook('wikipage.content').add(function(item) {
+                    if (item.attr('id') === 'mw-content-text') {
+                        self.initQuickEdit(); //加载快速编辑
+                        !self.getSetting('disableEditEveryWhere') && self.editEveryWhere(); //任意编辑
+                    }
+                });
                 this.editSettings(); //编辑设置
                 this.simpleRedirector(); //快速重定向
                 this.preloadEventBinding(); //预读取
-                if (!this.getSetting('disableEditEveryWhere')) {
-                    this.editEveryWhere(); //任意编辑
-                }
             }
             initRecentChangesPageFunctions() {}
             initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.5';
+                this.version = '2.3.6';
                 this.langVersion = '212';
-                this.releaseNote = '允许确认用户使用 Wikiplus';
+                this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
                 this.inValidNameSpaces = [-1, 8964];
                 this.defaultSettings = {
@@ -1649,7 +1652,7 @@ $(function() {
                 if (this.version !== localStorage.Wikiplus_Version) {
                     localStorage.Wikiplus_Version = this.version;
                     this.notice.create.success(`Wikiplus ${this.version}`);
-                    this.notice.create.success(language === 'zh-cn' ? this.releaseNote : 'Compatible with Minerva Skin'); // 避免给其他语言用户不必要的理解困难
+                    this.notice.create.success(language === 'zh-cn' ? this.releaseNote : 'Minor bug fixes'); // 避免给其他语言用户不必要的理解困难
                 }
                 if (i18nData[language] === undefined) {
                     loadLanguage(language);
