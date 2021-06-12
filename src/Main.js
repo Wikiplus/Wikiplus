@@ -950,7 +950,7 @@ $(function() {
                 }
                 if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length === 0) {
                     mw.config.get('skin') === 'minerva' ? $('#ca-edit').parent().after(topBtn) : $('#ca-edit').after(topBtn);
-                } else {
+                } else if ($('#ca-edit').length === 0) {
                     throwError('fail_to_init_quickedit');
                 }
                 if ($('.mw-editsection').length > 0) {
