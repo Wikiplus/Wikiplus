@@ -95,6 +95,7 @@
 	margin: 5px 0;
 }
 #Wikiplus-Quickedit {
+	word-break: break-all;
 	width: 100%;
 	min-height: 500px;
 }
