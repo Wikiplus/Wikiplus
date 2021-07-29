@@ -950,6 +950,9 @@ $(function() {
                 }
                 if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length === 0) {
                     mw.config.get('skin') === 'minerva' ? $('#ca-edit').parent().after(topBtn) : $('#ca-edit').after(topBtn);
+                    $('#Wikiplus-Edit-TopBtn').click(function() {
+                        self.initQuickEditInterface($(this));
+                    });
                 } else if ($('#ca-edit').length === 0) {
                     throwError('fail_to_init_quickedit');
                 }
@@ -982,13 +985,11 @@ $(function() {
                             throwError('fail_to_init_quickedit');
                         }
                     });
+                    $('.Wikiplus-Edit-SectionBtn').off('click');
+                    $('.Wikiplus-Edit-SectionBtn').click(function() {
+                        self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
+                    });
                 }
-                $('.Wikiplus-Edit-SectionBtn').click(function() {
-                    self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
-                });
-                $('#Wikiplus-Edit-TopBtn').click(function() {
-                    self.initQuickEditInterface($(this));
-                });
             }
             /**
              * 加载快速编辑主界面相关内容
@@ -1626,7 +1627,7 @@ $(function() {
             initRecentChangesPageFunctions() {}
             initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.6';
+                this.version = '2.3.7';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
