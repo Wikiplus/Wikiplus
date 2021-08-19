@@ -966,7 +966,15 @@ $(function() {
                         try {
                             var editURL = $(this).find('a').first().attr('href');
                             var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
-                            var sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
+                            var _sectionTargetName = function() {
+                                try {
+                                    return decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
+                                } catch(e) {
+                                    $('.mw-editsection-divider').css('visibility', 'hidden');
+                                    return decodeURIComponent(editURL.match(/\/wiki\/(.+?)\?/)[1]);
+                                }
+                            };
+                            var sectionTargetName = _sectionTargetName();
                             var cloneNode = $(this).prev().clone();
                             cloneNode.find('.mw-headline-number').remove();
                             var sectionName = cloneNode.text().trim();
@@ -1460,9 +1468,11 @@ $(function() {
                 var button = mw.config.get('skin') === 'minerva'
                     ? $('<li>').attr('id', id).addClass('toggle-list-item').append($('<a>').addClass('mw-ui-icon mw-ui-icon-before toggle-list-item__anchor').append($('<span>').attr('href', 'javascript:void(0);').addClass('toggle-list-item__label').text(text)))
                     : $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
-                if (mw.config.get('skin') === 'minerva' && $('#p-tb').length > 0) {
-                    $('#p-tb').append(button);
-                    $(`#${id}`).click(clickEvent);
+                if (mw.config.get('skin') === 'minerva') {
+                    if ($('#p-tb').length > 0) {
+                        $('#p-tb').append(button);
+                        $(`#${id}`).click(clickEvent);
+                    }
                 } else if ($('#p-cactions').length > 0) {
                     $('#p-cactions ul').append(button);
                     $(`#${id}`).click(clickEvent);
@@ -1626,7 +1636,7 @@ $(function() {
             initRecentChangesPageFunctions() {}
             initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.7';
+                this.version = '2.3.8';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
