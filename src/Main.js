@@ -932,6 +932,10 @@ $(function() {
              */
             initQuickEdit(callback = {}) {
                 var self = this;
+                var checkRight = function() {
+                    !mw.config.get('wgUserGroups').includes('autoconfirmed') && !mw.config.get('wgUserGroups').includes('confirmed') && (new MoeNotification).create.error(getErrorInfo('not_autoconfirmed_user').message);
+                    throwError('not_autoconfirmed_user');
+                }
                 callback.success = callback.success || new Function();
                 callback.fail = callback.fail || new Function();
                 if (!(mw.config.get('wgIsArticle') && mw.config.get('wgAction') === 'view' && mw.config.get('wgIsProbablyEditable'))) {
@@ -951,6 +955,7 @@ $(function() {
                 if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length === 0) {
                     mw.config.get('skin') === 'minerva' ? $('#ca-edit').parent().after(topBtn) : $('#ca-edit').after(topBtn);
                     $('#Wikiplus-Edit-TopBtn').click(function() {
+                        checkRight();
                         self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
                     });
                 } else if ($('#ca-edit').length === 0) {
@@ -997,6 +1002,7 @@ $(function() {
                         }
                     });
                     $('.Wikiplus-Edit-SectionBtn').click(function() {
+                        checkRight();
                         self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
                     });
                 }
@@ -1639,7 +1645,7 @@ $(function() {
             initRecentChangesPageFunctions() {}
             initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.7';
+                this.version = '2.3.8';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
