@@ -950,6 +950,9 @@ $(function() {
                 }
                 if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length === 0) {
                     mw.config.get('skin') === 'minerva' ? $('#ca-edit').parent().after(topBtn) : $('#ca-edit').after(topBtn);
+                    $('#Wikiplus-Edit-TopBtn').click(function() {
+                        self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
+                    });
                 } else if ($('#ca-edit').length === 0) {
                     throwError('fail_to_init_quickedit');
                 }
@@ -963,7 +966,18 @@ $(function() {
                         try {
                             var editURL = $(this).find('a').first().attr('href');
                             var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
-                            var sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
+                            var sectionTargetName;
+                            if (editURL.match(/title=(.+?)&/)) {
+                                sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
+                            } else {
+                                var regex = new RegExp(`${mw.config.get('wgArticlePath').replace('$1', '')}(.+?)\\?`);
+                                if (editURL.match(regex)) {
+                                    $('.mw-editsection-divider').css('visibility', 'hidden');
+                                    sectionTargetName = decodeURIComponent(editURL.match(regex)[1]);
+                                } else {
+                                    throwError('fail_to_init_quickedit');
+                                }
+                            }
                             var cloneNode = $(this).prev().clone();
                             cloneNode.find('.mw-headline-number').remove();
                             var sectionName = cloneNode.text().trim();
@@ -982,13 +996,10 @@ $(function() {
                             throwError('fail_to_init_quickedit');
                         }
                     });
+                    $('.Wikiplus-Edit-SectionBtn').click(function() {
+                        self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
+                    });
                 }
-                $('.Wikiplus-Edit-SectionBtn').click(function() {
-                    self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
-                });
-                $('#Wikiplus-Edit-TopBtn').click(function() {
-                    self.initQuickEditInterface($(this));
-                });
             }
             /**
              * 加载快速编辑主界面相关内容
@@ -1460,9 +1471,11 @@ $(function() {
                 var button = mw.config.get('skin') === 'minerva'
                     ? $('<li>').attr('id', id).addClass('toggle-list-item').append($('<a>').addClass('mw-ui-icon mw-ui-icon-before toggle-list-item__anchor').append($('<span>').attr('href', 'javascript:void(0);').addClass('toggle-list-item__label').text(text)))
                     : $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
-                if (mw.config.get('skin') === 'minerva' && $('#p-tb').length > 0) {
-                    $('#p-tb').append(button);
-                    $(`#${id}`).click(clickEvent);
+                if (mw.config.get('skin') === 'minerva') {
+                    if ($('#p-tb').length > 0) {
+                        $('#p-tb').append(button);
+                        $(`#${id}`).click(clickEvent);
+                    }
                 } else if ($('#p-cactions').length > 0) {
                     $('#p-cactions ul').append(button);
                     $(`#${id}`).click(clickEvent);
@@ -1626,7 +1639,7 @@ $(function() {
             initRecentChangesPageFunctions() {}
             initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.6';
+                this.version = '2.3.7';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
