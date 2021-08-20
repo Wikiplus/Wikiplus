@@ -966,15 +966,18 @@ $(function() {
                         try {
                             var editURL = $(this).find('a').first().attr('href');
                             var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
-                            var _sectionTargetName = function() {
-                                try {
-                                    return decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
-                                } catch(e) {
+                            var sectionTargetName;
+                            if (editURL.match(/title=(.+?)&/)) {
+                                sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
+                            } else {
+                                var regex = new RegExp(mw.config.get('wgArticlePath').replace('$1', '') + '(.+?)\\?');
+                                if (editURL.match(regex)) {
                                     $('.mw-editsection-divider').css('visibility', 'hidden');
-                                    return decodeURIComponent(editURL.match(/\/wiki\/(.+?)\?/)[1]);
+                                    sectionTargetName = decodeURIComponent(editURL.match(regex)[1]);
+                                } else {
+                                    throwError('fail_to_init_quickedit');
                                 }
-                            };
-                            var sectionTargetName = _sectionTargetName();
+                            }
                             var cloneNode = $(this).prev().clone();
                             cloneNode.find('.mw-headline-number').remove();
                             var sectionName = cloneNode.text().trim();
@@ -1636,7 +1639,7 @@ $(function() {
             initRecentChangesPageFunctions() {}
             initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.8';
+                this.version = '2.3.7';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
