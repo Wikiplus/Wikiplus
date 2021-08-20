@@ -933,8 +933,10 @@ $(function() {
             initQuickEdit(callback = {}) {
                 var self = this;
                 var checkRight = function() {
-                    !mw.config.get('wgUserGroups').includes('autoconfirmed') && !mw.config.get('wgUserGroups').includes('confirmed') && (new MoeNotification).create.error(getErrorInfo('not_autoconfirmed_user').message);
-                    throwError('not_autoconfirmed_user');
+                    if (!mw.config.get('wgUserGroups').includes('autoconfirmed') && !mw.config.get('wgUserGroups').includes('confirmed')) {
+                        (new MoeNotification).create.error(getErrorInfo('not_autoconfirmed_user').message);
+                        throwError('not_autoconfirmed_user');
+                    }
                 }
                 callback.success = callback.success || new Function();
                 callback.fail = callback.fail || new Function();
