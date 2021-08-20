@@ -970,7 +970,7 @@ $(function() {
                             if (editURL.match(/title=(.+?)&/)) {
                                 sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
                             } else {
-                                var regex = new RegExp(mw.config.get('wgArticlePath').replace('$1', '') + '(.+?)\\?');
+                                var regex = new RegExp(`${mw.config.get('wgArticlePath').replace('$1', '')}(.+?)\\?`);
                                 if (editURL.match(regex)) {
                                     $('.mw-editsection-divider').css('visibility', 'hidden');
                                     sectionTargetName = decodeURIComponent(editURL.match(regex)[1]);
