@@ -1001,6 +1001,12 @@ $(function () {
                     var callback = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
                     var self = this;
+                    var checkRight = function checkRight() {
+                        if (!mw.config.get('wgUserGroups').includes('autoconfirmed') && !mw.config.get('wgUserGroups').includes('confirmed')) {
+                            new MoeNotification().create.error(getErrorInfo('not_autoconfirmed_user').message);
+                            throwError('not_autoconfirmed_user');
+                        }
+                    };
                     callback.success = callback.success || new Function();
                     callback.fail = callback.fail || new Function();
                     if (!(mw.config.get('wgIsArticle') && mw.config.get('wgAction') === 'view' && mw.config.get('wgIsProbablyEditable'))) {
@@ -1019,9 +1025,13 @@ $(function () {
                     }
                     if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length === 0) {
                         mw.config.get('skin') === 'minerva' ? $('#ca-edit').parent().after(topBtn) : $('#ca-edit').after(topBtn);
+                        $('#Wikiplus-Edit-TopBtn').click(function () {
+                            checkRight();
+                            self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
+                        });
                     } else if ($('#ca-edit').length === 0) {
-                        throwError('fail_to_init_quickedit');
-                    }
+                            throwError('fail_to_init_quickedit');
+                        }
                     if ($('.mw-editsection').length > 0) {
                         self.sectionMap = {};
                         //段落快速编辑按钮
@@ -1030,7 +1040,17 @@ $(function () {
                             try {
                                 var editURL = $(this).find('a').first().attr('href');
                                 var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
-                                var sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
+                                var sectionTargetName;
+                                if (editURL.match(/title=(.+?)&/)) {
+                                    sectionTargetName = decodeURIComponent(editURL.match(/title=(.+?)&/)[1]);
+                                } else {
+                                    var regex = new RegExp(mw.config.get('wgArticlePath').replace('$1', '') + '(.+?)\\?');
+                                    if (editURL.match(regex)) {
+                                        sectionTargetName = decodeURIComponent(editURL.match(regex)[1]);
+                                    } else {
+                                        throwError('fail_to_init_quickedit');
+                                    }
+                                }
                                 var cloneNode = $(this).prev().clone();
                                 cloneNode.find('.mw-headline-number').remove();
                                 var sectionName = cloneNode.text().trim();
@@ -1049,13 +1069,11 @@ $(function () {
                                 throwError('fail_to_init_quickedit');
                             }
                         });
+                        $('.Wikiplus-Edit-SectionBtn').click(function () {
+                            checkRight();
+                            self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
+                        });
                     }
-                    $('.Wikiplus-Edit-SectionBtn').click(function () {
-                        self.initQuickEditInterface($(this)); //直接把DOM传递给下一步
-                    });
-                    $('#Wikiplus-Edit-TopBtn').click(function () {
-                        self.initQuickEditInterface($(this));
-                    });
                 }
 
                 /**
@@ -1558,9 +1576,11 @@ $(function () {
                 key: 'addFunctionButton',
                 value: function addFunctionButton(text, id, clickEvent) {
                     var button = mw.config.get('skin') === 'minerva' ? $('<li>').attr('id', id).addClass('toggle-list-item').append($('<a>').addClass('mw-ui-icon mw-ui-icon-before toggle-list-item__anchor').append($('<span>').attr('href', 'javascript:void(0);').addClass('toggle-list-item__label').text(text))) : $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
-                    if (mw.config.get('skin') === 'minerva' && $('#p-tb').length > 0) {
-                        $('#p-tb').append(button);
-                        $('#' + id).click(clickEvent);
+                    if (mw.config.get('skin') === 'minerva') {
+                        if ($('#p-tb').length > 0) {
+                            $('#p-tb').append(button);
+                            $('#' + id).click(clickEvent);
+                        }
                     } else if ($('#p-cactions').length > 0) {
                         $('#p-cactions ul').append(button);
                         $('#' + id).click(clickEvent);
@@ -1753,7 +1773,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.3.6';
+                this.version = '2.3.8';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
