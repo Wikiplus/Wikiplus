@@ -979,7 +979,6 @@ $(function() {
                             } else {
                                 var regex = new RegExp(`${mw.config.get('wgArticlePath').replace('$1', '')}(.+?)\\?`);
                                 if (editURL.match(regex)) {
-                                    $('.mw-editsection-divider').css('visibility', 'hidden');
                                     sectionTargetName = decodeURIComponent(editURL.match(regex)[1]);
                                 } else {
                                     throwError('fail_to_init_quickedit');
