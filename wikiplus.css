@@ -160,6 +160,9 @@
 .mw-editsection-divider {
 	display: inline !important;
 }
+.skin-minerva .mw-editsection-divider {
+	visibility: hidden;
+}
 .skin-minerva #Wikiplus-Quickedit-Preview-Submit, .skin-minerva #Wikiplus-Quickedit-Submit, .skin-minerva #Wikiplus-Quickedit-Summary-Input, .skin-minerva .Wikiplus-InterBox-Input {
 	all: revert;
 }
