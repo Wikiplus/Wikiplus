@@ -41,6 +41,7 @@ $(async () => {
         return;
     }
     if (!Constants.userGroups.includes("autoconfirmed")) {
+        Notification.error(i18n.translate("not_autoconfirmed_user"));
         Log.info(i18n.translate("not_autoconfirmed_user"));
         return;
     }
