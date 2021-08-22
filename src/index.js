@@ -11,7 +11,7 @@ import Log from "./utils/log";
 import Constants from "./utils/constants";
 import i18n from "./utils/i18n";
 
-$(document).ready(async () => {
+$(async () => {
     const Pages = {};
     const isNewPage = $(".noarticletext").length > 0 && Constants.articleId === 0;
 

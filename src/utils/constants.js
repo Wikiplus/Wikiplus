@@ -25,7 +25,7 @@ class Constants {
         return window.mw.config.get("wgAction");
     }
     get skin() {
-        return window.mw.config.get('skin');
+        return window.mw.config.get("skin");
     }
     get userGroups() {
         return window.mw.config.get("wgUserGroups");
