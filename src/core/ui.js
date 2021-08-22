@@ -2,7 +2,7 @@ import Constants from "../utils/constants";
 import Notification from "./notification";
 import i18n from "../utils/i18n";
 import Log from "../utils/log";
-import sleep from '../utils/sleep';
+import sleep from "../utils/sleep";
 import { parseQuery } from "../utils/helpers";
 
 class UI {
@@ -94,9 +94,24 @@ class UI {
      * @return {JQuery<HTMLElement>} button
      */
     addFunctionButton(text, id) {
-        const button = Constants.skin === "minerva"
-            ? $("<li>").attr("id", id).addClass("toggle-list-item").append($("<a>").addClass("mw-ui-icon mw-ui-icon-before toggle-list-item__anchor").append($("<span>").attr("href", "javascript:void(0);").addClass("toggle-list-item__label").text(text)))
-            : $("<li>").attr("id", id).append($("<a>").attr("href", "javascript:void(0);").text(text));
+        const button =
+            Constants.skin === "minerva"
+                ? $("<li>")
+                      .attr("id", id)
+                      .addClass("toggle-list-item")
+                      .append(
+                          $("<a>")
+                              .addClass("mw-ui-icon mw-ui-icon-before toggle-list-item__anchor")
+                              .append(
+                                  $("<span>")
+                                      .attr("href", "javascript:void(0);")
+                                      .addClass("toggle-list-item__label")
+                                      .text(text)
+                              )
+                      )
+                : $("<li>")
+                      .attr("id", id)
+                      .append($("<a>").attr("href", "javascript:void(0);").text(text));
         if (Constants.skin === "minerva" && $("#p-tb").length > 0) {
             $("#p-tb").append(button);
             return $(`#${id}`);
@@ -146,11 +161,16 @@ class UI {
                         .attr("href", "javascript:void(0)")
                         .text(`${i18n.translate("quickedit_topbtn")}`)
                 )
-        );
+            );
         if (Constants.skin === "minerva") {
-            $(topBtn).css({ "align-items": "center", "display": "flex" });
+            $(topBtn).css({ "align-items": "center", display: "flex" });
             $(topBtn).find("span").addClass("page-actions-menu__list-item");
-            $(topBtn).find("a").addClass("mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop").css("vertical-align", "middle");
+            $(topBtn)
+                .find("a")
+                .addClass(
+                    "mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop"
+                )
+                .css("vertical-align", "middle");
         }
         $(topBtn).on("click", () => {
             onClick({
@@ -159,7 +179,9 @@ class UI {
             });
         });
         if ($("#ca-edit").length > 0 && $("#Wikiplus-Edit-TopBtn").length === 0) {
-            Constants.skin === "minerva" ? $("#ca-edit").parent().after(topBtn) : $("#ca-edit").after(topBtn);
+            Constants.skin === "minerva"
+                ? $("#ca-edit").parent().after(topBtn)
+                : $("#ca-edit").after(topBtn);
         }
     }
 
@@ -168,9 +190,25 @@ class UI {
      * Insert QuickEdit buttons for each section.
      */
     insertSectionQuickEditEntries(onClick = () => {}) {
-        const sectionBtn = Constants.skin === "minerva"
-            ? $("<span>").append($("<a>").addClass("Wikiplus-Edit-SectionBtn mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 edit-page mw-ui-icon-flush-right").css("margin-left", "0.75em").attr("href", "javascript:void(0)").attr("title", i18n("quickedit_sectionbtn")))
-            : $("<span>").append($("<span>").addClass("mw-editsection-divider").text(" | ")).append($("<a>").addClass("Wikiplus-Edit-SectionBtn").attr("href", "javascript:void(0)").text(i18n("quickedit_sectionbtn")));
+        const sectionBtn =
+            Constants.skin === "minerva"
+                ? $("<span>").append(
+                      $("<a>")
+                          .addClass(
+                              "Wikiplus-Edit-SectionBtn mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 edit-page mw-ui-icon-flush-right"
+                          )
+                          .css("margin-left", "0.75em")
+                          .attr("href", "javascript:void(0)")
+                          .attr("title", i18n.translate("quickedit_sectionbtn"))
+                  )
+                : $("<span>")
+                      .append($("<span>").addClass("mw-editsection-divider").text(" | "))
+                      .append(
+                          $("<a>")
+                              .addClass("Wikiplus-Edit-SectionBtn")
+                              .attr("href", "javascript:void(0)")
+                              .text(i18n.translate("quickedit_sectionbtn"))
+                      );
         $(".mw-editsection").each(function (i) {
             try {
                 const editURL = $(this).find("a").first().attr("href");
@@ -189,7 +227,9 @@ class UI {
                         targetPageName: sectionTargetName,
                     });
                 });
-                Constants.skin === "minerva" ? $(this).append(_sectionBtn) : $(this).find(".mw-editsection-bracket").last().before(_sectionBtn);
+                Constants.skin === "minerva"
+                    ? $(this).append(_sectionBtn)
+                    : $(this).find(".mw-editsection-bracket").last().before(_sectionBtn);
             } catch (e) {
                 Log.error("fail_to_init_quickedit");
             }
