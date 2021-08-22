@@ -8,7 +8,9 @@ class I18n {
     constructor() {
         let language;
         try {
-            language = JSON.parse(localStorage.Wikiplus_Settings)["language"] || window.navigator.language.toLowerCase();
+            language =
+                JSON.parse(localStorage.Wikiplus_Settings)["language"] ||
+                window.navigator.language.toLowerCase();
         } catch (e) {
             language = window.navigator.language.toLowerCase();
         }

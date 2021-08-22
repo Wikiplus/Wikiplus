@@ -10,8 +10,8 @@ class Requests {
         const response = await fetch(url, {
             credentials: "same-origin",
             headers: {
-                "Api-User-Agent": `Wikiplus/${Constants.version} (${Constants.wikiId})`
-            }
+                "Api-User-Agent": `Wikiplus/${Constants.version} (${Constants.wikiId})`,
+            },
         });
         return await response.json();
     }
@@ -26,8 +26,8 @@ class Requests {
             body: form,
             credentials: "same-origin",
             headers: {
-                "Api-User-Agent": `Wikiplus/${Constants.version} (${Constants.wikiId})`
-            }
+                "Api-User-Agent": `Wikiplus/${Constants.version} (${Constants.wikiId})`,
+            },
         });
         return await response.json();
     }

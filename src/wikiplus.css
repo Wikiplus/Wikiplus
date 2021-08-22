@@ -1,193 +1,203 @@
 .clear {
-	clear: both;
+    clear: both;
 }
 #Wikiplus-Quickedit-Summary-Input {
-	width: 50%;
+    width: 50%;
 }
-#Wikiplus-Quickedit-Preview-Submit, #Wikiplus-Quickedit-Submit {
-	margin-top: 5px;
-	padding: revert;
+#Wikiplus-Quickedit-Preview-Submit,
+#Wikiplus-Quickedit-Submit {
+    margin-top: 5px;
+    padding: revert;
 }
 .Wikiplus-Btn {
-	position: relative;
-	float: left;
-	margin: 3px 5px;
-	padding: 3px 1em;
-	width: auto;
-	background-color: #fff;
-	box-shadow: 0 1px 2px #aaa;
-	text-align: center;
-	cursor: pointer;
+    position: relative;
+    float: left;
+    margin: 3px 5px;
+    padding: 3px 1em;
+    width: auto;
+    background-color: #fff;
+    box-shadow: 0 1px 2px #aaa;
+    text-align: center;
+    cursor: pointer;
 }
 .Wikiplus-Btn a {
-	position: relative;
-	display: block;
-	margin: 0;
-	color: #000;
-	text-decoration: none;
+    position: relative;
+    display: block;
+    margin: 0;
+    color: #000;
+    text-decoration: none;
 }
 .Wikiplus-InterBox {
-	position: absolute;
-	top: 20%;
-	z-index: 200;
-	padding: 20px 10px;
-	width: 600px;
-	min-height: 100px;
-	border: 1px rgba(161, 154, 220, 0.41) solid;
-	background-color: #edf9f7;
-	user-select: none;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
+    position: absolute;
+    top: 20%;
+    z-index: 200;
+    padding: 20px 10px;
+    width: 600px;
+    min-height: 100px;
+    border: 1px rgba(161, 154, 220, 0.41) solid;
+    background-color: #edf9f7;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 .Wikiplus-InterBox-Header {
-	position: relative;
-	top: 0;
-	top: -8px;
-	margin: 0;
-	width: 100%;
-	border-bottom: 1px #6cf solid;
-	text-align: left;
-	font-size: 15px;
-	line-height: 30px;
-	cursor: move;
+    position: relative;
+    top: 0;
+    top: -8px;
+    margin: 0;
+    width: 100%;
+    border-bottom: 1px #6cf solid;
+    text-align: left;
+    font-size: 15px;
+    line-height: 30px;
+    cursor: move;
 }
 .Wikiplus-InterBox-Input {
-	margin: 20px;
-	width: 60%;
+    margin: 20px;
+    width: 60%;
 }
 .Wikiplus-InterBox-Btn {
-	position: relative;
-	float: right;
-	margin: auto 3px;
-	padding: 6px 12px;
-	border: 1px solid #dedede;
-	background-color: #fff;
-	vertical-align: middle;
-	text-align: center;
-	cursor: pointer;
+    position: relative;
+    float: right;
+    margin: auto 3px;
+    padding: 6px 12px;
+    border: 1px solid #dedede;
+    background-color: #fff;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
 }
 .Wikiplus-InterBox-Btn:hover {
-	background-color: #e8e8e8;
+    background-color: #e8e8e8;
 }
 .Wikiplus-InterBox-Close {
-	position: absolute;
-	top: 0;
-	right: 0;
-	margin: 3px 7px;
-	font-size: 20px;
-	cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 3px 7px;
+    font-size: 20px;
+    cursor: pointer;
 }
 .Wikiplus-InterBox label {
-	font-size: 13px;
+    font-size: 13px;
 }
 .Wikiplus-InterBox table.diff {
-	table-layout: auto !important;
+    table-layout: auto !important;
 }
-.Wikiplus-InterBox table.diff .diff-addedline, .Wikiplus-InterBox table.diff .diff-deletedline, .Wikiplus-InterBox table.diff .diff-lineno {
-	width: 50%;
+.Wikiplus-InterBox table.diff .diff-addedline,
+.Wikiplus-InterBox table.diff .diff-deletedline,
+.Wikiplus-InterBox table.diff .diff-lineno {
+    width: 50%;
 }
 .Wikiplus-InterBox table.diff .diff-marker {
-	text-align: left;
+    text-align: left;
 }
 #Wikiplus-Quickedit-Preview-Output {
-	clear: both;
-	margin: 5px 0;
+    clear: both;
+    margin: 5px 0;
 }
 #Wikiplus-Quickedit {
-	word-break: break-all;
-	width: 100%;
-	min-height: 500px;
+    word-break: break-all;
+    width: 100%;
+    min-height: 500px;
 }
 .Wikiplus-Banner {
-	margin: 0;
-	padding: 10px 5px;
-	min-height: 50px;
-	background: rgba(193, 222, 214, 0.51);
-	text-align: center;
-	font-size: 30px;
-	font-family: 微软雅黑;
+    margin: 0;
+    padding: 10px 5px;
+    min-height: 50px;
+    background: rgba(193, 222, 214, 0.51);
+    text-align: center;
+    font-size: 30px;
+    font-family: 微软雅黑;
 }
 .MoeNotification-notice {
-	position: relative;
-	display: none;
-	overflow: hidden;
-	margin: 3px 5px;
-	padding: 0 5px;
-	width: auto;
-	box-shadow: 0 3px 3px #aaa;
-	font-size: 14px !important;
+    position: relative;
+    display: none;
+    overflow: hidden;
+    margin: 3px 5px;
+    padding: 0 5px;
+    width: auto;
+    box-shadow: 0 3px 3px #aaa;
+    font-size: 14px !important;
 }
 .MoeNotification-notice span {
-	position: relative;
-	margin: 3px auto 3px 3px;
-	color: #fff;
-	text-align: left;
-	font-size: 14px !important;
-	font-family: Arial, Tahoma, Microsoft YaHei, \5fae\8f6f\96c5\9ed1, Hiragino Sans GB, Microsoft JhengHei, 微軟正黑體, sans-serif;
-	line-height: 1.5 !important;
+    position: relative;
+    margin: 3px auto 3px 3px;
+    color: #fff;
+    text-align: left;
+    font-size: 14px !important;
+    font-family: Arial, Tahoma, Microsoft YaHei, \5fae\8f6f\96c5\9ed1, Hiragino Sans GB,
+        Microsoft JhengHei, 微軟正黑體, sans-serif;
+    line-height: 1.5 !important;
 }
 .MoeNotification-notice-success {
-	border-left: 5px #8dda93 solid;
-	border-bottom-left-radius: 3px;
-	border-top-left-radius: 3px;
-	background-color: #008a00;
+    border-left: 5px #8dda93 solid;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
+    background-color: #008a00;
 }
 .MoeNotification-notice-warning {
-	border-left: 5px #ffdf00 solid;
-	border-bottom-left-radius: 3px;
-	border-top-left-radius: 3px;
-	background-color: #f4bd00;
+    border-left: 5px #ffdf00 solid;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
+    background-color: #f4bd00;
 }
 .MoeNotification-notice-warning span {
-	color: #000;
+    color: #000;
 }
 .MoeNotification-notice-error {
-	border-left: 5px #e71717 solid;
-	border-bottom-left-radius: 3px;
-	border-top-left-radius: 3px;
-	background-color: #b00e06;
+    border-left: 5px #e71717 solid;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
+    background-color: #b00e06;
 }
 #MoeNotification {
-	position: fixed;
-	bottom: 30px;
-	left: 0;
-	z-index: 713;
-	min-width: 20%;
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    z-index: 713;
+    min-width: 20%;
 }
 .mw-editsection-divider {
-	display: inline !important;
+    display: inline !important;
 }
-.skin-minerva #Wikiplus-Quickedit-Preview-Submit, .skin-minerva #Wikiplus-Quickedit-Submit, .skin-minerva #Wikiplus-Quickedit-Summary-Input, .skin-minerva .Wikiplus-InterBox-Input {
-	all: revert;
+.skin-minerva #Wikiplus-Quickedit-Preview-Submit,
+.skin-minerva #Wikiplus-Quickedit-Submit,
+.skin-minerva #Wikiplus-Quickedit-Summary-Input,
+.skin-minerva .Wikiplus-InterBox-Input {
+    all: revert;
 }
 .skin-minerva #Wikiplus-Quickedit-Summary-Input {
-	width: 50%;
+    width: 50%;
 }
-.skin-minerva #Wikiplus-Quickedit-Preview-Submit, .skin-minerva #Wikiplus-Quickedit-Submit {
-	margin-top: 5px;
+.skin-minerva #Wikiplus-Quickedit-Preview-Submit,
+.skin-minerva #Wikiplus-Quickedit-Submit {
+    margin-top: 5px;
 }
 .skin-minerva #Wikiplus-Setting-Input {
-	width: calc(100% - 10px);
-	max-width: calc(100% - 10px);
+    width: calc(100% - 10px);
+    max-width: calc(100% - 10px);
 }
 .skin-minerva .Wikiplus-InterBox-Input {
-	margin: 20px;
-	width: 60%;
+    margin: 20px;
+    width: 60%;
 }
 .skin-minerva #Wikiplus-Settings-Intro a:before {
-	background-image: linear-gradient(transparent,transparent), url(/w/load.php?modules=skins.minerva.mainMenu.icons&image=settings&format=original&skin=minerva&version=1up49);
+    background-image: linear-gradient(transparent, transparent),
+        url(/w/load.php?modules=skins.minerva.mainMenu.icons&image=settings&format=original&skin=minerva&version=1up49);
 }
 .skin-minerva #Wikiplus-SR-Intro a:before {
-	background-image: linear-gradient(transparent,transparent), url(/w/load.php?modules=skins.minerva.overflow.icons&image=articleRedirect&format=original&lang=zh-cn&skin=minerva&version=1vckg);
+    background-image: linear-gradient(transparent, transparent),
+        url(/w/load.php?modules=skins.minerva.overflow.icons&image=articleRedirect&format=original&lang=zh-cn&skin=minerva&version=1vckg);
 }
 .skin-minerva .mw-parser-output .mw-editsection {
-	display: flex !important;
-	align-items: center;
+    display: flex !important;
+    align-items: center;
 }
-.skin-minerva .mw-parser-output .section-heading>div {
-	vertical-align: baseline;
+.skin-minerva .mw-parser-output .section-heading > div {
+    vertical-align: baseline;
 }
 .skin-vector #Wikiplus-Quickedit-Summary-Input {
-	margin-top: 5px;
+    margin-top: 5px;
 }
