@@ -181,10 +181,10 @@
 	width: 60%;
 }
 .skin-minerva #Wikiplus-Settings-Intro a:before {
-	background-image: linear-gradient(transparent,transparent), url(/w/load.php?modules=skins.minerva.mainMenu.icons&image=settings&format=original&skin=minerva&version=1up49);
+	background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cg%20fill%3D%22%2354595d%22%3E%3Cg%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20transform%3D%22translate(10%2010)%22%3E%3Cpath%20id%3D%22a%22%20d%3D%22M1.5-10h-3l-1%206.5h5m0%207h-5l1%206.5h3%22%2F%3E%3Cuse%20transform%3D%22rotate(45)%22%20xlink%3Ahref%3D%22%23a%22%2F%3E%3Cuse%20transform%3D%22rotate(90)%22%20xlink%3Ahref%3D%22%23a%22%2F%3E%3Cuse%20transform%3D%22rotate(135)%22%20xlink%3Ahref%3D%22%23a%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M10%202.5a7.5%207.5%200%20000%2015%207.5%207.5%200%20000-15v4a3.5%203.5%200%20010%207%203.5%203.5%200%20010-7%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
 .skin-minerva #Wikiplus-SR-Intro a:before {
-	background-image: linear-gradient(transparent,transparent), url(/w/load.php?modules=skins.minerva.overflow.icons&image=articleRedirect&format=original&lang=zh-cn&skin=minerva&version=1vckg);
+	background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cg%20fill%3D%22%2354595d%22%3E%3Cpath%20d%3D%22M5%201a2%202%200%2000-2%202v1c0%205%202%208%207%208V9l5%204-5%204v-3c-3.18%200-5.51-.85-7-2.68V17a2%202%200%20002%202h10a2%202%200%20002-2V3a2%202%200%2000-2-2z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
 .skin-minerva .mw-parser-output .mw-editsection {
 	display: flex !important;
