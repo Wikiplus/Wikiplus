@@ -1583,7 +1583,7 @@ $(function () {
                         }
                     } else if ($('#p-cactions').length > 0) {
                         $('#p-cactions ul').append(button);
-                        $('#' + id).click(clickEvent);
+                        $('#' + id).find('a').click(clickEvent);
                     } else {
                         throwError('cant_add_funcbtn');
                     }
@@ -1773,7 +1773,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.3.8';
+                this.version = '2.3.9';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
