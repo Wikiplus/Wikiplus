@@ -1475,9 +1475,13 @@ $(function() {
              * @param {function} clickEvent 点击事件
              */
             addFunctionButton(text, id, clickEvent) {
-                var button = mw.config.get('skin') === 'minerva'
-                    ? $('<li>').attr('id', id).addClass('toggle-list-item').append($('<a>').addClass('mw-ui-icon mw-ui-icon-before toggle-list-item__anchor').append($('<span>').attr('href', 'javascript:void(0);').addClass('toggle-list-item__label').text(text)))
-                    : $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
+                var button = $('<li>').addClass('mw-list-item mw-list-item-js').attr('id', id);
+                var href = $('<a>').attr('href', 'javascript:void(0);');
+                button = mw.config.get('skin') === 'minerva'
+                    ? button.addClass('toggle-list-item').append(href.addClass('toggle-list-item__anchor').append($('<span>').addClass(`mw-ui-icon mw-ui-icon-portletlink-${id.toLowerCase()}`)).append($('<span>').addClass('toggle-list-item__label').text(text)))
+                    : mw.config.get('skin') === 'vector'
+                    ? button.append(href.append($('<span>').text(text)))
+                    : button.append(href.text(text));
                 if (mw.config.get('skin') === 'minerva') {
                     if ($('#p-tb').length > 0) {
                         $('#p-tb').append(button);
@@ -1646,7 +1650,7 @@ $(function() {
             initRecentChangesPageFunctions() {}
             initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.9';
+                this.version = '2.3.10';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
