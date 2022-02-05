@@ -638,7 +638,20 @@ $(function() {
                 console.log('页面JavaScript载入不完全或这不是一个MediaWiki站点');
                 return;
             }
-            if ((function() {mw.loader.using('mediawiki.user').then(function() {mw.user.getRights(function(rights) {return $.inArray('skipcaptcha', rights) > 0})})})()) {
+            var hasRight = (function(mw) {
+                var flag = false;
+                if ($.inArray('autoconfirmed', mw.config.get('wgUserGroups')) > 0 || $.inArray('confirmed', mw.config.get('wgUserGroups')) > 0) {
+                    flag = true;
+                } else {
+                    mw.loader.using('mediawiki.user').then(function() {
+                        mw.user.getRights(function(rights) {
+                            flag = $.inArray('skipcaptcha', rights) > 0;
+                        });
+                    });
+                }
+                return flag;
+            })(window.mw);
+            if (!hasRight) {
                 throwError('not_autoconfirmed_user');
                 return;
             }
