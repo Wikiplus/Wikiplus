@@ -639,16 +639,12 @@ $(function() {
                 return;
             }
             var hasRight = (function(mw) {
-                var flag = false;
-                if ($.inArray('autoconfirmed', mw.config.get('wgUserGroups')) > 0 || $.inArray('confirmed', mw.config.get('wgUserGroups')) > 0) {
-                    flag = true;
-                } else {
-                    mw.loader.using('mediawiki.user').then(function() {
-                        mw.user.getRights(function(rights) {
-                            flag = $.inArray('skipcaptcha', rights) > 0;
-                        });
+                var flag = mw.config.get('wgUserGroups').includes('autoconfirmed') || mw.config.get('wgUserGroups').includes('confirmed');
+                !flag && mw.loader.using('mediawiki.user').then(function() {
+                    mw.user.getRights(function(rights) {
+                        flag = rights.includes('skipcaptcha');
                     });
-                }
+                });
                 return flag;
             })(window.mw);
             if (!hasRight) {
