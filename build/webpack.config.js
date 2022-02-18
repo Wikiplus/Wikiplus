@@ -5,7 +5,7 @@ module.exports = {
     mode: "production",
     entry: [path.resolve(__dirname, "../src/index.js")],
     output: {
-        path: path.resolve(__dirname, "../"),
+        path: path.resolve(__dirname, "../dist/"),
         filename: "Main.development.js",
         sourceMapFilename: "[file].map",
     },
@@ -28,6 +28,18 @@ module.exports = {
                         ],
                     },
                 },
+            },
+            {
+                test: /\.css$/i,
+                use: [
+                    "style-loader",
+                    {
+                        loader: "css-loader",
+                        options: {
+                            url: false,
+                        },
+                    },
+                ],
             },
         ],
     },
