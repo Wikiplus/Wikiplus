@@ -10,20 +10,6 @@ class UI {
     scrollTop = 0;
 
     /**
-     * 加载CSS
-     * @param {string} url
-     */
-    loadCSS(url) {
-        $("<link>")
-            .attr({
-                rel: "stylesheet",
-                type: "text/css",
-                href: `${url}`,
-            })
-            .appendTo($("head"));
-    }
-
-    /**
      * 创建居中对话框
      * @param {string} title 窗口标题
      * @param {string | JQuery<HTMLElement>} content 内容

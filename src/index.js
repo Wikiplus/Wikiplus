@@ -38,7 +38,7 @@ $(async () => {
     Log.info(`Wikiplus now loading. Version: ${Constants.version}`);
 
     if (!window.mw) {
-        console.log("页面JavaScript载入不完全或这不是一个MediaWiki站点");
+        console.log("Mediawiki JavaScript not loaded or not a Mediawiki website.");
         return;
     }
     if (!Constants.userGroups.includes("autoconfirmed")) {
@@ -53,7 +53,7 @@ $(async () => {
     }
 
     // Initialize current page 默认初始化当前页面
-    window.Pages = Pages;
+    window._WikiplusPages = Pages;
     const currentPageName = Constants.currentPageName;
     const revisionId = Constants.revisionId;
     const currentPage = await getPage({
@@ -175,7 +175,6 @@ $(async () => {
         });
     };
 
-    // UI.loadCSS("https://wikiplus-app.com/wikiplus.css");
     UI.insertTopQuickEditEntry(handleQuickEditButtonClicked);
     UI.insertSectionQuickEditEntries(handleQuickEditButtonClicked);
     UI.insertLinkEditEntries(handleQuickEditButtonClicked);
