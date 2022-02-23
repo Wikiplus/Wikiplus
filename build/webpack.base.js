@@ -1,14 +1,11 @@
 const path = require("path");
-const TerserPlugin = require("terser-webpack-plugin");
+const fs = require("fs");
+const webpack = require("webpack");
+
+const VERSION = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../package.json"))).version;
 
 module.exports = {
-    mode: "production",
     entry: [path.resolve(__dirname, "../src/index.js")],
-    output: {
-        path: path.resolve(__dirname, "../dist/"),
-        filename: "Main.development.js",
-        sourceMapFilename: "[file].map",
-    },
     module: {
         rules: [
             {
@@ -46,9 +43,9 @@ module.exports = {
     resolve: {
         extensions: ["*", ".js"],
     },
-    mode: "development",
-    devtool: "source-map",
-    optimization: {
-        usedExports: true,
-    },
+    plugins: [
+        new webpack.BannerPlugin({
+            banner: `Wikiplus - ${VERSION}`,
+        }),
+    ],
 };

@@ -1,55 +1,22 @@
 const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
+const baseConfig = require("./webpack.base.js");
 
 module.exports = {
+    ...baseConfig,
     mode: "production",
-    entry: [path.resolve(__dirname, "../src/index.js")],
     output: {
         path: path.resolve(__dirname, "../dist/"),
         filename: "Main.js",
     },
-    module: {
-        rules: [
-            {
-                test: /\.m?js$/,
-                exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: [
-                            [
-                                "@babel/preset-env",
-                                {
-                                    useBuiltIns: "usage",
-                                    corejs: "3",
-                                },
-                            ],
-                        ],
-                    },
-                },
-            },
-            {
-                test: /\.css$/i,
-                use: [
-                    "style-loader",
-                    {
-                        loader: "css-loader",
-                        options: {
-                            url: false,
-                        },
-                    },
-                ],
-            },
-        ],
-    },
-    resolve: {
-        extensions: ["*", ".js"],
-    },
-    mode: "production",
     devtool: "source-map",
     optimization: {
         usedExports: true,
         minimize: true,
-        minimizer: [new TerserPlugin()],
+        minimizer: [
+            new TerserPlugin({
+                extractComments: false,
+            }),
+        ],
     },
 };

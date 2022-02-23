@@ -9,7 +9,7 @@
         "url": "https://github.com/Wikiplus/Wikiplus"
     },
     "scripts": {
-        "watch": "webpack-cli --config ./build/webpack.config.js --watch",
+        "watch": "webpack-cli --config ./build/webpack.development.js --watch",
         "build": "webpack-cli --config ./build/webpack.production.config.js"
     },
     "keywords": [
