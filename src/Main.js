@@ -1099,7 +1099,7 @@ $(function() {
                 //DOM定义结束
                 var editBody = $('<div>').append(backBtn, jumpBtn, previewBox, inputBox, summaryBox, $('<br>'), isMinorEdit, editSubmitBtn, previewSubmitBtn);
                 this.createDialogBox(`${i18n('quickedit_topbtn')}${message}`, editBody, 1000, function() {
-                    $('#Wikiplus-Quickedit').text(sectionContent);
+                    $('#Wikiplus-Quickedit').val(sectionContent);
                     $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                     //事件绑定
                     //返回

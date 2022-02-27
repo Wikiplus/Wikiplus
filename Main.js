@@ -1174,7 +1174,7 @@ $(function () {
                     //DOM定义结束
                     var editBody = $('<div>').append(backBtn, jumpBtn, previewBox, inputBox, summaryBox, $('<br>'), isMinorEdit, editSubmitBtn, previewSubmitBtn);
                     this.createDialogBox('' + i18n('quickedit_topbtn') + message, editBody, 1000, function () {
-                        $('#Wikiplus-Quickedit').text(sectionContent);
+                        $('#Wikiplus-Quickedit').val(sectionContent);
                         $('#Wikiplus-Quickedit-Summary-Input').val(summary);
                         //事件绑定
                         //返回
@@ -1575,7 +1575,9 @@ $(function () {
             }, {
                 key: 'addFunctionButton',
                 value: function addFunctionButton(text, id, clickEvent) {
-                    var button = mw.config.get('skin') === 'minerva' ? $('<li>').attr('id', id).addClass('toggle-list-item').append($('<a>').addClass('mw-ui-icon mw-ui-icon-before toggle-list-item__anchor').append($('<span>').attr('href', 'javascript:void(0);').addClass('toggle-list-item__label').text(text))) : $('<li>').attr('id', id).append($('<a>').attr('href', 'javascript:void(0);').text(text));
+                    var button = $('<li>').addClass('mw-list-item mw-list-item-js').attr('id', id);
+                    var href = $('<a>').attr('href', 'javascript:void(0);');
+                    button = mw.config.get('skin') === 'minerva' ? button.addClass('toggle-list-item').append(href.addClass('toggle-list-item__anchor').append($('<span>').addClass('mw-ui-icon mw-ui-icon-portletlink-' + id.toLowerCase())).append($('<span>').addClass('toggle-list-item__label').text(text))) : mw.config.get('skin') === 'vector' ? button.append(href.append($('<span>').text(text))) : button.append(href.text(text));
                     if (mw.config.get('skin') === 'minerva') {
                         if ($('#p-tb').length > 0) {
                             $('#p-tb').append(button);
@@ -1773,7 +1775,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.3.9';
+                this.version = '2.3.10';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
