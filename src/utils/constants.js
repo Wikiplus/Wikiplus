@@ -1,5 +1,5 @@
 class Constants {
-    version = "3.0.1";
+    version = "4.0.3";
     get isArticle() {
         return window.mw.config.get("wgIsArticle");
     }

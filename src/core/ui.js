@@ -318,7 +318,7 @@ class UI {
             previewSubmitBtn
         );
         this.createDialogBox(title, editBody, 1000, () => {
-            $("#Wikiplus-Quickedit").text(content);
+            $("#Wikiplus-Quickedit").val(content);
             $("#Wikiplus-Quickedit-Summary-Input").val(summary);
         });
         // Back
