@@ -85,7 +85,7 @@ $(async () => {
             sectionTargetName: targetPageName,
         });
         const summary =
-            customSummary ||
+            customSummary ??
             (sectionName
                 ? `/* ${sectionName} */ ${i18n.translate("default_summary_suffix")}`
                 : i18n.translate("default_summary_suffix"));
