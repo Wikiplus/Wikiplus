@@ -638,7 +638,16 @@ $(function() {
                 console.log('页面JavaScript载入不完全或这不是一个MediaWiki站点');
                 return;
             }
-            if (!window.mw.config.get('wgUserGroups').includes('autoconfirmed') && !window.mw.config.get('wgUserGroups').includes('confirmed')) {
+            var hasRight = (function(mw) {
+                var flag = mw.config.get('wgUserGroups').includes('autoconfirmed') || mw.config.get('wgUserGroups').includes('confirmed');
+                !flag && mw.loader.using('mediawiki.user').then(function() {
+                    mw.user.getRights(function(rights) {
+                        flag = rights.includes('skipcaptcha');
+                    });
+                });
+                return flag;
+            })(window.mw);
+            if (!hasRight) {
                 throwError('not_autoconfirmed_user');
                 return;
             }
@@ -1479,7 +1488,7 @@ $(function() {
                 var href = $('<a>').attr('href', 'javascript:void(0);');
                 button = mw.config.get('skin') === 'minerva'
                     ? button.addClass('toggle-list-item').append(href.addClass('toggle-list-item__anchor').append($('<span>').addClass(`mw-ui-icon mw-ui-icon-portletlink-${id.toLowerCase()}`)).append($('<span>').addClass('toggle-list-item__label').text(text)))
-                    : mw.config.get('skin') === 'vector'
+                    : mw.config.get('skin') === 'vector' || mw.config.get('skin') === 'vector-2022'
                     ? button.append(href.append($('<span>').text(text)))
                     : button.append(href.text(text));
                 if (mw.config.get('skin') === 'minerva') {
@@ -1650,7 +1659,7 @@ $(function() {
             initRecentChangesPageFunctions() {}
             initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.10';
+                this.version = '2.3.11';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
