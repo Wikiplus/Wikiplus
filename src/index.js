@@ -103,6 +103,7 @@ $(async () => {
             Settings.getSetting("esc_to_exit_quickedit") === "true" ||
             Settings.getSetting("escToExitQuickEdit") === true ||
             Settings.getSetting("escToExitQuickEdit") === "true";
+        const customEditTags = Settings.getSetting("custom_edit_tags");
         clearTimeout(timer);
         Notification.empty();
 
@@ -125,6 +126,9 @@ $(async () => {
                     config: {
                         summary,
                         ...(sectionNumber !== -1 ? { section: sectionNumber } : {}),
+                        ...(customEditTags?.length
+                            ? { tags: customEditTags.join("|") }
+                            : { tags: "wikiplus" }),
                     },
                 };
                 if (isMinorEdit) {
