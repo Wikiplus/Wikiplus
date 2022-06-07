@@ -201,3 +201,40 @@
 .skin-vector #Wikiplus-Quickedit-Summary-Input {
     margin-top: 5px;
 }
+.skin-moeskin .Wikiplus-More-Function-Button a {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+}
+.skin-moeskin #Wikiplus-Edit-TopBtn {
+    display: flex;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    color: var(--theme-button-color);
+    background-color: var(--theme-accent-link-color);
+    line-height: 2;
+    text-align: center;
+    box-shadow: var(--theme-card-box-shadow);
+    transition: all .24s ease;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.skin-moeskin #Wikiplus-Edit-TopBtn:hover {
+    color: var(--theme-accent-link-color);
+    box-shadow: var(--theme-card-box-shadow--hover);
+    background-color: var(--theme-button-color);
+}
+.skin-moeskin #Wikiplus-Edit-TopBtn a {
+    display: none;
+}
+.skin-moeskin #Wikiplus-Edit-TopBtn span::after {
+    content: 'W+';
+    display: inline-block;
+    font-weight: bold;
+    font-size: smaller;
+    transform: translateY(-2px);
+}

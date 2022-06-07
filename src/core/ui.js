@@ -80,26 +80,38 @@ class UI {
      * @return {JQuery<HTMLElement>} button
      */
     addFunctionButton(text, id) {
-        const button =
-            Constants.skin === "minerva"
-                ? $("<li>")
-                      .attr("id", id)
-                      .addClass("toggle-list-item")
-                      .append(
-                          $("<a>")
-                              .addClass("mw-ui-icon mw-ui-icon-before toggle-list-item__anchor")
-                              .append(
-                                  $("<span>")
-                                      .attr("href", "javascript:void(0);")
-                                      .addClass("toggle-list-item__label")
-                                      .text(text)
-                              )
-                      )
-                : $("<li>")
-                      .attr("id", id)
-                      .append($("<a>").attr("href", "javascript:void(0);").text(text));
+        let button;
+        switch (Constants.skin) {
+            case "minerva": {
+                button = $("<li>")
+                    .attr("id", id)
+                    .addClass("toggle-list-item")
+                    .append(
+                        $("<a>")
+                            .addClass("mw-ui-icon mw-ui-icon-before toggle-list-item__anchor")
+                            .append(
+                                $("<span>")
+                                    .attr("href", "javascript:void(0);")
+                                    .addClass("toggle-list-item__label")
+                                    .text(text)
+                            )
+                    );
+                break;
+            }
+            case "moeskin": {
+            }
+            default: {
+                button = $("<li>")
+                    .addClass("Wikiplus-More-Function-Button")
+                    .attr("id", id)
+                    .append($("<a>").attr("href", "javascript:void(0);").text(text));
+            }
+        }
         if (Constants.skin === "minerva" && $("#p-tb").length > 0) {
             $("#p-tb").append(button);
+            return $(`#${id}`);
+        } else if (Constants.skin === "moeskin") {
+            $(".more-actions-list").first().append(button);
             return $(`#${id}`);
         } else if ($("#p-cactions").length > 0) {
             $("#p-cactions ul").append(button);
