@@ -104,6 +104,12 @@ $(async () => {
             Settings.getSetting("escToExitQuickEdit") === true ||
             Settings.getSetting("escToExitQuickEdit") === "true";
         const customEditTags = Settings.getSetting("custom_edit_tags");
+        const defaultEditTags =
+            location.host.includes("zh.wikipedia.org") ||
+            location.host.includes("zh.m.wikipedia.org")
+                ? ["wikiplus"]
+                : [];
+        const editTags = customEditTags?.length ? customEditTags : defaultEditTags;
         clearTimeout(timer);
         Notification.empty();
 
@@ -126,9 +132,7 @@ $(async () => {
                     config: {
                         summary,
                         ...(sectionNumber !== -1 ? { section: sectionNumber } : {}),
-                        ...(customEditTags?.length
-                            ? { tags: customEditTags.join("|") }
-                            : { tags: "wikiplus" }),
+                        ...(editTags.length ? { tags: editTags.join("|") } : {}),
                     },
                 };
                 if (isMinorEdit) {
