@@ -1038,7 +1038,7 @@ $(function () {
                         var sectionBtn = mw.config.get('skin') === 'minerva' ? $('<span>').append($('<a>').addClass('Wikiplus-Edit-SectionBtn mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 edit-page mw-ui-icon-flush-right').css('margin-left', '0.75em').attr('href', 'javascript:void(0)').attr('title', i18n('quickedit_sectionbtn'))) : $('<span>').append($('<span>').addClass('mw-editsection-divider').text(' | ')).append($('<a>').addClass('Wikiplus-Edit-SectionBtn').attr('href', 'javascript:void(0)').text(i18n('quickedit_sectionbtn')));
                         $('.mw-editsection').each(function (i) {
                             try {
-                                var editURL = $(this).find('a').first().attr('href');
+                                var editURL = $(this).find("a[href*='action=edit']").first().attr('href');
                                 var sectionNumber = editURL.match(/&[ve]*section\=([^&]+)/)[1].replace(/T-/ig, '');
                                 var sectionTargetName;
                                 if (editURL.match(/title=(.+?)&/)) {
@@ -1775,7 +1775,7 @@ $(function () {
             function Wikiplus() {
                 _classCallCheck(this, Wikiplus);
 
-                this.version = '2.3.10';
+                this.version = '2.3.11';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
