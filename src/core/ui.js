@@ -209,7 +209,7 @@ class UI {
                       );
         $(".mw-editsection").each(function (i) {
             try {
-                const editURL = $(this).find("a").first().attr("href");
+                const editURL = $(this).find("a[href*='action=edit']").first().attr("href");
                 const sectionNumber = editURL
                     .match(/&[ve]*section\=([^&]+)/)[1] // `ve` for visual editor
                     .replace(/T-/gi, ""); // embedded pages use T-series section number
