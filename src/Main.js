@@ -945,15 +945,15 @@ $(function() {
                     return;
                 }
                 //顶部编辑入口
-                var topBtn = $('<li>').attr('id', 'Wikiplus-Edit-TopBtn').append($('<span>').append($('<a>').attr('href', 'javascript:void(0)').text(`${i18n('quickedit_topbtn')}`))).data({
+                var topBtn = $('<li>').attr('id', 'Wikiplus-Edit-TopBtn');
+                var topBtnA = $('<a>').attr('href', 'javascript:void(0)');
+                topBtn = mw.config.get('skin') === 'minerva'
+                    ? topBtn.addClass('page-actions-menu__list-item').append(topBtnA.addClass('mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop mw-ui-button mw-ui-quiet').text(`${i18n('quickedit_topbtn')}`))
+                    : topBtn.addClass('mw-list-item').append(topBtnA.append($('<span>').text(`${i18n('quickedit_topbtn')}`)));
+                topBtn = topBtn.data({
                     number: -1,
                     target: self.kotori.pageName
                 });
-                if (mw.config.get('skin') === 'minerva') {
-                    $(topBtn).css({ 'align-items': 'center', 'display': 'flex' });
-                    $(topBtn).find('span').addClass('page-actions-menu__list-item');
-                    $(topBtn).find('a').addClass('mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop').css('vertical-align', 'middle');
-                }
                 if ($('#ca-edit').length > 0 && $('#Wikiplus-Edit-TopBtn').length === 0) {
                     mw.config.get('skin') === 'minerva' ? $('#ca-edit').parent().after(topBtn) : $('#ca-edit').after(topBtn);
                     $('#Wikiplus-Edit-TopBtn').click(function() {
@@ -1479,7 +1479,7 @@ $(function() {
                 var href = $('<a>').attr('href', 'javascript:void(0);');
                 button = mw.config.get('skin') === 'minerva'
                     ? button.addClass('toggle-list-item').append(href.addClass('toggle-list-item__anchor').append($('<span>').addClass(`mw-ui-icon mw-ui-icon-portletlink-${id.toLowerCase()}`)).append($('<span>').addClass('toggle-list-item__label').text(text)))
-                    : mw.config.get('skin') === 'vector'
+                    : mw.config.get('skin') === 'vector' || mw.config.get('skin') === 'vector-2022'
                     ? button.append(href.append($('<span>').text(text)))
                     : button.append(href.text(text));
                 if (mw.config.get('skin') === 'minerva') {
@@ -1650,7 +1650,7 @@ $(function() {
             initRecentChangesPageFunctions() {}
             initAdvancedFunctions() {}
             constructor() {
-                this.version = '2.3.11';
+                this.version = '2.3.12';
                 this.langVersion = '212';
                 this.releaseNote = '修正一些问题';
                 this.notice = new MoeNotification();
