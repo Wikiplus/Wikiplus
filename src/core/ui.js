@@ -153,12 +153,12 @@ class UI {
     insertTopQuickEditEntry(onClick) {
         const topBtn = $("<li>")
             .attr("id", "Wikiplus-Edit-TopBtn")
+            .attr("class", "mw-list-item")
             .append(
-                $("<span>").append(
-                    $("<a>")
-                        .attr("href", "javascript:void(0)")
-                        .text(`${i18n.translate("quickedit_topbtn")}`)
-                )
+                $("<a>")
+                    .attr("href", "javascript:void(0)")
+                    .text(`${i18n.translate("quickedit_topbtn")}`)
+                
             );
         if (Constants.skin === "minerva") {
             $(topBtn).css({ "align-items": "center", display: "flex" });
