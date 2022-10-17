@@ -99,10 +99,15 @@ class UI {
                 break;
             }
             case "moeskin": {
+                button = $("<li>")
+                    .addClass("Wikiplus-More-Function-Button")
+                    .attr("id", id)
+                    .append($("<a>").attr("href", "javascript:void(0);").text(text));
+                break;
             }
             default: {
                 button = $("<li>")
-                    .addClass("Wikiplus-More-Function-Button")
+                    .addClass("mw-list-item")
                     .attr("id", id)
                     .append($("<a>").attr("href", "javascript:void(0);").text(text));
             }
@@ -160,15 +165,24 @@ class UI {
                     .text(`${i18n.translate("quickedit_topbtn")}`)
                 
             );
-        if (Constants.skin === "minerva") {
-            $(topBtn).css({ "align-items": "center", display: "flex" });
-            $(topBtn).find("span").addClass("page-actions-menu__list-item");
-            $(topBtn)
-                .find("a")
-                .addClass(
-                    "mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop"
-                )
-                .css("vertical-align", "middle");
+        switch (Constants.skin) {
+            case "minerva": {
+                $(topBtn).css({ "align-items": "center", display: "flex" });
+                $(topBtn).find("span").addClass("page-actions-menu__list-item");
+                $(topBtn)
+                    .find("a")
+                    .addClass(
+                        "mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop"
+                    )
+                    .css("vertical-align", "middle");
+                break;
+            }        
+            case "vector-2022": {
+                $(topBtn).addClass("vector-tab-noicon");
+                break;
+            }
+            default: {
+            }
         }
         $(topBtn).on("click", () => {
             onClick({
