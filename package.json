@@ -1,6 +1,6 @@
 {
     "name": "wikiplus-core",
-    "version": "4.0.9",
+    "version": "4.0.10",
     "homepage": "https://wikiplus-app.smartgslb.com/",
     "description": "A front-end jQuery-based Mediawiki plugin.",
     "main": "dist/Main.js",

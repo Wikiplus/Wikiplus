@@ -108,6 +108,7 @@ class UI {
             default: {
                 button = $("<li>")
                     .addClass("mw-list-item")
+                    .addClass("vector-tab-noicon")
                     .attr("id", id)
                     .append($("<a>").attr("href", "javascript:void(0);").text(text));
             }
