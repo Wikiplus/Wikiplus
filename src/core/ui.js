@@ -159,27 +159,29 @@ class UI {
     insertTopQuickEditEntry(onClick) {
         const topBtn = $("<li>")
             .attr("id", "Wikiplus-Edit-TopBtn")
-            .attr("class", "mw-list-item")
-            .append(
-                $("<a>")
-                    .attr("href", "javascript:void(0)")
-                    .text(`${i18n.translate("quickedit_topbtn")}`)
-                
-            );
+            .attr("class", "mw-list-item");
+        const topBtnLink = $("<a>")
+            .attr("href", "javascript:void(0)")
+            .text(`${i18n.translate("quickedit_topbtn")}`);
+        topBtn.append(topBtnLink);
         switch (Constants.skin) {
             case "minerva": {
-                $(topBtn).css({ "align-items": "center", display: "flex" });
-                $(topBtn).find("span").addClass("page-actions-menu__list-item");
-                $(topBtn)
+                topBtn.css({ "align-items": "center", display: "flex" });
+                topBtn.find("span").addClass("page-actions-menu__list-item");
+                topBtn
                     .find("a")
                     .addClass(
                         "mw-ui-icon mw-ui-icon-element mw-ui-icon-wikimedia-edit-base20 mw-ui-icon-with-label-desktop"
                     )
                     .css("vertical-align", "middle");
                 break;
-            }        
+            }
             case "vector-2022": {
-                $(topBtn).addClass("vector-tab-noicon");
+                topBtn.addClass("vector-tab-noicon");
+                break;
+            }
+            case "vector": {
+                topBtn.append($("<span>").append(topBtnLink));
                 break;
             }
             default: {
