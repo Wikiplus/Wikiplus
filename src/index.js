@@ -14,7 +14,7 @@ import "./wikiplus.css";
 
 $(async () => {
     const Pages = {};
-    const isNewPage = $(".noarticletext").length > 0 && Constants.articleId === 0;
+    let isCurrentPageEmpty = $(".noarticletext").length > 0 && Constants.articleId === 0;
 
     /**
      * Get page instance.
@@ -66,18 +66,16 @@ $(async () => {
         sectionName,
         targetPageName,
     } = {}) => {
-        if (
-            targetPageName !== currentPageName &&
-            Constants.latestRevisionId !== Constants.revisionId
-        ) {
+        const isOtherPage = targetPageName !== currentPageName;
+        if (isOtherPage && Constants.latestRevisionId !== Constants.revisionId) {
             // 在历史版本编辑其他页面有问题 暂时不支持
             Log.error("cross_page_history_revision_edit_warning");
             return;
         }
-        const revisionId =
-            targetPageName === currentPageName
-                ? Constants.revisionId
-                : await Wiki.getLatestRevisionIdForPage(targetPageName);
+        const revisionId = isOtherPage
+            ? await Wiki.getLatestRevisionIdForPage(targetPageName)
+            : Constants.revisionId;
+
         const page = await getPage({ revisionId, title: targetPageName });
         const customSummary = Settings.getSetting("defaultSummary", {
             sectionName,
@@ -96,8 +94,7 @@ $(async () => {
             section: sectionNumber,
         });
         const isEditHistoryRevision =
-            targetPageName === currentPageName &&
-            Constants.latestRevisionId !== Constants.revisionId;
+            !isOtherPage && Constants.latestRevisionId !== Constants.revisionId;
         const escToExit =
             Settings.getSetting("esc_to_exit_quickedit") === true || // 兼容老设置key
             Settings.getSetting("esc_to_exit_quickedit") === "true" ||
@@ -116,11 +113,14 @@ $(async () => {
         if (isEditHistoryRevision) {
             Notification.warning(i18n.translate("history_edit_warning"));
         }
+
+        const shouldShowCreatePageTip = isOtherPage ? !revisionId : isCurrentPageEmpty;
+
         UI.showQuickEditPanel({
             title: `${i18n.translate("quickedit_topbtn")}${
                 isEditHistoryRevision ? i18n.translate("history_edit_warning") : ""
             }`,
-            content: isNewPage ? i18n.translate("create_page_tip") : sectionContent,
+            content: shouldShowCreatePageTip ? i18n.translate("create_page_tip") : sectionContent,
             summary,
             onBack: UI.hideQuickEditPanel,
             onParse: (wikiText) => {
