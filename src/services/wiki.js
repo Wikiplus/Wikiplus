@@ -87,6 +87,10 @@ class Wiki {
      * @return {Promise<string>} wikitext内容
      */
     async getWikiText({ section, revisionId }) {
+        if (revisionId === undefined) {
+            Log.error("fail_to_get_wikitext");
+            return;
+        }
         try {
             const response = await (
                 await fetch(
