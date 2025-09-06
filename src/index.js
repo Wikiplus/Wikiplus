@@ -151,11 +151,39 @@ $(async () => {
             onEdit: async ({ title, summary, forceOverwrite = false }) => {
                 const page = await getPage({ title });
                 const currentPageName = Constants.currentPageName;
+                const contentmodel = page.contentmodel;
                 if (summary == "") {
                     summary = i18n.translate("redirect_from_summary", [title, currentPageName]);
                 }
+                const content = (() => {
+                    let content;
+                    switch (contentmodel) {
+                        case "javascript":
+                            content = `/* #REDIRECT */mw.loader.load("${location.protocol}//${
+                                location.host
+                            }${Constants.scriptPath}/index.php?title=${mw.util.wikiUrlencode(
+                                currentPageName
+                            )}&action=raw&ctype=text/javascript");`;
+                            break;
+                        case "css":
+                            content = `/* #REDIRECT */@import url(${location.protocol}//${
+                                location.host
+                            }${Constants.scriptPath}/index.php?title=${mw.util.wikiUrlencode(
+                                currentPageName
+                            )}&action=raw&ctype=text/css);`;
+                            break;
+                        case "Scribunto":
+                            content = `return require [[${currentPageName}]]`;
+                            break;
+                        case "wikitext":
+                        default:
+                            content = `#REDIRECT [[${currentPageName}]]`;
+                            break;
+                    }
+                    return content;
+                })();
                 const payload = {
-                    content: `#REDIRECT [[${currentPageName}]]`,
+                    content: content,
                     config: {
                         summary,
                     },
