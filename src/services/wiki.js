@@ -72,8 +72,7 @@ class Wiki {
                 const pageInfo =
                     response.query.pages[Object.keys(response.query.pages)[0]].revisions[0];
                 if (title) {
-                    this.pageInfoCache[title] = pageInfo;
-                    this.pageInfoCache[title].contentmodel = contentmodel;
+                    this.pageInfoCache[title] = { ...pageInfo, contentmodel };
                 }
                 return {
                     timestamp: pageInfo.timestamp,
