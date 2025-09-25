@@ -64,7 +64,7 @@ class Wiki {
                 if (Object.keys(response.query.pages)[0] === "-1") {
                     // 不存在这一页面
                     // Page not found.
-                    this.pageInfoCache[title] = { contentmodel: contentmodel };
+                    this.pageInfoCache[title] = { contentmodel };
                     return {
                         contentmodel: contentmodel,
                     };
