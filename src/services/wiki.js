@@ -59,9 +59,9 @@ class Wiki {
             }
             const response = await requests.get(params);
             if (response.query && response.query.pages) {
-                const contentmodel =
-                    response.query.pages[Object.keys(response.query.pages)[0]].contentmodel;
-                if (Object.keys(response.query.pages)[0] === "-1") {
+                const pageKey = Object.keys(response.query.pages)[0];
+                const contentmodel = response.query.pages[pageKey].contentmodel;
+                if (pageKey === "-1") {
                     // 不存在这一页面
                     // Page not found.
                     this.pageInfoCache[title] = { contentmodel };
@@ -69,8 +69,7 @@ class Wiki {
                         contentmodel: contentmodel,
                     };
                 }
-                const pageInfo =
-                    response.query.pages[Object.keys(response.query.pages)[0]].revisions[0];
+                const pageInfo = response.query.pages[pageKey].revisions[0];
                 if (title) {
                     this.pageInfoCache[title] = { ...pageInfo, contentmodel };
                 }
