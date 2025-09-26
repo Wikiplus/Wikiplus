@@ -10,11 +10,14 @@ class Page {
     inited = false;
     isNewPage = false;
 
+    contentmodel = "wikitext";
+
     sectionCache = {};
 
     /**
      * @param {params.title} 页面标题 Page Name (optional)
      * @param {params.revisionId} 页面修订编号 Revision Id
+     * @param {params.contentmodel} 页面内容模型 Content Model
      */
     constructor({ title, revisionId }) {
         this.title = title;
@@ -28,7 +31,7 @@ class Page {
      * @param {string} editToken (optional) 如果提供了editToken，将不会再获取
      */
     async init({ editToken = "" } = {}) {
-        const promiseArr = [this.getTimestamp()];
+        const promiseArr = [this.getTimestamp(), this.getContentModel()];
         if (!editToken) {
             promiseArr.push(this.getEditToken());
         }
@@ -68,6 +71,20 @@ class Page {
             this.revisionId = revisionId;
             this.isNewPage = false;
         }
+    }
+
+    /**
+     * 获得页面内容模型
+     *
+     * @param {Object} config
+     * @param {string} config.revisionId
+     */
+    async getContentModel() {
+        const { contentmodel } = await Wiki.getPageInfo({
+            revisionId: this.revisionId,
+            title: this.title,
+        });
+        this.contentmodel = contentmodel || "wikitext";
     }
 
     /**

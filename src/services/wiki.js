@@ -1,7 +1,6 @@
 import requests from "../utils/requests";
 import Log from "../utils/log";
 import i18n from "../utils/i18n";
-import Constants from "../utils/constants";
 
 class Wiki {
     pageInfoCache = {};
@@ -34,6 +33,7 @@ class Wiki {
      * Get the timestamp of the last revision of page specified.
      * @param {params.string} title 页面名 / Pagename
      * @param {params.revisionId} revisionId 修订版本号 / Revision ID
+     * @param {params.contentmodel} contentmodel 内容模型 / Content Model
      * @returns {Promise<string>}
      */
     async getPageInfo({ title, revisionId }) {
@@ -52,25 +52,31 @@ class Wiki {
                     return {
                         timestamp: this.pageInfoCache[title].timestamp,
                         revisionId: this.pageInfoCache[title].revid,
+                        contentmodel: this.pageInfoCache[title].contentmodel,
                     };
                 }
                 params.titles = title;
             }
             const response = await requests.get(params);
             if (response.query && response.query.pages) {
-                if (Object.keys(response.query.pages)[0] === "-1") {
+                const pageKey = Object.keys(response.query.pages)[0];
+                const contentmodel = response.query.pages[pageKey].contentmodel;
+                if (pageKey === "-1") {
                     // 不存在这一页面
                     // Page not found.
-                    return {};
+                    this.pageInfoCache[title] = { contentmodel };
+                    return {
+                        contentmodel: contentmodel,
+                    };
                 }
-                const pageInfo =
-                    response.query.pages[Object.keys(response.query.pages)[0]].revisions[0];
+                const pageInfo = response.query.pages[pageKey].revisions[0];
                 if (title) {
-                    this.pageInfoCache[title] = pageInfo;
+                    this.pageInfoCache[title] = { ...pageInfo, contentmodel };
                 }
                 return {
                     timestamp: pageInfo.timestamp,
                     revisionId: pageInfo.revid,
+                    contentmodel: contentmodel,
                 };
             }
         } catch (e) {
