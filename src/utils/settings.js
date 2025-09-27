@@ -14,7 +14,7 @@ class Settings {
                     if (customSettingFunction()(w) === true) {
                         return;
                     } else {
-                        return customSettingFunction()(w) || settings[key];
+                        return customSettingFunction()(w) ?? settings[key];
                     }
                 } catch (e) {
                     return settings[key];
