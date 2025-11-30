@@ -157,7 +157,7 @@ class UI {
      * Insert QuickEdit button besides page edit button.
      */
     insertTopQuickEditEntry(onClick) {
-        const topBtn = $("<li>").attr("id", "Wikiplus-Edit-TopBtn").attr("class", "mw-list-item");
+        const topBtn = $("<li>").attr("id", "Wikiplus-Edit-TopBtn").attr("class", "mw-list-item collapsible");
         const topBtnLink = $("<a>")
             .attr("href", "javascript:void(0)")
             .text(`${i18n.translate("quickedit_topbtn")}`);
